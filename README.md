@@ -21,5 +21,3 @@ Installation
 * install ADT
 * import project to Eclipse
 * the .apk file can be found at : [OpenNMS Android](http://ge.tt/4HdCvlF/v/0)
-
-
