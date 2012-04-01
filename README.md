@@ -1,11 +1,11 @@
-###### OpenNMS Android Client Sample
+# OpenNMS Android Client Sample
 The application is a proof of concept for OpenNMS Android client project proposed to Google Summer of Code 2012.
 
-###Features:
+######Features:
 
 * displays nodes existing on demo.opennms.org server
 
-###Technical aspects:
+######Technical aspects:
 
 * the application uses Apache's HTTPClient to remotely connect to the rest service provided by demo.opennms.org:8980/rest/nodes
 * the xml response is parsed and displayed in an Android ListView
@@ -18,7 +18,7 @@ The application is a proof of concept for OpenNMS Android client project propose
 
 ![About](http://i.imgur.com/xORBx.png)
 
-###Installation
+######Installation
 
 * install Android SDK 2.3.3 or newer
 * install ADT
