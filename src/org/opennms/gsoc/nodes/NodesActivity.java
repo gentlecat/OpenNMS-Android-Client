@@ -28,7 +28,7 @@ import android.widget.ListView;
  * 
  */
 public class NodesActivity extends Activity {
-	private static final String URL = "http://demo.opennms.org:8980/opennms/rest/nodes";
+	private static final String URL = "http://demo.opennms.org/opennms/rest/nodes";
 	private static final String USERNAME = "demo";
 	private static final String PASSWORD = "demo";
 	private ListView listView;
