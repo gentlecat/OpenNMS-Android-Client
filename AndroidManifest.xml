@@ -20,12 +20,14 @@
             </intent-filter>
         </activity>
         
+        <service android:name=".nodes.NodesService"></service>
+        
         <activity android:name=".nodes.NodesActivity" android:label="@string/app_name"
                         android:theme="@android:style/Theme.NoTitleBar">
         </activity>
         <activity android:name=".about.AboutActivity" android:label="@string/app_name"
                         android:theme="@android:style/Theme.NoTitleBar">
-        </activity>
+        </activity> 
     </application>
 
 </manifest>

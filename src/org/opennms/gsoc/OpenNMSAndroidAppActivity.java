@@ -35,6 +35,7 @@ public class OpenNMSAndroidAppActivity extends TabActivity {
 	    spec = tabHost.newTabSpec("nodes").setIndicator("Nodes",
 	                      res.getDrawable(R.drawable.display))
 	                  .setContent(intent);
+	    
 	    tabHost.addTab(spec);
 	    tabHost.setCurrentTab(2);
 	}

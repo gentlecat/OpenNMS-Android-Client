@@ -2,7 +2,6 @@ package org.opennms.gsoc.nodes;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -27,8 +26,8 @@ public class NodesParser {
 	private static final String NODE_ID = "@id";
 	private static final String NODE_TYPE = "@type";
 	
-	public static List<String> parse(InputStream is) {
-		List<String> values = new ArrayList<String>();
+	public static ArrayList<String> parse(InputStream is) {
+		ArrayList<String> values = new ArrayList<String>();
 
 		NodeList nodes = null;
 		try {

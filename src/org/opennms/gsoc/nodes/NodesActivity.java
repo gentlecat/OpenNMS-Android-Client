@@ -1,22 +1,14 @@
 package org.opennms.gsoc.nodes;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -28,11 +20,9 @@ import android.widget.ListView;
  * 
  */
 public class NodesActivity extends Activity {
-	private static final String URL = "http://demo.opennms.org/opennms/rest/nodes";
-	private static final String USERNAME = "demo";
-	private static final String PASSWORD = "demo";
 	private ListView listView;
 	private ArrayAdapter<String> adapter;
+	private Intent intent;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,69 +34,45 @@ public class NodesActivity extends Activity {
 				new ArrayList<String>());
 
 		listView.setAdapter(adapter);
-		getNodes();
+
+		intent = new Intent(this, NodesService.class);
 
 	}
 
-	private class RetrieveNodesAsyncTask extends
-			AsyncTask<Void, Void, HttpResponse> {
-
-		protected HttpResponse doInBackground(Void... params) {
-			HttpGet httpget;
-			httpget = new HttpGet(URL);
-
-			String auth = new String(Base64.encode(
-					(USERNAME + ":" + PASSWORD).getBytes(), Base64.URL_SAFE
-							| Base64.NO_WRAP));
-			httpget.addHeader("Authorization", "Basic " + auth);
-
-			HttpClient client = new DefaultHttpClient();
-			HttpResponse response = null;
-			try {
-				response = client.execute(httpget);
-			} catch (ClientProtocolException e1) {
-				Log.i("NodesActivity HttpResponse", e1.getMessage());
-			} catch (IOException e1) {
-				Log.i("NodesActivity HttpResponse ", e1.getMessage());
-			}
-
-			return response;
-		}
-
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
-		protected void onPostExecute(HttpResponse response) {
-			if (response != null) {
-				HttpEntity entity = response.getEntity();
-				InputStream is = null;
-				if (entity != null) {
-					try {
-						is = entity.getContent();
-					} catch (IllegalStateException e2) {
-						Log.i("NodesActivity : entity.getContent()", e2.getMessage());
-					} catch (IOException e2) {
-						Log.i("NodesActivity : entity.getContent()", e2.getMessage());
-					}
-
-					List<String> values = NodesParser.parse(is);
-
-					for (String s : values) {
-						adapter.add(s);
-					}
-				} else {
-					adapter.add("There are no nodes to display");
-				}
-			} else {
-				adapter.add("The connection with the server couldn't be establish");
-			}
-			listView.setAdapter(adapter);
-
+		public void onReceive(Context context, Intent intent) {
+			updateUI(intent);
 		}
+	};
+
+	private void updateUI(Intent intent) {
+		adapter.clear();
+		List<String> values = intent.getStringArrayListExtra(NodesService.NODES_RESPONSE_STRING);
+		
+		if (values != null) {
+
+			for (String s : values) {
+				adapter.add(s);
+			}
+		}
+
+		listView.setAdapter(adapter);
 	}
 
-	public void getNodes() {
-		RetrieveNodesAsyncTask task = new RetrieveNodesAsyncTask();
-		task.execute();
+	@Override
+	public void onResume() {
+		super.onResume();
+		startService(intent);
+		registerReceiver(broadcastReceiver, new IntentFilter(
+				NodesService.BROADCAST_ACTION));
+	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(broadcastReceiver);
+		stopService(intent);
 	}
 
 }
