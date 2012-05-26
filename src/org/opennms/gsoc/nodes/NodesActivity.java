@@ -3,11 +3,15 @@ package org.opennms.gsoc.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.actionbarsherlock.app.SherlockActivity;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,7 +23,7 @@ import android.widget.ListView;
  * @author melania galea
  * 
  */
-public class NodesActivity extends Activity {
+public class NodesActivity extends SherlockActivity {
 	private ListView listView;
 	private ArrayAdapter<String> adapter;
 	private Intent intent;
@@ -34,9 +38,7 @@ public class NodesActivity extends Activity {
 				new ArrayList<String>());
 
 		listView.setAdapter(adapter);
-
 		intent = new Intent(this, NodesService.class);
-
 	}
 
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -48,8 +50,9 @@ public class NodesActivity extends Activity {
 
 	private void updateUI(Intent intent) {
 		adapter.clear();
-		List<String> values = intent.getStringArrayListExtra(NodesService.NODES_RESPONSE_STRING);
-		
+		List<String> values = intent
+				.getStringArrayListExtra(NodesService.NODES_RESPONSE_STRING);
+
 		if (values != null) {
 
 			for (String s : values) {
@@ -74,5 +77,4 @@ public class NodesActivity extends Activity {
 		unregisterReceiver(broadcastReceiver);
 		stopService(intent);
 	}
-
 }
