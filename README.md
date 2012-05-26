@@ -8,6 +8,7 @@ The application is a proof of concept for [OpenNMS](http://www.opennms.org/) And
 ######Technical aspects:
 
 * the application uses [Apache's HTTPClient](http://developer.android.com/reference/org/apache/http/client/HttpClient.html) to remotely connect to the rest service provided by [demo.opennms.org/opennms/rest/nodes](http://demo.opennms.org/opennms/rest/nodes)
+* the process of fetching the nodes from the web service is performed within a Service 
 * the xml response is parsed and displayed in an Android ListView
 
 * the nodes are displayed with their id, label and type in the Nodes Tab
