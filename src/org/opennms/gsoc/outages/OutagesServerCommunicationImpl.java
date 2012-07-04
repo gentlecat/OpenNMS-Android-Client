@@ -1,0 +1,34 @@
+package org.opennms.gsoc.outages;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import org.opennms.gsoc.RestingServerCommunication;
+import org.opennms.gsoc.nodes.model.OnmsOutage;
+
+import com.google.resting.component.impl.ServiceResponse;
+
+public class OutagesServerCommunicationImpl implements
+		OutagesServerCommunication {
+
+	@Override
+	public ArrayList<OnmsOutage> getOutages(String url) {
+		final ExecutorService executorService = Executors.newCachedThreadPool();
+		Future<ServiceResponse> outagesCommunication = executorService
+				.submit(new RestingServerCommunication("outages"));
+		ServiceResponse outages = null;
+		try {
+			outages = outagesCommunication.get();
+		} catch (InterruptedException e) {
+		} catch (ExecutionException e) {
+		}
+
+		ArrayList<OnmsOutage> outagesList = new ArrayList<OnmsOutage>();
+		outagesList = OutagesParser.parse(outages.getContentData().getContentInString());
+		return outagesList;
+	}
+
+}

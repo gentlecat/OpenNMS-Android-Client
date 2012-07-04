@@ -1,7 +1,6 @@
 package org.opennms.gsoc;
 
 import org.opennms.gsoc.nodes.NodesServerCommunicationImpl;
-
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +25,7 @@ public class TestActivity extends SherlockActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	NodesServerCommunicationImpl nodes = new NodesServerCommunicationImpl();
+    	//NodesServerCommunicationImpl nodes = new NodesServerCommunicationImpl();
         //Toast.makeText(this, nodes.getNodes("nodes", 1), Toast.LENGTH_SHORT).show();
         return true;
     }

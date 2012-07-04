@@ -21,8 +21,17 @@
         </activity>
         
         <service android:name=".nodes.NodesService"></service>
+        <service android:name=".outages.OutagesService"></service>
         
         <activity android:name=".nodes.NodesActivity" android:label="@string/app_name"
+                        android:theme="@style/Theme.Sherlock">
+        </activity>
+        
+        <activity android:name=".nodes.NodeViewerActivity" android:label="@string/app_name"
+                        android:theme="@style/Theme.Sherlock">
+        </activity>
+        
+        <activity android:name=".outages.OutagesActivity" android:label="@string/app_name"
                         android:theme="@style/Theme.Sherlock">
         </activity>
         <activity android:name=".about.AboutActivity" android:label="@string/app_name"

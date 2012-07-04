@@ -1,4 +1,4 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.outages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import com.google.resting.Resting;
 import com.google.resting.component.EncodingTypes;
 import com.google.resting.component.impl.ServiceResponse;
 
-public class RestingNodesServerCommunication implements Callable{
+public class RestingOutagesServerCommunication implements Callable{
 	private ServerConfiguration serverConfiguration = ServerConfiguration.getInstance();
 	
 	@Override
@@ -25,7 +25,7 @@ public class RestingNodesServerCommunication implements Callable{
 		Header httpHeader = new BasicHeader("Authorization", "Basic " + auth);
 		List<Header> headers = new ArrayList<Header>();
 		headers.add(httpHeader);
-		ServiceResponse response=Resting.get(serverConfiguration.getBase() + "/nodes", 80, null, EncodingTypes.UTF8, headers);
+		ServiceResponse response=Resting.get(serverConfiguration.getBase() + "/outages", 80, null, EncodingTypes.UTF8, headers);
 		return response;
 	}
 }

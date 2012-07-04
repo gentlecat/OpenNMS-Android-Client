@@ -1,42 +1,38 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.outages;
 
 import org.opennms.gsoc.ServerConfiguration;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.util.Log;
 
-public class NodesService extends Service {
-
-	private static final String TAG = "NodesService";
-	public static final String BROADCAST_ACTION = "org.opennms.gsoc.nodes";
+public class OutagesService extends Service{
+	private static final String TAG = "OutagesService";
+	public static final String BROADCAST_ACTION = "org.opennms.gsoc.outages";
 	private Intent intent;
-	public static final String NODES_RESPONSE_STRING = "response";
+	public static final String OUTAGES_RESPONSE_STRING = "response";
 	private ServerConfiguration serverConfiguration = ServerConfiguration
 			.getInstance();
-	private NodesServerCommunication nodesServer;
+	private OutagesServerCommunication outagesServer;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		intent = new Intent(BROADCAST_ACTION);
-		nodesServer = new NodesServerCommunicationImpl(new NodesParser());
+		outagesServer = new OutagesServerCommunicationImpl();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		Log.i(TAG, "Service started...");
-		getNodes();
+		getOutages();
 
 	}
 
-	public void getNodes() {
-		intent.putExtra(NODES_RESPONSE_STRING, nodesServer.getNodes("nodes"));
+	public void getOutages() {
+		intent.putExtra(OUTAGES_RESPONSE_STRING, outagesServer.getOutages("outages"));
 		sendBroadcast(intent);
 	}
 

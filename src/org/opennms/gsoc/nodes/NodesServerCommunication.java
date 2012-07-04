@@ -1,9 +1,10 @@
 package org.opennms.gsoc.nodes;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import org.opennms.gsoc.nodes.model.OnmsNode;
 
 
 public interface NodesServerCommunication {
-	ArrayList<String> getNodes(String url);
+	ArrayList<OnmsNode> getNodes(String url);
 }
