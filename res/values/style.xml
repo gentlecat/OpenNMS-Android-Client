@@ -1,0 +1,20 @@
+<resources>
+<!-- style for the tabs -->
+    <style name="MyActionBarTabStyle" parent="Widget.Sherlock.ActionBar.TabBar">
+        <item name="android:background">@drawable/app_tab</item>
+    </style>
+    
+    <style name="NoActionBarTabStyle" parent="Widget.Sherlock.ActionBar.TabBar">
+    </style>
+    
+    <style name="ButtonNormalText" parent="@android:style/Widget.Button">
+    <item name="android:textColor" >#FFFFFF</item>
+    <item name="android:textSize" >12dip</item>
+    <item name="android:textStyle" >bold</item>
+    <item name="android:height" >24dip</item>
+    <item name="android:drawableTop" >@drawable/button_selector</item>
+    <item name="android:focusable" >true</item>
+    <item name="android:clickable" >true</item>
+</style>
+
+</resources>

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.opennms.gsoc.nodes.model.OnmsOutage;
+import org.opennms.gsoc.model.OnmsOutage;
 import org.opennms.gsoc.util.OnmsParserUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;

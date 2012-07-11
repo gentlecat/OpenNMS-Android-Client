@@ -1,24 +1,24 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.outages;
 
 import org.opennms.gsoc.R;
-import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsOutage;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class NodeViewerActivity extends Activity {
-    @Override
+public class OutageViewerActivity extends Activity{
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.details);
+        setContentView(R.layout.outages_details);
 
         Intent launchingIntent = getIntent();
-        OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
+        OnmsOutage content = (OnmsOutage) launchingIntent.getSerializableExtra("onmsoutage");
         
-        NodeViewerFragment viewer = (NodeViewerFragment) getFragmentManager()
-                .findFragmentById(R.id.details);
+        OutageViewerFragment viewer = (OutageViewerFragment) getFragmentManager()
+                .findFragmentById(R.id.outagesDetails);
 
         viewer.updateUrl(content);
     }
@@ -27,5 +27,4 @@ public class NodeViewerActivity extends Activity {
     	Log.i("back pressed", "i'm pressed");
     	this.finish();
     }
-
 }

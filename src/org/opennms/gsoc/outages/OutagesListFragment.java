@@ -1,9 +1,11 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.outages;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsOutage;
+import org.opennms.gsoc.nodes.NodesListFragment.OnNodesListSelectedListener;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -16,42 +18,26 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class NodesListFragment extends ListFragment{
-	private OnNodesListSelectedListener nodesListSelectedListener;
+public class OutagesListFragment extends ListFragment{
+	private ArrayAdapter<OnmsOutage> adapter;
 	private Intent intent;
-	private ArrayAdapter<OnmsNode> adapter;
+	private OnOutagesListSelectedListener outagesListSelectedListener;
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		OnmsNode selection = (OnmsNode)l.getItemAtPosition(position);
-	    nodesListSelectedListener.onNodeSelected(selection);
+		OnmsOutage selection = (OnmsOutage)l.getItemAtPosition(position);
+	    outagesListSelectedListener.onOutageSelected(selection);
 	}
-	 
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		adapter = new ArrayAdapter<OnmsNode>(getActivity().getApplicationContext(),
+		adapter = new ArrayAdapter<OnmsOutage>(getActivity().getApplicationContext(),
 				android.R.layout.simple_list_item_1, android.R.id.text1,
-				new ArrayList<OnmsNode>());
-		setListAdapter(adapter);
-
-		intent = new Intent(getActivity().getApplicationContext(), NodesService.class);
+				new ArrayList<OnmsOutage>());
+		this.setListAdapter(adapter);
+		intent = new Intent(getActivity().getApplicationContext(), OutagesService.class);
 	}
-
-	public interface OnNodesListSelectedListener {
-        void onNodeSelected(OnmsNode nodeUrl);
-    }
-	
-	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-        	nodesListSelectedListener = (OnNodesListSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnNodesSelectedListener");
-        }
-    }
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -60,26 +46,41 @@ public class NodesListFragment extends ListFragment{
 		}
 	};
 
+	public interface OnOutagesListSelectedListener {
+        void onOutageSelected(OnmsOutage outage);
+    }
+	
 	private void updateUI(Intent intent) {
 		adapter.clear();
-		List<OnmsNode> values = (List<OnmsNode>) intent.getSerializableExtra(NodesService.NODES_RESPONSE_STRING);
+		List<OnmsOutage> values = (List<OnmsOutage>)intent.getSerializableExtra(OutagesService.OUTAGES_RESPONSE_STRING);
 
 		if (values != null) {
 
-			for (OnmsNode s : values) {
+			for (OnmsOutage s : values) {
 				adapter.add(s);
 			}
 		}
 
 		this.setListAdapter(adapter);
 	}
+	
+	@Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+        	outagesListSelectedListener = (OnOutagesListSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnOutagesSelectedListener");
+        }
+    }
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		getActivity().getApplicationContext().startService(intent);
 		getActivity().getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(
-				NodesService.BROADCAST_ACTION));
+				OutagesService.BROADCAST_ACTION));
 	}
 
 	@Override

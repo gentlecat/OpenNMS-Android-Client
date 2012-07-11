@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.opennms.gsoc.RestingServerCommunication;
-import org.opennms.gsoc.nodes.model.OnmsAssetRecord;
-import org.opennms.gsoc.nodes.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsAssetRecord;
+import org.opennms.gsoc.model.OnmsNode;
 
 import com.google.resting.component.impl.ServiceResponse;
 

@@ -1,7 +1,7 @@
 package org.opennms.gsoc.nodes;
 
 import org.opennms.gsoc.R;
-import org.opennms.gsoc.nodes.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsNode;
 
 import android.app.Fragment;
 import android.os.Bundle;

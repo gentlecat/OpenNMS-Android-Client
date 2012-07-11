@@ -2,7 +2,7 @@ package org.opennms.gsoc.outages;
 
 import java.util.ArrayList;
 
-import org.opennms.gsoc.nodes.model.OnmsOutage;
+import org.opennms.gsoc.model.OnmsOutage;
 
 public interface OutagesServerCommunication {
 

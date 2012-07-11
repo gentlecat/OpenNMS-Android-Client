@@ -24,8 +24,9 @@ public class OpenNMSAndroidAppActivity extends TabActivity {
 
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 	    setContentView(R.layout.main);
-
+	    
 	    Resources res = getResources(); 
 	    tabHost = getTabHost(); 
 	    TabHost.TabSpec spec;
@@ -33,20 +34,21 @@ public class OpenNMSAndroidAppActivity extends TabActivity {
 
 	    intent = new Intent().setClass(this, AboutActivity.class);
 	    spec = tabHost.newTabSpec("about").setIndicator("About",
-	                      res.getDrawable(R.drawable.icon_about_tab))
+	                      res.getDrawable(R.drawable.o))
 	                  .setContent(intent);
+	    
 	    tabHost.addTab(spec);
 
 	    intent = new Intent().setClass(this, NodesActivity.class);
 	    spec = tabHost.newTabSpec("nodes").setIndicator("Nodes",
-	                      res.getDrawable(R.drawable.icon_nodes_tab))
+	                      res.getDrawable(R.drawable.display))
 	                  .setContent(intent);
 	    
 	    tabHost.addTab(spec);
 	    
 	    intent = new Intent().setClass(this, OutagesActivity.class);
 	    spec = tabHost.newTabSpec("nodes").setIndicator("Outages",
-	                      res.getDrawable(R.drawable.icon_outages_tab))
+	                      res.getDrawable(R.drawable.ekg))
 	                  .setContent(intent);
 	    
 	    tabHost.addTab(spec);

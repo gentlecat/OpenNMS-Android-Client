@@ -1,4 +1,4 @@
-package org.opennms.gsoc.nodes.model;
+package org.opennms.gsoc.model;
 
 import java.io.Serializable;
 import java.util.Date;

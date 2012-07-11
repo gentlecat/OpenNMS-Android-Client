@@ -3,4 +3,11 @@
     <string name="hello">Hello World, OpenNMSAndroidAppActivity!</string>
     <string name="app_name">OpenNMSAndroidApp</string>
     <string name="schedule">Nodes</string>
+    <string name="settings_button">Settings</string>
+    <string name="host">Host:</string>
+    <string name="port">Port:</string>
+    <string name="path">Path:</string>
+    <string name="user">User:</string>
+    <string name="pass">Pass:</string>
+    <string name="update_button">Update</string>
 </resources>

@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.opennms.gsoc.RestingServerCommunication;
-import org.opennms.gsoc.nodes.model.OnmsOutage;
+import org.opennms.gsoc.model.OnmsOutage;
 
 import com.google.resting.component.impl.ServiceResponse;
 

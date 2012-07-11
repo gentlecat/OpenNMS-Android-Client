@@ -1,71 +1,31 @@
 package org.opennms.gsoc.outages;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.opennms.gsoc.R;
+import org.opennms.gsoc.model.OnmsOutage;
 
-import org.opennms.gsoc.nodes.model.OnmsOutage;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
-public class OutagesActivity extends SherlockActivity{
-	private ListView listView;
-	private ArrayAdapter<OnmsOutage> adapter;
-	private Intent intent;
-	
+public class OutagesActivity extends SherlockActivity implements OutagesListFragment.OnOutagesListSelectedListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		listView = new ListView(this);
-		setContentView(listView);
-		adapter = new ArrayAdapter<OnmsOutage>(this,
-				android.R.layout.simple_list_item_1, android.R.id.text1,
-				new ArrayList<OnmsOutage>());
-
-		listView.setAdapter(adapter);
-		intent = new Intent(this, OutagesService.class);
-	}
-	
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			updateUI(intent);
-		}
-	};
-
-	private void updateUI(Intent intent) {
-		adapter.clear();
-		List<OnmsOutage> values = (List<OnmsOutage>)intent.getSerializableExtra(OutagesService.OUTAGES_RESPONSE_STRING);
-
-		if (values != null) {
-
-			for (OnmsOutage s : values) {
-				adapter.add(s);
-			}
-		}
-
-		listView.setAdapter(adapter);
+		setContentView(R.layout.outages_list);
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		startService(intent);
-		registerReceiver(broadcastReceiver, new IntentFilter(
-				OutagesService.BROADCAST_ACTION));
-	}
+	public void onOutageSelected(OnmsOutage outage) {
+		OutageViewerFragment viewer = (OutageViewerFragment) getFragmentManager()
+	            .findFragmentById(R.id.outagesDetails);
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		unregisterReceiver(broadcastReceiver);
-		stopService(intent);
+	    if (viewer == null || !viewer.isInLayout()) {
+	        Intent showContent = new Intent(getApplicationContext(),
+	        		OutageViewerActivity.class);
+	        showContent.putExtra("onmsoutage", outage);
+	        startActivity(showContent);
+	    } else {
+	        viewer.updateUrl(outage);
+	    }
 	}
 }

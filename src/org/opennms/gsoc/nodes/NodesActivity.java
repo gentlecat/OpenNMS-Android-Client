@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.opennms.gsoc.OpenNMSAndroidAppActivity;
 import org.opennms.gsoc.R;
-import org.opennms.gsoc.nodes.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsNode;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Window;
 /**
  * The class represents the activity to take place when the nodes tab is
  * selected. It displays the nodes retrieved from the demo.opennms.org server.
@@ -29,6 +30,12 @@ public class NodesActivity extends SherlockActivity implements NodesListFragment
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.nodes_list);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		
 	}
 
 	@Override
