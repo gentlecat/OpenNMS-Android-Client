@@ -3,20 +3,25 @@ package org.opennms.gsoc.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.OnmsNode;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class NodesListFragment extends ListFragment{
+import com.actionbarsherlock.app.SherlockListFragment;
+
+public class NodesListFragment extends SherlockListFragment{
 	private OnNodesListSelectedListener nodesListSelectedListener;
 	private Intent intent;
 	private ArrayAdapter<OnmsNode> adapter;
@@ -27,31 +32,46 @@ public class NodesListFragment extends ListFragment{
 	    nodesListSelectedListener.onNodeSelected(selection);
 	}
 	 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		adapter = new ArrayAdapter<OnmsNode>(getActivity().getApplicationContext(),
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				new ArrayList<OnmsNode>());
-		setListAdapter(adapter);
-
+		getListView().setAdapter(adapter);
+					
 		intent = new Intent(getActivity().getApplicationContext(), NodesService.class);
 	}
-
-	public interface OnNodesListSelectedListener {
-        void onNodeSelected(OnmsNode nodeUrl);
-    }
 	
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-        	nodesListSelectedListener = (OnNodesListSelectedListener) activity;
+        	nodesListSelectedListener = new OnNodesListSelectedListener() {
+				
+				@Override
+				public void onNodeSelected(OnmsNode node) {
+					NodeViewerFragment viewer = (NodeViewerFragment) getActivity().getFragmentManager()
+				            .findFragmentById(R.id.details);
+
+				    if (viewer == null || !viewer.isInLayout()) {
+				        Intent showContent = new Intent(getActivity().getApplicationContext(),
+				        		NodeViewerActivity.class);
+				        showContent.putExtra("onmsnode", node);
+				        startActivity(showContent);
+				    } else {
+				        viewer.updateUrl(node);
+				    }
+				}
+			};
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnNodesSelectedListener");
         }
     }
+	
+	public interface OnNodesListSelectedListener {
+		void onNodeSelected(OnmsNode nodeUrl);
+	}
 	
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
@@ -68,10 +88,10 @@ public class NodesListFragment extends ListFragment{
 
 			for (OnmsNode s : values) {
 				adapter.add(s);
+				Log.i("Nodes list fragment", s + "");
 			}
 		}
-
-		this.setListAdapter(adapter);
+		getListView().setAdapter(adapter);
 	}
 
 	@Override
@@ -87,5 +107,11 @@ public class NodesListFragment extends ListFragment{
 		super.onPause();
 		getActivity().getApplicationContext().unregisterReceiver(broadcastReceiver);
 		getActivity().getApplicationContext().stopService(intent);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.nodes_list, container, false);
 	}
 }

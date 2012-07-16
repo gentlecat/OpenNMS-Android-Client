@@ -3,6 +3,10 @@ package org.opennms.gsoc.model;
 import java.io.Serializable;
 
 public class OnmsOutage implements Serializable, Comparable<OnmsOutage>{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String ipAddress;
 	private String ifLostService;

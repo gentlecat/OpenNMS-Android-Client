@@ -1,12 +1,7 @@
 package org.opennms.gsoc.nodes;
 
-import org.opennms.gsoc.ServerConfiguration;
-
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -16,15 +11,13 @@ public class NodesService extends Service {
 	public static final String BROADCAST_ACTION = "org.opennms.gsoc.nodes";
 	private Intent intent;
 	public static final String NODES_RESPONSE_STRING = "response";
-	private ServerConfiguration serverConfiguration = ServerConfiguration
-			.getInstance();
 	private NodesServerCommunication nodesServer;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		intent = new Intent(BROADCAST_ACTION);
-		nodesServer = new NodesServerCommunicationImpl(new NodesParser());
+		nodesServer = new NodesServerCommunicationImpl();
 	}
 
 	@Override

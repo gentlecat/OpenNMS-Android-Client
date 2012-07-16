@@ -12,7 +12,7 @@
         android:label="@string/app_name" >
         <activity
             android:name=".OpenNMSAndroidAppActivity"
-            android:label="@string/app_name" android:theme="@style/MyActionBarTabStyle">
+            android:label="@string/app_name" android:theme="@style/Theme.Sherlock">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,18 +23,7 @@
         <service android:name=".nodes.NodesService"></service>
         <service android:name=".outages.OutagesService"></service>
         
-        <activity android:name=".nodes.NodesActivity" android:label="@string/app_name"
-                        android:theme="@style/MyActionBarTabStyle">
-        </activity>
-        
         <activity android:name=".nodes.NodeViewerActivity" android:label="@string/app_name"
-                        android:theme="@style/Theme.Sherlock">
-        </activity>
-        
-        <activity android:name=".outages.OutagesActivity" android:label="@string/app_name"
-                        android:theme="@style/Theme.Sherlock">
-        </activity>
-        <activity android:name=".about.AboutActivity" android:label="@string/app_name"
                         android:theme="@style/Theme.Sherlock">
         </activity>
         

@@ -13,7 +13,7 @@ import com.google.resting.Resting;
 import com.google.resting.component.EncodingTypes;
 import com.google.resting.component.impl.ServiceResponse;
 
-public class RestingServerCommunication implements Callable{
+public class RestingServerCommunication implements Callable<ServiceResponse>{
 	private ServerConfiguration serverConfiguration = ServerConfiguration.getInstance();
 	private String url;
 	

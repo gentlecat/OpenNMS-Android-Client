@@ -1,7 +1,6 @@
 package org.opennms.gsoc.outages;
 
 import org.opennms.gsoc.R;
-import org.opennms.gsoc.model.OnmsNode;
 import org.opennms.gsoc.model.OnmsOutage;
 
 import android.app.Fragment;

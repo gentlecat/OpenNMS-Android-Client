@@ -1,7 +1,5 @@
 package org.opennms.gsoc.outages;
 
-import org.opennms.gsoc.ServerConfiguration;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -12,8 +10,6 @@ public class OutagesService extends Service{
 	public static final String BROADCAST_ACTION = "org.opennms.gsoc.outages";
 	private Intent intent;
 	public static final String OUTAGES_RESPONSE_STRING = "response";
-	private ServerConfiguration serverConfiguration = ServerConfiguration
-			.getInstance();
 	private OutagesServerCommunication outagesServer;
 
 	@Override

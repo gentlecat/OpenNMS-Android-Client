@@ -3,22 +3,24 @@ package org.opennms.gsoc.outages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.OnmsOutage;
-import org.opennms.gsoc.nodes.NodesListFragment.OnNodesListSelectedListener;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class OutagesListFragment extends ListFragment{
+import com.actionbarsherlock.app.SherlockListFragment;
+
+public class OutagesListFragment extends SherlockListFragment{
 	private ArrayAdapter<OnmsOutage> adapter;
 	private Intent intent;
 	private OnOutagesListSelectedListener outagesListSelectedListener;
@@ -68,7 +70,24 @@ public class OutagesListFragment extends ListFragment{
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-        	outagesListSelectedListener = (OnOutagesListSelectedListener) activity;
+        	outagesListSelectedListener = new OnOutagesListSelectedListener() {
+				
+				@Override
+				public void onOutageSelected(OnmsOutage outage) {
+					OutageViewerFragment viewer = (OutageViewerFragment) getActivity().getFragmentManager()
+				            .findFragmentById(R.id.outagesDetails);
+
+				    if (viewer == null || !viewer.isInLayout()) {
+				        Intent showContent = new Intent(getActivity().getApplicationContext(),
+				        		OutageViewerActivity.class);
+				        showContent.putExtra("onmsoutage", outage);
+				        startActivity(showContent);
+				    } else {
+				        viewer.updateUrl(outage);
+				    }
+					
+				}
+			};
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnOutagesSelectedListener");
@@ -88,5 +107,11 @@ public class OutagesListFragment extends ListFragment{
 		super.onPause();
 		getActivity().getApplicationContext().unregisterReceiver(broadcastReceiver);
 		getActivity().getApplicationContext().stopService(intent);
+	}
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.outages_list, container, false);
 	}
 }

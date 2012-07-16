@@ -14,7 +14,7 @@ import com.google.resting.Resting;
 import com.google.resting.component.EncodingTypes;
 import com.google.resting.component.impl.ServiceResponse;
 
-public class RestingNodesServerCommunication implements Callable{
+public class RestingNodesServerCommunication implements Callable<ServiceResponse>{
 	private ServerConfiguration serverConfiguration = ServerConfiguration.getInstance();
 	
 	@Override
