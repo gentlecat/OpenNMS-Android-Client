@@ -12,23 +12,23 @@ import android.widget.EditText;
 
 public class SettingsViewerFragment extends Fragment{
 	private View viewer = null;
-	
+
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	
-    	viewer = (View) inflater.inflate(R.layout.settings_view,
-                container, false);
-    	viewer.setFocusableInTouchMode(true);
-    	viewer.requestFocus();
-    	updateContent();
-    	
-        return viewer;
-    }
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		this.viewer = inflater.inflate(R.layout.settings_view,
+				container, false);
+		this.viewer.setFocusableInTouchMode(true);
+		this.viewer.requestFocus();
+		updateContent();
+
+		return this.viewer;
+	}
 
 	public void updateContent() {
-		EditText idEditText = (EditText)viewer.findViewById(R.id.editTextHost);
+		EditText idEditText = (EditText)this.viewer.findViewById(R.id.editTextHost);
 		idEditText.setText(ServerConfiguration.getInstance().getHost());
-		
+
 	}
 }

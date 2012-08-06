@@ -11,46 +11,51 @@ public class OnmsOutage implements Serializable, Comparable<OnmsOutage>{
 	private String ipAddress;
 	private String ifLostService;
 	private String ifRegainedService;
-	
+
+	public OnmsOutage(Integer id, String ipAddress) {
+		this.id = id;
+		this.ipAddress = ipAddress;
+	}
+
 	public OnmsOutage(Integer id, String ipAddress, String ifLostService, String ifRegainedService) {
 		this.id = id;
 		this.ipAddress = ipAddress;
 		this.ifLostService = ifLostService;
 		this.ifRegainedService = ifRegainedService;
 	}
-	
+
 	public Integer getId() {
-		return id;
+		return this.id;
 	}
 
 	public String getIpAddress() {
-		return ipAddress;
+		return this.ipAddress;
 	}
 
 	public String getIfLostService() {
-		return ifLostService;
+		return this.ifLostService;
 	}
 
 	public String getIfRegainedService() {
-		return ifRegainedService;
+		return this.ifRegainedService;
 	}
 
 	@Override
 	public String toString() {
-		return "OnmsOutage [id=" + id + ", ipAddress=" + ipAddress
-				+ ", ifLostService=" + ifLostService + ", ifRegainedService="
-				+ ifRegainedService + "]";
+		return "OnmsOutage [id=" + this.id + ", ipAddress=" + this.ipAddress
+				+ ", ifLostService=" + this.ifLostService + ", ifRegainedService="
+				+ this.ifRegainedService + "]";
 	}
 
 	@Override
 	public int compareTo(OnmsOutage o) {
-        Integer compareId = 0;
+		Integer compareId = 0;
 
-        if (o != null) {
-            compareId = o.getId();
-        }
+		if (o != null) {
+			compareId = o.getId();
+		}
 
-        return this.getId().compareTo(compareId);
+		return this.getId().compareTo(compareId);
 	}
-	
+
 }

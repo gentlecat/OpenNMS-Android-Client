@@ -1,6 +1,13 @@
 package org.opennms.gsoc.nodes;
 
+import java.util.List;
+
+import org.opennms.gsoc.dao.OnmsDatabaseHelper;
+import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.nodes.dao.NodesListProvider;
+
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -8,35 +15,37 @@ import android.util.Log;
 public class NodesService extends Service {
 
 	private static final String TAG = "NodesService";
-	public static final String BROADCAST_ACTION = "org.opennms.gsoc.nodes";
-	private Intent intent;
-	public static final String NODES_RESPONSE_STRING = "response";
 	private NodesServerCommunication nodesServer;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		intent = new Intent(BROADCAST_ACTION);
-		nodesServer = new NodesServerCommunicationImpl();
+		this.nodesServer = new NodesServerCommunicationImpl();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		Log.i(TAG, "Service started...");
+		Log.i(NodesService.TAG, "Service started...");
 		getNodes();
 
 	}
 
 	public void getNodes() {
-		intent.putExtra(NODES_RESPONSE_STRING, nodesServer.getNodes("nodes"));
-		sendBroadcast(intent);
+		List<OnmsNode> nodes = this.nodesServer.getNodes("nodes");
+		for(OnmsNode node : nodes) {
+			ContentValues tutorialData = new ContentValues();
+			tutorialData.put(OnmsDatabaseHelper.COL_NODE_ID, node.getId());
+			tutorialData.put(OnmsDatabaseHelper.COL_TYPE, node.getType());
+			tutorialData.put(OnmsDatabaseHelper.COL_LABEL, node.getLabel());
+			getContentResolver().insert(NodesListProvider.CONTENT_URI, tutorialData);
+		}
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		Log.i(TAG, "Service stopped...");
+		Log.i(NodesService.TAG, "Service stopped...");
 	}
 
 	@Override

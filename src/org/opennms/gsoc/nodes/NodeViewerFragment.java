@@ -14,23 +14,23 @@ public class NodeViewerFragment extends Fragment{
 	private View viewer = null;
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	
-    	viewer = (View) inflater.inflate(R.layout.node_view,
-                container, false);
-    	viewer.setFocusableInTouchMode(true);
-    	viewer.requestFocus();
-    	
-        return viewer;
-    }
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
-    public void updateUrl(OnmsNode newNode) {
-    	if(viewer != null) {
-    		TextView idTextView = (TextView)viewer.findViewById(R.id.nodeView);
-    		idTextView.setText(printNode(newNode));
-    	}
-    }
+		this.viewer = inflater.inflate(R.layout.node_view,
+				container, false);
+		this.viewer.setFocusableInTouchMode(true);
+		this.viewer.requestFocus();
+
+		return this.viewer;
+	}
+
+	public void updateUrl(OnmsNode newNode) {
+		if(this.viewer != null) {
+			TextView idTextView = (TextView)this.viewer.findViewById(R.id.nodeView);
+			idTextView.setText(printNode(newNode));
+		}
+	}
 
 	private String printNode(OnmsNode newNode) {
 		StringBuilder builder = new StringBuilder();
@@ -40,8 +40,8 @@ public class NodeViewerFragment extends Fragment{
 		builder.append("Created Time : " + newNode.getCreateTime() + "\n");
 		builder.append("Sys Contact : " + newNode.getSysContact() + "\n");
 		builder.append("Label Source : " + newNode.getLabelSource() + "\n");
-		
+
 		return builder.toString();
 	}
-    
+
 }

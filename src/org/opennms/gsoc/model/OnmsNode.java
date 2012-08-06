@@ -13,95 +13,101 @@ import java.util.Date;
 
 public class OnmsNode implements Serializable, Comparable<OnmsNode> {
 
-    private static final long serialVersionUID = -5736397583719151493L;
+	private static final long serialVersionUID = -5736397583719151493L;
 
-    private Integer id;
-    private String type;
-    private String label;
-    private String createTime;
-    private String labelSource;
-    private String sysContact;
-    private Date lastCapsdPoll;
-    private OnmsAssetRecord assetRecord;
-    
-    public OnmsNode(Integer id, String label, String type, String createTime, String sysContact, String labelSource) {
-    	this.id = id;
-    	this.label = label;
-    	this.type = type;
-    	this.createTime = createTime;
-    	this.labelSource = labelSource;
-    	this.sysContact = sysContact;
-    }
-    
-    public Integer getId() {
-        return id;
-    }
-    
-    /**
-     * <p>getNodeId</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    
-    public String getNodeId() {
-    	if (getId() != null) {
-    		return getId().toString();
-    	}
-    	return null;
-    }
+	private Integer id;
+	private String type;
+	private String label;
+	private String createTime;
+	private String labelSource;
+	private String sysContact;
+	private Date lastCapsdPoll;
+	private OnmsAssetRecord assetRecord;
 
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getSysContact() {
-        return sysContact;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public String getLabelSource() {
-        return labelSource;
-    }
-
-    public Date getLastCapsdPoll() {
-        return lastCapsdPoll;
-    }
-
-    public OnmsAssetRecord getAssetRecord() {
-        return assetRecord;
-    }
-
-	@Override
-	public int compareTo(OnmsNode o) {
-		String compareLabel = "";
-        Integer compareId = 0;
-
-        if (o != null) {
-            compareLabel = o.getLabel();
-            compareId = o.getId();
-        }
-
-        int returnval = this.getLabel().compareToIgnoreCase(compareLabel);
-        if (returnval == 0) {
-            return this.getId().compareTo(compareId);
-        } else {
-            return returnval;
-        }
+	public OnmsNode(Integer id, String label, String type) {
+		this.id = id;
+		this.label = label;
+		this.type = type;
 	}
 
-	@Override
-	public String toString() {
-		return "OnmsNode [id=" + id + ", type=" + type + ", label=" + label
-				+ ", createTime=" + createTime + ", labelSource=" + labelSource
-				+ ", sysContact=" + sysContact + "]";
+	public OnmsNode(Integer id, String label, String type, String createTime, String sysContact, String labelSource) {
+		this.id = id;
+		this.label = label;
+		this.type = type;
+		this.createTime = createTime;
+		this.labelSource = labelSource;
+		this.sysContact = sysContact;
 	}
-	
-	
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	/**
+	 * <p>getNodeId</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+
+	 public String getNodeId() {
+		 if (getId() != null) {
+			 return getId().toString();
+		 }
+		 return null;
+	 }
+
+	 public String getCreateTime() {
+		 return this.createTime;
+	 }
+
+	 public String getType() {
+		 return this.type;
+	 }
+
+	 public String getSysContact() {
+		 return this.sysContact;
+	 }
+
+	 public String getLabel() {
+		 return this.label;
+	 }
+
+	 public String getLabelSource() {
+		 return this.labelSource;
+	 }
+
+	 public Date getLastCapsdPoll() {
+		 return this.lastCapsdPoll;
+	 }
+
+	 public OnmsAssetRecord getAssetRecord() {
+		 return this.assetRecord;
+	 }
+
+	 @Override
+	 public int compareTo(OnmsNode o) {
+		 String compareLabel = "";
+		 Integer compareId = 0;
+
+		 if (o != null) {
+			 compareLabel = o.getLabel();
+			 compareId = o.getId();
+		 }
+
+		 int returnval = this.getLabel().compareToIgnoreCase(compareLabel);
+		 if (returnval == 0) {
+			 return this.getId().compareTo(compareId);
+		 } else {
+			 return returnval;
+		 }
+	 }
+
+	 @Override
+	 public String toString() {
+		 return "OnmsNode [id=" + this.id + ", type=" + this.type + ", label=" + this.label
+				 + ", createTime=" + this.createTime + ", labelSource=" + this.labelSource
+				 + ", sysContact=" + this.sysContact + "]";
+	 }
+
+
 }

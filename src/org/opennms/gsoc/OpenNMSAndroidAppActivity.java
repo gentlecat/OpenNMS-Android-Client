@@ -19,33 +19,35 @@ public class OpenNMSAndroidAppActivity extends SherlockFragmentActivity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         final ActionBar bar = getSupportActionBar();
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
         bar.addTab(bar.newTab()
                 .setText("Nodes")
                 .setTabListener(new TabListener<NodesListFragment>(
-                        this, "Nodes", NodesListFragment.class)));
+                        this, "Nodes", NodesListFragment.class))
+                .setIcon(R.drawable.display));
         
         bar.addTab(bar.newTab()
                 .setText("Outages")
                 .setTabListener(new TabListener<OutagesListFragment>(
-                        this, "Outages", OutagesListFragment.class)));
+                        this, "Outages", OutagesListFragment.class))
+                .setIcon(R.drawable.ekg));
         
         bar.addTab(bar.newTab()
-                .setText("About")
+                .setText("about")
                 .setTabListener(new TabListener<AboutFragment>(
-                        this, "About", AboutFragment.class)));
-        
+                        this, "About", AboutFragment.class))
+                .setIcon(R.drawable.o));
         
         if (savedInstanceState != null) {
             bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
         }
     }
 
-    @Override
+
+	@Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("tab", getActionBar().getSelectedNavigationIndex());

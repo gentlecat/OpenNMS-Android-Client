@@ -9,23 +9,24 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class NodeViewerActivity extends Activity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.details);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.details);
 
-        Intent launchingIntent = getIntent();
-        OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
-        
-        NodeViewerFragment viewer = (NodeViewerFragment) getFragmentManager()
-                .findFragmentById(R.id.details);
+		Intent launchingIntent = getIntent();
+		OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
 
-        viewer.updateUrl(content);
-    }
-    
-    public void onBackPressed() {
-    	Log.i("back pressed", "i'm pressed");
-    	this.finish();
-    }
+		NodeViewerFragment viewer = (NodeViewerFragment) getFragmentManager()
+				.findFragmentById(R.id.details);
+
+		viewer.updateUrl(content);
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.i("back pressed", "i'm pressed");
+		this.finish();
+	}
 
 }

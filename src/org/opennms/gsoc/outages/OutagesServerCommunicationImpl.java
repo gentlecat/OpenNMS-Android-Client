@@ -12,7 +12,7 @@ import org.opennms.gsoc.model.OnmsOutage;
 import com.google.resting.component.impl.ServiceResponse;
 
 public class OutagesServerCommunicationImpl implements
-		OutagesServerCommunication {
+OutagesServerCommunication {
 
 	@Override
 	public ArrayList<OnmsOutage> getOutages(String url) {
@@ -27,7 +27,9 @@ public class OutagesServerCommunicationImpl implements
 		}
 
 		ArrayList<OnmsOutage> outagesList = new ArrayList<OnmsOutage>();
-		outagesList = OutagesParser.parse(outages.getContentData().getContentInString());
+		if(outages != null) {
+			outagesList = OutagesParser.parse(outages.getContentData().getContentInString());
+		}
 		return outagesList;
 	}
 

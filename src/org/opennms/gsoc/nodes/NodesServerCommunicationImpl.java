@@ -26,7 +26,9 @@ public class NodesServerCommunicationImpl implements NodesServerCommunication {
 		}
 
 		ArrayList<OnmsNode> nodesList = new ArrayList<OnmsNode>();
-		nodesList = NodesParser.parse(nodesServiceResponse.getContentData().getContentInString());
+		if(nodesServiceResponse != null) { 
+			nodesList = NodesParser.parse(nodesServiceResponse.getContentData().getContentInString());
+		}
 		return nodesList;
 	}
 }

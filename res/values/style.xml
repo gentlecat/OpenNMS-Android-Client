@@ -8,13 +8,17 @@
     </style>
     
     <style name="ButtonNormalText" parent="@android:style/Widget.Button">
-    <item name="android:textColor" >#FFFFFF</item>
-    <item name="android:textSize" >12dip</item>
-    <item name="android:textStyle" >bold</item>
-    <item name="android:height" >24dip</item>
-    <item name="android:drawableTop" >@drawable/button_selector</item>
-    <item name="android:focusable" >true</item>
-    <item name="android:clickable" >true</item>
-</style>
+    	<item name="android:textColor" >#FFFFFF</item>
+    	<item name="android:textSize" >12dip</item>
+    	<item name="android:textStyle" >bold</item>
+    	<item name="android:height" >24dip</item>
+    	<item name="android:drawableTop" >@drawable/button_selector</item>
+    	<item name="android:focusable" >true</item>
+    	<item name="android:clickable" >true</item>
+	</style>
 
+    <style name="ListFont" parent="@android:style/Widget.ListView">
+    	<item name="android:textColor">#FF0000</item>
+    	<item name="android:typeface">sans</item>
+	</style>
 </resources>

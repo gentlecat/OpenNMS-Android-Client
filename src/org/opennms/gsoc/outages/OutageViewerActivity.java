@@ -10,21 +10,22 @@ import android.util.Log;
 
 public class OutageViewerActivity extends Activity{
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.outages_details);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.outages_details);
 
-        Intent launchingIntent = getIntent();
-        OnmsOutage content = (OnmsOutage) launchingIntent.getSerializableExtra("onmsoutage");
-        
-        OutageViewerFragment viewer = (OutageViewerFragment) getFragmentManager()
-                .findFragmentById(R.id.outagesDetails);
+		Intent launchingIntent = getIntent();
+		OnmsOutage content = (OnmsOutage) launchingIntent.getSerializableExtra("onmsoutage");
 
-        viewer.updateUrl(content);
-    }
-    
-    public void onBackPressed() {
-    	Log.i("back pressed", "i'm pressed");
-    	this.finish();
-    }
+		OutageViewerFragment viewer = (OutageViewerFragment) getFragmentManager()
+				.findFragmentById(R.id.outagesDetails);
+
+		viewer.updateUrl(content);
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.i("back pressed", "i'm pressed");
+		this.finish();
+	}
 }

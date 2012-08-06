@@ -15,25 +15,25 @@ public class OutageViewerFragment extends Fragment{
 	private View viewer = null;
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	
-    	viewer = (View) inflater.inflate(R.layout.outage_view,
-                container, false);
-    	viewer.setFocusableInTouchMode(true);
-    	viewer.requestFocus();
-    	
-        return viewer;
-    }
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
-    public void updateUrl(OnmsOutage newOutage) {
-    	if(viewer != null) {
-    		TextView idTextView = (TextView)viewer.findViewById(R.id.outageView);
-    		idTextView.setText(printOutage(newOutage));
-    	}
-    }
-    
-    private String printOutage(OnmsOutage newNode) {
+		this.viewer = inflater.inflate(R.layout.outage_view,
+				container, false);
+		this.viewer.setFocusableInTouchMode(true);
+		this.viewer.requestFocus();
+
+		return this.viewer;
+	}
+
+	public void updateUrl(OnmsOutage newOutage) {
+		if(this.viewer != null) {
+			TextView idTextView = (TextView)this.viewer.findViewById(R.id.outageView);
+			idTextView.setText(printOutage(newOutage));
+		}
+	}
+
+	private String printOutage(OnmsOutage newNode) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("OnmsOutage Id : " + newNode.getId());
 		return builder.toString();

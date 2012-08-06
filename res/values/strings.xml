@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, OpenNMSAndroidAppActivity!</string>
-    <string name="app_name">OpenNMSAndroidApp</string>
+    <string name="app_name">OpenNMS</string>
     <string name="schedule">Nodes</string>
     <string name="settings_button">Settings</string>
     <string name="host">Host:</string>

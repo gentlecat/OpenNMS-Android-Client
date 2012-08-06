@@ -1,117 +1,176 @@
 package org.opennms.gsoc.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opennms.gsoc.R;
+import org.opennms.gsoc.dao.OnmsDatabaseHelper;
 import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.nodes.dao.NodesListProvider;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
-public class NodesListFragment extends SherlockListFragment{
+public class NodesListFragment extends SherlockListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 	private OnNodesListSelectedListener nodesListSelectedListener;
+	private String currentFilter;
 	private Intent intent;
-	private ArrayAdapter<OnmsNode> adapter;
-	
+	private SimpleCursorAdapter adapter;
+
 	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		OnmsNode selection = (OnmsNode)l.getItemAtPosition(position);
-	    nodesListSelectedListener.onNodeSelected(selection);
-	}
-	 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		adapter = new ArrayAdapter<OnmsNode>(getActivity().getApplicationContext(),
-				android.R.layout.simple_list_item_1, android.R.id.text1,
-				new ArrayList<OnmsNode>());
-		getListView().setAdapter(adapter);
-					
-		intent = new Intent(getActivity().getApplicationContext(), NodesService.class);
+
+		this.intent = new Intent(getActivity().getApplicationContext(), NodesService.class);
+
+		setHasOptionsMenu(true);
+
+		this.adapter = new SimpleCursorAdapter(getActivity(),
+				android.R.layout.simple_list_item_2, null,
+				new String[] {OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_LABEL},
+				new int[] { android.R.id.text1, android.R.id.text2}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		getListView().setAdapter(this.adapter);
+		getActivity().getSupportLoaderManager().initLoader(0, null, this);
+
 	}
-	
+
 	@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-        	nodesListSelectedListener = new OnNodesListSelectedListener() {
-				
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		String projection[] = { OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_TYPE,  OnmsDatabaseHelper.COL_LABEL};
+		Cursor nodesCursor = getActivity().getContentResolver().query(
+				Uri.withAppendedPath(NodesListProvider.CONTENT_URI,
+						String.valueOf(id)), projection, null, null, null);
+		if (nodesCursor.moveToFirst()) {
+			Integer nodeId = nodesCursor.getInt(0);
+			String nodeType = nodesCursor.getString(1);
+			String nodeLabel = nodesCursor.getString(2);
+			OnmsNode onmsnode = new OnmsNode(nodeId, nodeLabel, nodeType);
+			this.nodesListSelectedListener.onNodeSelected(onmsnode);
+		}
+		nodesCursor.close();
+	}
+
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			this.nodesListSelectedListener = new OnNodesListSelectedListener() {
+
 				@Override
 				public void onNodeSelected(OnmsNode node) {
 					NodeViewerFragment viewer = (NodeViewerFragment) getActivity().getFragmentManager()
-				            .findFragmentById(R.id.details);
+							.findFragmentById(R.id.details);
 
-				    if (viewer == null || !viewer.isInLayout()) {
-				        Intent showContent = new Intent(getActivity().getApplicationContext(),
-				        		NodeViewerActivity.class);
-				        showContent.putExtra("onmsnode", node);
-				        startActivity(showContent);
-				    } else {
-				        viewer.updateUrl(node);
-				    }
+					if (viewer == null || !viewer.isInLayout()) {
+						Intent showContent = new Intent(getActivity().getApplicationContext(),
+								NodeViewerActivity.class);
+						showContent.putExtra("onmsnode", node);
+						startActivity(showContent);
+					} else {
+						viewer.updateUrl(node);
+					}
 				}
 			};
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnNodesSelectedListener");
-        }
-    }
-	
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnNodesSelectedListener");
+		}
+	}
+
 	public interface OnNodesListSelectedListener {
 		void onNodeSelected(OnmsNode nodeUrl);
-	}
-	
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			updateUI(intent);
-		}
-	};
-
-	private void updateUI(Intent intent) {
-		adapter.clear();
-		List<OnmsNode> values = (List<OnmsNode>) intent.getSerializableExtra(NodesService.NODES_RESPONSE_STRING);
-
-		if (values != null) {
-
-			for (OnmsNode s : values) {
-				adapter.add(s);
-				Log.i("Nodes list fragment", s + "");
-			}
-		}
-		getListView().setAdapter(adapter);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		getActivity().getApplicationContext().startService(intent);
-		getActivity().getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(
-				NodesService.BROADCAST_ACTION));
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		getActivity().getApplicationContext().unregisterReceiver(broadcastReceiver);
-		getActivity().getApplicationContext().stopService(intent);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.nodes_list, container, false);
+	}
+
+	@Override 
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		MenuItem item = menu.add("Search");
+		item.setIcon(android.R.drawable.ic_menu_search);
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		SearchView sv = new SearchView(getActivity());
+		sv.setOnQueryTextListener(this);
+		item.setActionView(sv);
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+		if (this.currentFilter == null && newFilter == null) {
+			return true;
+		}
+		if (this.currentFilter != null && this.currentFilter.equals(newFilter)) {
+			return true;
+		}
+		this.currentFilter = newFilter;
+		getActivity().getSupportLoaderManager().restartLoader(0, null, this);
+		return true;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return true;
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Uri baseUri;
+		if (this.currentFilter != null) {
+			baseUri = Uri.withAppendedPath(Uri.withAppendedPath(NodesListProvider.CONTENT_URI, "label"),
+					Uri.encode(this.currentFilter));
+		} else {
+			baseUri = NodesListProvider.CONTENT_URI;
+		}
+		String[] projection = { OnmsDatabaseHelper.TABLE_NODES_ID, OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_TYPE, OnmsDatabaseHelper.COL_LABEL };
+
+		CursorLoader cursorLoader = new CursorLoader(getActivity(),
+				baseUri, projection, null, null, null);
+		return cursorLoader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		this.adapter.swapCursor(cursor);
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		this.adapter.swapCursor(null);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getActivity().getApplicationContext().startService(this.intent);
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getActivity().getApplicationContext().stopService(this.intent);
 	}
 }

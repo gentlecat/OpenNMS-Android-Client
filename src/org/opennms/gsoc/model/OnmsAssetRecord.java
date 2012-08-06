@@ -7,31 +7,31 @@ public class OnmsAssetRecord {
 	private Date lastModifiedDate;
 	private String lastModifiedBy;
 	private int nodeId;
-	
+
 	public OnmsAssetRecord(String category, String lastModifiedBy, Date lastModifiedDate, int nodeId) {
 		this.category = category;
 		this.lastModifiedBy = lastModifiedBy;
 		this.lastModifiedDate = lastModifiedDate;
 		this.nodeId = nodeId;
 	}
-	
+
 	public String getCategory() {
-		return category;
+		return this.category;
 	}
 	public Date getLastModifiedDate() {
-		return lastModifiedDate;
+		return this.lastModifiedDate;
 	}
 	public String getLastModifiedBy() {
-		return lastModifiedBy;
+		return this.lastModifiedBy;
 	}
 	public int getNodeId() {
-		return nodeId;
+		return this.nodeId;
 	}
 
 	@Override
 	public String toString() {
-		return "OnmsAssetRecord [category=" + category + ", lastModifiedDate="
-				+ lastModifiedDate + ", lastModifiedBy=" + lastModifiedBy
-				+ ", nodeId=" + nodeId + "]";
+		return "OnmsAssetRecord [category=" + this.category + ", lastModifiedDate="
+				+ this.lastModifiedDate + ", lastModifiedBy=" + this.lastModifiedBy
+				+ ", nodeId=" + this.nodeId + "]";
 	}
 }

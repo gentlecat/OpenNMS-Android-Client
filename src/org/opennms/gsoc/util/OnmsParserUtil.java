@@ -12,7 +12,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class OnmsParserUtil {
-	
+
 	public static  NodeList getXmlNodeSetForExpression(String expression,
 			String is) throws XPathExpressionException {
 		XPath xpath = XPathFactory.newInstance().newXPath();

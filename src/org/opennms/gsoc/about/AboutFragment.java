@@ -17,35 +17,36 @@ import com.actionbarsherlock.app.SherlockFragment;
  * @author melania galea
  *
  */
-		
+
 public class AboutFragment extends SherlockFragment{
-	
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
+		super.onCreate(savedInstanceState);
+
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.about_settings, container, false);
-		
+
 		Button button = (Button)v.findViewById(R.id.buttonSettings);
-        button.setOnClickListener(new OnClickListener() {
-			
+		button.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				SettingsViewerFragment viewer = (SettingsViewerFragment)getActivity().getFragmentManager()
-			            .findFragmentById(R.id.about_settings_details);
+						.findFragmentById(R.id.about_settings_details);
 
-			    if (viewer == null || !viewer.isInLayout()) {
-			        Intent showContent = new Intent(getActivity().getApplicationContext(),
-			        		SettingsViewerActivity.class);
-			        startActivity(showContent);
-			    } 
+				if (viewer == null || !viewer.isInLayout()) {
+					Intent showContent = new Intent(getActivity().getApplicationContext(),
+							SettingsViewerActivity.class);
+					startActivity(showContent);
+				} 
 			}
 		});
-        
-        return v;
+
+		return v;
 	}
 }
