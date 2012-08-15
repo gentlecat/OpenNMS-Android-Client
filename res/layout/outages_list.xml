@@ -8,6 +8,16 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content" >
 </ListView>
+
+<ProgressBar android:id="@+id/progressBarOutages"
+             android:layout_width="wrap_content"
+             style="@android:style/Widget.ProgressBar.Large"
+         	 android:layout_marginRight="5dp" 
+         	 android:layout_gravity = "center_vertical|center_horizontal"
+         	 android:layout_centerInParent="true"
+             android:layout_height="wrap_content">
+</ProgressBar>
+
 </LinearLayout>
 <!--  <fragment
     xmlns:android="http://schemas.android.com/apk/res/android"

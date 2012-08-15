@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -33,6 +34,7 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 	private String currentFilter;
 	private Intent intent;
 	private SimpleCursorAdapter adapter;
+	private ProgressBar progressBarNodes;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -49,6 +51,20 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 		getListView().setAdapter(this.adapter);
 		getActivity().getSupportLoaderManager().initLoader(0, null, this);
 
+		new Thread(new ProgressBarThread()).start();
+
+	}
+
+	private class ProgressBarThread implements Runnable {
+
+		@Override
+		public void run() {
+			NodesListFragment.this.progressBarNodes = (ProgressBar)getActivity().findViewById(R.id.progressBarNodes);
+			while(NodesListFragment.this.adapter.isEmpty()) {
+				NodesListFragment.this.progressBarNodes.setVisibility(View.VISIBLE);
+			}
+			NodesListFragment.this.progressBarNodes.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -76,7 +92,7 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 
 				@Override
 				public void onNodeSelected(OnmsNode node) {
-					NodeViewerFragment viewer = (NodeViewerFragment) getActivity().getFragmentManager()
+					NodeViewerFragment viewer = (NodeViewerFragment) getActivity().getSupportFragmentManager()
 							.findFragmentById(R.id.details);
 
 					if (viewer == null || !viewer.isInLayout()) {

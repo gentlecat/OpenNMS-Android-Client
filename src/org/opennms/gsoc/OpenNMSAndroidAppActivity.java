@@ -17,40 +17,40 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
  */
 public class OpenNMSAndroidAppActivity extends SherlockFragmentActivity {
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        final ActionBar bar = getSupportActionBar();
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        bar.addTab(bar.newTab()
-                .setText("Nodes")
-                .setTabListener(new TabListener<NodesListFragment>(
-                        this, "Nodes", NodesListFragment.class))
-                .setIcon(R.drawable.display));
-        
-        bar.addTab(bar.newTab()
-                .setText("Outages")
-                .setTabListener(new TabListener<OutagesListFragment>(
-                        this, "Outages", OutagesListFragment.class))
-                .setIcon(R.drawable.ekg));
-        
-        bar.addTab(bar.newTab()
-                .setText("about")
-                .setTabListener(new TabListener<AboutFragment>(
-                        this, "About", AboutFragment.class))
-                .setIcon(R.drawable.o));
-        
-        if (savedInstanceState != null) {
-            bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-        }
-    }
+		final ActionBar bar = getSupportActionBar();
+		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		bar.addTab(bar.newTab()
+				.setText("about")
+				.setTabListener(new TabListener<AboutFragment>(
+						this, "About", AboutFragment.class))
+						.setIcon(R.drawable.o));
+
+		bar.addTab(bar.newTab()
+				.setText("Nodes")
+				.setTabListener(new TabListener<NodesListFragment>(
+						this, "Nodes", NodesListFragment.class))
+						.setIcon(R.drawable.display));
+
+		bar.addTab(bar.newTab()
+				.setText("Outages")
+				.setTabListener(new TabListener<OutagesListFragment>(
+						this, "Outages", OutagesListFragment.class))
+						.setIcon(R.drawable.ekg));
+
+		if (savedInstanceState != null) {
+			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+		}
+	}
 
 
 	@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
-    }
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
+	}
 
 }

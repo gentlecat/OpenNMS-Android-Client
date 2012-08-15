@@ -11,17 +11,19 @@ public class OnmsOutage implements Serializable, Comparable<OnmsOutage>{
 	private String ipAddress;
 	private String ifLostService;
 	private String ifRegainedService;
+	private String serviceTypeName;
 
 	public OnmsOutage(Integer id, String ipAddress) {
 		this.id = id;
 		this.ipAddress = ipAddress;
 	}
 
-	public OnmsOutage(Integer id, String ipAddress, String ifLostService, String ifRegainedService) {
+	public OnmsOutage(Integer id, String ipAddress, String ifLostService, String ifRegainedService, String serviceTypeName) {
 		this.id = id;
 		this.ipAddress = ipAddress;
 		this.ifLostService = ifLostService;
 		this.ifRegainedService = ifRegainedService;
+		this.serviceTypeName = serviceTypeName;
 	}
 
 	public Integer getId() {
@@ -38,6 +40,10 @@ public class OnmsOutage implements Serializable, Comparable<OnmsOutage>{
 
 	public String getIfRegainedService() {
 		return this.ifRegainedService;
+	}
+
+	public String getServiceTypeName() {
+		return this.serviceTypeName;
 	}
 
 	@Override

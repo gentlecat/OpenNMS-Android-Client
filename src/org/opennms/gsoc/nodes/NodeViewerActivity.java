@@ -3,12 +3,13 @@ package org.opennms.gsoc.nodes;
 import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.OnmsNode;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class NodeViewerActivity extends Activity {
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+public class NodeViewerActivity extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -17,7 +18,7 @@ public class NodeViewerActivity extends Activity {
 		Intent launchingIntent = getIntent();
 		OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
 
-		NodeViewerFragment viewer = (NodeViewerFragment) getFragmentManager()
+		NodeViewerFragment viewer = (NodeViewerFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.details);
 
 		viewer.updateUrl(content);

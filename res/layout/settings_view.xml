@@ -1,59 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-    
-<EditText  
-    android:id="@+id/editTextHost"  
-    android:layout_height="wrap_content"  
-    android:hint="@string/host"  
-    android:inputType="textPersonName"  
-    android:layout_width="fill_parent">  
-</EditText>
+    android:layout_height="fill_parent" >
 
-<EditText  
-    android:id="@+id/editTextPort"  
-    android:layout_height="wrap_content"  
-    android:hint="@string/port"  
-    android:inputType="textPersonName"  
-    android:layout_width="fill_parent">  
-</EditText>
-
-<EditText  
-    android:id="@+id/editTextPath"  
-    android:layout_height="wrap_content"  
-    android:hint="@string/path"  
-    android:inputType="textPersonName"  
-    android:layout_width="fill_parent">  
-</EditText>
-
-<EditText  
-    android:id="@+id/editTextUser"  
-    android:layout_height="wrap_content"  
-    android:hint="@string/user"  
-    android:inputType="textPersonName"  
-    android:layout_width="fill_parent">  
-</EditText>
-
-<EditText  
-    android:id="@+id/editTextPass"  
-    android:layout_height="wrap_content"  
-    android:hint="@string/pass"  
-    android:inputType="textPersonName"  
-    android:layout_width="fill_parent">  
-</EditText>
-
-<Button
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/form"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonSettings"
-        android:paddingTop="12sp"
-        android:drawablePadding="-35sp"
-        android:clickable="true"
-        android:background="@android:color/transparent"
-        android:drawableTop="@drawable/green_button_default"
-        android:textSize="15dip"
-        android:text="@string/update_button"></Button>
-    
-</LinearLayout>
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewHost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:paddingTop="3.5pt"
+            android:text="@string/host"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/editTextHost"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/textViewHost"
+            android:hint="@string/host"
+            android:inputType="textPersonName" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/textViewPort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textViewHost"
+            android:paddingTop="5pt"
+            android:text="@string/port"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/editTextPort"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextHost"
+            android:layout_toRightOf="@+id/textViewPort"
+            android:hint="@string/port"
+            android:inputType="textPersonName" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/textViewPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textViewPort"
+            android:paddingTop="5pt"
+            android:text="@string/path"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/editTextPath"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPort"
+            android:layout_toRightOf="@+id/textViewPath"
+            android:hint="@string/path"
+            android:inputType="textPersonName" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/textViewUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textViewPath"
+            android:paddingTop="5pt"
+            android:text="@string/user"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/editTextUser"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPath"
+            android:layout_toRightOf="@+id/textViewUser"
+            android:hint="@string/user"
+            android:inputType="textPersonName" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/textViewPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textViewUser"
+            android:paddingTop="5pt"
+            android:text="@string/pass"
+            android:textSize="10pt" />
+
+        <EditText
+            android:id="@+id/editTextPass"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextUser"
+            android:layout_toRightOf="@+id/textViewPass"
+            android:hint="@string/pass"
+            android:inputType="textPersonName"
+            android:password="true" >
+        </EditText>
+        
+        <TextView
+            android:id="@+id/textViewHttps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textViewPass"
+            android:paddingTop="4pt"
+            android:text="@string/https"
+            android:textSize="10pt" />
+        
+        <Spinner
+            android:id="@+id/spinnerHttps"
+            android:layout_height="wrap_content"
+            android:prompt="@string/feedbacktype"
+            android:layout_width="fill_parent"
+            android:layout_toRightOf="@+id/textViewHttps"
+            android:layout_below="@id/editTextPass"
+            android:entries="@array/feedbacktypelist"></Spinner>
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerHttps"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:drawablePadding="-35sp"
+            android:drawableTop="@drawable/green_button_default"
+            android:paddingTop="12sp"
+            android:paddingLeft="15sp"
+            android:text="@string/update_button"
+            android:textSize="15dip" 
+            android:onClick="updateServerConfigurations">
+        </Button>
+        
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerHttps"
+            android:layout_toRightOf="@+id/buttonSettings"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:drawablePadding="-35sp"
+            android:drawableTop="@drawable/green_button_default"
+            android:paddingTop="12sp"
+            android:paddingLeft="36sp"
+            android:text="@string/update_cancel_button"
+            android:textSize="15dip" 
+            android:onClick="updateServerConfigurations">
+        </Button>
+    </RelativeLayout>
+
+</ScrollView>

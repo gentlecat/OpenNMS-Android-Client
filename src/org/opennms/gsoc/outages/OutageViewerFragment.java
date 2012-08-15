@@ -3,15 +3,16 @@ package org.opennms.gsoc.outages;
 import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.OnmsOutage;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 
-public class OutageViewerFragment extends Fragment{
+
+public class OutageViewerFragment extends SherlockFragment{
 	private View viewer = null;
 
 	@Override

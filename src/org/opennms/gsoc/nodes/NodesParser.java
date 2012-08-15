@@ -38,20 +38,22 @@ public class NodesParser {
 		}
 
 		try {
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
+			if(nodes != null) {
+				for (int i = 0; i < nodes.getLength(); i++) {
+					Node node = nodes.item(i);
 
 
-				Node label = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_LABEL, node);
-				Node id = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_ID, node);
-				Node type = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_TYPE, node);
+					Node label = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_LABEL, node);
+					Node id = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_ID, node);
+					Node type = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_TYPE, node);
 
-				Node createTime = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_CREATE_TIME, node);
-				Node labelSource = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_LABEL_SOURCE, node);
-				Node sysContact = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_SYS_CONTACT, node);
+					Node createTime = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_CREATE_TIME, node);
+					Node labelSource = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_LABEL_SOURCE, node);
+					Node sysContact = OnmsParserUtil.getXmlNodeForExpression(NodesParser.NODE_SYS_CONTACT, node);
 
-				OnmsNode onmsNode = new OnmsNode(Integer.parseInt(id.getNodeValue()), label.getNodeValue(), type.getNodeValue(), createTime.getTextContent(), sysContact.getTextContent(), labelSource.getTextContent());
-				values.add(onmsNode);
+					OnmsNode onmsNode = new OnmsNode(Integer.parseInt(id.getNodeValue()), label.getNodeValue(), type.getNodeValue(), createTime.getTextContent(), sysContact.getTextContent(), labelSource.getTextContent());
+					values.add(onmsNode);
+				}
 			}
 		} catch (XPathExpressionException e) {
 			Log.e("node attributes", e.getMessage(), e);

@@ -1,6 +1,9 @@
 package org.opennms.gsoc.nodes;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.opennms.gsoc.dao.OnmsDatabaseHelper;
 import org.opennms.gsoc.model.OnmsNode;
@@ -27,11 +30,25 @@ public class NodesService extends Service {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		Log.i(NodesService.TAG, "Service started...");
-		getNodes();
+		try {
+			getNodes();
+		} catch (UnknownHostException e) {
+			Log.i(NodesService.TAG, e.getMessage());
+			getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+		} catch (InterruptedException e) {
+			Log.i(NodesService.TAG, e.getMessage());
+			getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+		} catch (ExecutionException e) {
+			Log.i(NodesService.TAG, e.getMessage());
+			getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+		}catch (IOException e) {
+			Log.i(NodesService.TAG, e.getMessage());
+			getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+		}
 
 	}
 
-	public void getNodes() {
+	public void getNodes() throws InterruptedException, ExecutionException, IOException {
 		List<OnmsNode> nodes = this.nodesServer.getNodes("nodes");
 		for(OnmsNode node : nodes) {
 			ContentValues tutorialData = new ContentValues();

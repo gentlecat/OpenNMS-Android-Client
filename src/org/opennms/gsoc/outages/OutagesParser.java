@@ -18,6 +18,7 @@ public class OutagesParser {
 	private static final String OUTAGES_ID = "@id";
 	private static final String OUTAGES_IF_REGAINED_SERVICE = "ifRegainedService";
 	private static final String OUTAGES_IP_ADDRESS = "ipAddress";
+	private static final String SERVICE_TYPE_NAME = "/monitoredService/serviceType/name";
 
 	public static ArrayList<OnmsOutage> parse(String is) {
 		ArrayList<OnmsOutage> values = new ArrayList<OnmsOutage>();
@@ -39,8 +40,9 @@ public class OutagesParser {
 				Node ifLostService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_LOST_SERVICE, node);
 
 				Node ifRegainedService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_REGAINED_SERVICE, node);
-
-				OnmsOutage onmsOutage = new OnmsOutage(Integer.parseInt(id.getNodeValue()), ipAddress.getTextContent(), ifLostService.getTextContent(), ifRegainedService.getTextContent());
+				Node serviceTypeName = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.SERVICE_TYPE_NAME, node);
+				Log.i("Outages Parser", serviceTypeName.getTextContent());
+				OnmsOutage onmsOutage = new OnmsOutage(Integer.parseInt(id.getNodeValue()), ipAddress.getTextContent(), ifLostService.getTextContent(), ifRegainedService.getTextContent(), serviceTypeName.getTextContent());
 				values.add(onmsOutage);
 			}
 		} catch (XPathExpressionException e) {

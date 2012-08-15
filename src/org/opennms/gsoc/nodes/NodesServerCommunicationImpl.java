@@ -1,5 +1,6 @@
 package org.opennms.gsoc.nodes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -14,20 +15,17 @@ import com.google.resting.component.impl.ServiceResponse;
 public class NodesServerCommunicationImpl implements NodesServerCommunication {
 
 	@Override
-	public ArrayList<OnmsNode> getNodes(String url) {
+	public ArrayList<OnmsNode> getNodes(String url) throws InterruptedException, ExecutionException, IOException {
 		final ExecutorService executorService = Executors.newCachedThreadPool();
 		Future<ServiceResponse> nodesCommunication = executorService
 				.submit(new RestingServerCommunication("nodes"));
 		ServiceResponse nodesServiceResponse = null;
-		try {
-			nodesServiceResponse = nodesCommunication.get();
-		} catch (InterruptedException e) {
-		} catch (ExecutionException e) {
-		}
+		nodesServiceResponse = nodesCommunication.get();
 
 		ArrayList<OnmsNode> nodesList = new ArrayList<OnmsNode>();
-		if(nodesServiceResponse != null) { 
-			nodesList = NodesParser.parse(nodesServiceResponse.getContentData().getContentInString());
+		if (nodesServiceResponse != null) {
+			nodesList = NodesParser.parse(nodesServiceResponse.getContentData()
+					.getContentInString());
 		}
 		return nodesList;
 	}

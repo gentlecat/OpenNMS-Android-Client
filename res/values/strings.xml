@@ -9,5 +9,10 @@
     <string name="path">Path:</string>
     <string name="user">User:</string>
     <string name="pass">Pass:</string>
+    <string name="https">Https:</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="feedbacktype">Https?</string>
     <string name="update_button">Update</string>
+    <string name="update_cancel_button">Cancel</string>
 </resources>

@@ -39,6 +39,10 @@ public class NodesListProvider extends OnmsContentProvider {
 		NodesListProvider.sURIMatcher.addURI(NodesListProvider.AUTHORITY, NodesListProvider.NODES_BASE_PATH + "/label/*",NodesListProvider.NODE_LABEL);
 	}
 
+	public void reset() {
+		super.reset();
+	}
+
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = NodesListProvider.sURIMatcher.match(uri);

@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -34,6 +35,7 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 	private Intent intent;
 	private String currentFilter;
 	private OnOutagesListSelectedListener outagesListSelectedListener;
+	private ProgressBar progressBarOutages;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -48,6 +50,20 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 
 		getListView().setAdapter(this.adapter);
 		getActivity().getSupportLoaderManager().initLoader(1, null, this);
+
+		new Thread(new ProgressBarThread()).start();
+	}
+
+	private class ProgressBarThread implements Runnable {
+
+		@Override
+		public void run() {
+			OutagesListFragment.this.progressBarOutages = (ProgressBar)getActivity().findViewById(R.id.progressBarOutages);
+			while(OutagesListFragment.this.adapter.isEmpty()) {
+				OutagesListFragment.this.progressBarOutages.setVisibility(View.VISIBLE);
+			}
+			OutagesListFragment.this.progressBarOutages.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -78,7 +94,7 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 
 				@Override
 				public void onOutageSelected(OnmsOutage outage) {
-					OutageViewerFragment viewer = (OutageViewerFragment) getActivity().getFragmentManager()
+					OutageViewerFragment viewer = (OutageViewerFragment) getActivity().getSupportFragmentManager()
 							.findFragmentById(R.id.outagesDetails);
 
 					if (viewer == null || !viewer.isInLayout()) {
