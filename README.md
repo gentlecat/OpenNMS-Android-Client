@@ -28,4 +28,4 @@ The application is a proof of concept for [OpenNMS](http://www.opennms.org/) And
 ######Execution
 
 * from Eclipse using an emulator
-* the .apk file to install the application on device can be found at : [Demo OpenNMS Android Client](http://ge.tt/8IClr4M/v/0)
+* the .apk file to install the application on device can be found at : [Demo OpenNMS Android Client](http://ge.tt/15gKa6M/v/0)
