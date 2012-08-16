@@ -1,6 +1,7 @@
 package org.opennms.gsoc.outages;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.opennms.gsoc.dao.OnmsDatabaseHelper;
 import org.opennms.gsoc.model.OnmsOutage;
@@ -26,11 +27,17 @@ public class OutagesService extends Service{
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		Log.i(OutagesService.TAG, "Service started...");
-		getOutages();
+		try {
+			getOutages();
+		} catch (InterruptedException e) {
+			Log.i(OutagesService.TAG, e.getMessage());
+		} catch (ExecutionException e) {
+			Log.i(OutagesService.TAG, e.getMessage());
+		}
 
 	}
 
-	public void getOutages() {
+	public void getOutages() throws InterruptedException, ExecutionException {
 		List<OnmsOutage> outages = this.outagesServer.getOutages("outages");
 		for(OnmsOutage outage : outages) {
 			ContentValues tutorialData = new ContentValues();

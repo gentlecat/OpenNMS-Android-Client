@@ -62,7 +62,6 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 			while(OutagesListFragment.this.adapter.isEmpty()) {
 				OutagesListFragment.this.progressBarOutages.setVisibility(View.VISIBLE);
 			}
-			OutagesListFragment.this.progressBarOutages.setVisibility(View.GONE);
 		}
 	}
 

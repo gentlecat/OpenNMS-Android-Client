@@ -15,16 +15,12 @@ public class OutagesServerCommunicationImpl implements
 OutagesServerCommunication {
 
 	@Override
-	public ArrayList<OnmsOutage> getOutages(String url) {
+	public ArrayList<OnmsOutage> getOutages(String url) throws InterruptedException, ExecutionException {
 		final ExecutorService executorService = Executors.newCachedThreadPool();
 		Future<ServiceResponse> outagesCommunication = executorService
 				.submit(new RestingServerCommunication("outages"));
 		ServiceResponse outages = null;
-		try {
-			outages = outagesCommunication.get();
-		} catch (InterruptedException e) {
-		} catch (ExecutionException e) {
-		}
+		outages = outagesCommunication.get();
 
 		ArrayList<OnmsOutage> outagesList = new ArrayList<OnmsOutage>();
 		if(outages != null) {

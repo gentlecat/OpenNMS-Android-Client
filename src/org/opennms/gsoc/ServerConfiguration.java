@@ -3,7 +3,7 @@ package org.opennms.gsoc;
 public class ServerConfiguration {
 	private static ServerConfiguration serverConfigurationInstance;
 	private boolean https = false;
-	private String host = "demo.opennms.org2";
+	private String host = "demo.opennms.org";
 	private int port = 8980;
 	private String path = "/opennms/rest";
 	private String username = "demo";

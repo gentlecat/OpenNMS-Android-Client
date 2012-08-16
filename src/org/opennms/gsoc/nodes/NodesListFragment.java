@@ -60,10 +60,11 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 		@Override
 		public void run() {
 			NodesListFragment.this.progressBarNodes = (ProgressBar)getActivity().findViewById(R.id.progressBarNodes);
+
 			while(NodesListFragment.this.adapter.isEmpty()) {
 				NodesListFragment.this.progressBarNodes.setVisibility(View.VISIBLE);
 			}
-			NodesListFragment.this.progressBarNodes.setVisibility(View.GONE);
+			//NodesListFragment.this.progressBarNodes.setVisibility(View.INVISIBLE);
 		}
 	}
 

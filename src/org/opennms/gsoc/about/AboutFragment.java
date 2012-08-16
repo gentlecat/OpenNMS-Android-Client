@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,7 +37,7 @@ public class AboutFragment extends SherlockFragment{
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.about_settings, container, false);
 
-		checkHost();
+		//checkHost();
 		//createAlertWindow();
 
 		Button button = (Button)v.findViewById(R.id.buttonSettings);
@@ -62,6 +63,7 @@ public class AboutFragment extends SherlockFragment{
 		try { 
 			InetAddress.getByName(ServerConfiguration.getInstance().getHost());
 		}catch(Exception e) {
+			Log.i("about frag", e.getMessage());
 			createAlertWindow();
 		}
 	}

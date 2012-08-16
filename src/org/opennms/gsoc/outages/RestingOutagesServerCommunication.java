@@ -25,8 +25,10 @@ public class RestingOutagesServerCommunication implements Callable<ServiceRespon
 				(this.serverConfiguration.getUsername() + ":" + this.serverConfiguration.getPassword()).getBytes(), Base64.URL_SAFE
 				| Base64.NO_WRAP));
 		Header httpHeader = new BasicHeader("Authorization", "Basic " + auth);
+		Header timeoutHttpHeader = new BasicHeader("Timeout", String.valueOf(5000));
 		List<Header> headers = new ArrayList<Header>();
 		headers.add(httpHeader);
+		headers.add(timeoutHttpHeader);
 		ServiceResponse response = null;
 		try {
 			InetAddress.getByName(ServerConfiguration.getInstance().getHost());
