@@ -34,9 +34,13 @@ public class OutageViewerFragment extends SherlockFragment{
 		}
 	}
 
-	private String printOutage(OnmsOutage newNode) {
+	private String printOutage(OnmsOutage newOutage) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("OnmsOutage Id : " + newNode.getId());
+		builder.append("OnmsOutage Id : " + newOutage.getId() + "\n");
+		builder.append("Ip Address : " + newOutage.getIpAddress() + "\n");
+		builder.append("If Lost Service : " + newOutage.getIfLostService() + "\n");
+		builder.append("If Regained Service : " + newOutage.getIfRegainedService() + "\n");
+		builder.append("Service Type Name: " + newOutage.getServiceTypeName() + "\n");
 		return builder.toString();
 	}
 }

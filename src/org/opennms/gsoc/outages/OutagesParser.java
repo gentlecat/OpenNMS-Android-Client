@@ -35,13 +35,12 @@ public class OutagesParser {
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node node = nodes.item(i);
 
-
 					Node id = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_ID, node);
 					Node ipAddress = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IP_ADDRESS, node);
 					Node ifLostService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_LOST_SERVICE, node);
-
 					Node ifRegainedService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_REGAINED_SERVICE, node);
 					Node serviceTypeName = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.SERVICE_TYPE_NAME, node);
+
 					OnmsOutage onmsOutage = new OnmsOutage(Integer.parseInt(id.getNodeValue()), ipAddress.getTextContent(), ifLostService.getTextContent(), ifRegainedService.getTextContent(), serviceTypeName.getTextContent());
 					values.add(onmsOutage);
 				}

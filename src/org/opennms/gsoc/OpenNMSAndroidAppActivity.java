@@ -1,6 +1,7 @@
 package org.opennms.gsoc;
 
 import org.opennms.gsoc.about.AboutFragment;
+import org.opennms.gsoc.alarms.AlarmsListFragment;
 import org.opennms.gsoc.listeners.TabListener;
 import org.opennms.gsoc.nodes.NodesListFragment;
 import org.opennms.gsoc.outages.OutagesListFragment;
@@ -40,6 +41,12 @@ public class OpenNMSAndroidAppActivity extends SherlockFragmentActivity {
 				.setTabListener(new TabListener<OutagesListFragment>(
 						this, "Outages", OutagesListFragment.class))
 						.setIcon(R.drawable.ekg));
+
+		bar.addTab(bar.newTab()
+				.setText("Alarms")
+				.setTabListener(new TabListener<AlarmsListFragment>(
+						this, "Alarms", AlarmsListFragment.class))
+						.setIcon(R.drawable.clock));
 
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));

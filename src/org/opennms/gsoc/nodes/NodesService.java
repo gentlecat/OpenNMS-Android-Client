@@ -55,6 +55,9 @@ public class NodesService extends Service {
 			tutorialData.put(OnmsDatabaseHelper.COL_NODE_ID, node.getId());
 			tutorialData.put(OnmsDatabaseHelper.COL_TYPE, node.getType());
 			tutorialData.put(OnmsDatabaseHelper.COL_LABEL, node.getLabel());
+			tutorialData.put(OnmsDatabaseHelper.COL_CREATED_TIME, node.getCreateTime());
+			tutorialData.put(OnmsDatabaseHelper.COL_SYS_CONTACT, node.getSysContact());
+			tutorialData.put(OnmsDatabaseHelper.COL_LABEL_SOURCE, node.getLabelSource());
 			getContentResolver().insert(NodesListProvider.CONTENT_URI, tutorialData);
 		}
 	}

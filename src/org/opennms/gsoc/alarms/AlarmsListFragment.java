@@ -1,9 +1,9 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.alarms;
 
 import org.opennms.gsoc.R;
+import org.opennms.gsoc.alarms.dao.AlarmsListProvider;
 import org.opennms.gsoc.dao.OnmsDatabaseHelper;
-import org.opennms.gsoc.model.OnmsNode;
-import org.opennms.gsoc.nodes.dao.NodesListProvider;
+import org.opennms.gsoc.model.OnmsAlarm;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,27 +29,27 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class NodesListFragment extends SherlockListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
-	private OnNodesListSelectedListener nodesListSelectedListener;
+public class AlarmsListFragment extends SherlockListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
+	private OnAlarmsListSelectedListener alarmsListSelectedListener;
 	private String currentFilter;
 	private Intent intent;
 	private SimpleCursorAdapter adapter;
-	private ProgressBar progressBarNodes;
+	private ProgressBar progressBarAlarms;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		this.intent = new Intent(getActivity().getApplicationContext(), NodesService.class);
+		this.intent = new Intent(getActivity().getApplicationContext(), AlarmsService.class);
 
 		setHasOptionsMenu(true);
 
 		this.adapter = new SimpleCursorAdapter(getActivity(),
 				android.R.layout.simple_list_item_2, null,
-				new String[] {OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_LABEL},
+				new String[] {OnmsDatabaseHelper.COL_ALARM_ID, OnmsDatabaseHelper.COL_SEVERITY},
 				new int[] { android.R.id.text1, android.R.id.text2}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		getListView().setAdapter(this.adapter);
-		getActivity().getSupportLoaderManager().initLoader(0, null, this);
+		getActivity().getSupportLoaderManager().initLoader(3, null, this);
 
 		new Thread(new ProgressBarThread()).start();
 
@@ -59,10 +59,10 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 
 		@Override
 		public void run() {
-			NodesListFragment.this.progressBarNodes = (ProgressBar)getActivity().findViewById(R.id.progressBarNodes);
+			AlarmsListFragment.this.progressBarAlarms = (ProgressBar)getActivity().findViewById(R.id.progressBarAlarms);
 
-			while(NodesListFragment.this.adapter.isEmpty()) {
-				NodesListFragment.this.progressBarNodes.setVisibility(View.VISIBLE);
+			while(AlarmsListFragment.this.adapter.isEmpty()) {
+				AlarmsListFragment.this.progressBarAlarms.setVisibility(View.VISIBLE);
 			}
 			//NodesListFragment.this.progressBarNodes.setVisibility(View.INVISIBLE);
 		}
@@ -70,21 +70,19 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		String projection[] = { OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_TYPE,  OnmsDatabaseHelper.COL_LABEL, OnmsDatabaseHelper.COL_CREATED_TIME, OnmsDatabaseHelper.COL_SYS_CONTACT, OnmsDatabaseHelper.COL_LABEL_SOURCE };
-		Cursor nodesCursor = getActivity().getContentResolver().query(
-				Uri.withAppendedPath(NodesListProvider.CONTENT_URI,
+		String projection[] = { OnmsDatabaseHelper.COL_ALARM_ID, OnmsDatabaseHelper.COL_SEVERITY,  OnmsDatabaseHelper.COL_DESCRIPTION, OnmsDatabaseHelper.COL_LOG_MESSAGE};
+		Cursor alarmsCursor = getActivity().getContentResolver().query(
+				Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI,
 						String.valueOf(id)), projection, null, null, null);
-		if (nodesCursor.moveToFirst()) {
-			Integer nodeId = nodesCursor.getInt(0);
-			String nodeType = nodesCursor.getString(1);
-			String nodeLabel = nodesCursor.getString(2);
-			String nodeCreatedTime = nodesCursor.getString(3);
-			String nodeSysContact = nodesCursor.getString(4);
-			String nodeLabelSource = nodesCursor.getString(5);
-			OnmsNode onmsnode = new OnmsNode(nodeId, nodeLabel, nodeType, nodeCreatedTime, nodeSysContact, nodeLabelSource);
-			this.nodesListSelectedListener.onNodeSelected(onmsnode);
+		if (alarmsCursor.moveToFirst()) {
+			Integer alarmId = alarmsCursor.getInt(0);
+			String alarmSeverity = alarmsCursor.getString(1);
+			String alarmDescription = alarmsCursor.getString(2);
+			String alarmLogMessage = alarmsCursor.getString(3);
+			OnmsAlarm onmsalarm = new OnmsAlarm(alarmId, alarmSeverity, alarmDescription, alarmLogMessage);
+			this.alarmsListSelectedListener.onAlarmSelected(onmsalarm);
 		}
-		nodesCursor.close();
+		alarmsCursor.close();
 	}
 
 
@@ -92,37 +90,37 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			this.nodesListSelectedListener = new OnNodesListSelectedListener() {
+			this.alarmsListSelectedListener = new OnAlarmsListSelectedListener() {
 
 				@Override
-				public void onNodeSelected(OnmsNode node) {
-					NodeViewerFragment viewer = (NodeViewerFragment) getActivity().getSupportFragmentManager()
-							.findFragmentById(R.id.nodesDetails);
+				public void onAlarmSelected(OnmsAlarm alarm) {
+					AlarmViewerFragment viewer = (AlarmViewerFragment) getActivity().getSupportFragmentManager()
+							.findFragmentById(R.id.alarmsDetails);
 
 					if (viewer == null || !viewer.isInLayout()) {
 						Intent showContent = new Intent(getActivity().getApplicationContext(),
-								NodeViewerActivity.class);
-						showContent.putExtra("onmsnode", node);
+								AlarmViewerActivity.class);
+						showContent.putExtra("onmsalarm", alarm);
 						startActivity(showContent);
 					} else {
-						viewer.updateUrl(node);
+						viewer.updateUrl(alarm);
 					}
 				}
 			};
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
-					+ " must implement OnNodesSelectedListener");
+					+ " must implement OnAlarmsSelectedListener");
 		}
 	}
 
-	public interface OnNodesListSelectedListener {
-		void onNodeSelected(OnmsNode nodeUrl);
+	public interface OnAlarmsListSelectedListener {
+		void onAlarmSelected(OnmsAlarm alarmUrl);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.nodes_list, container, false);
+		return inflater.inflate(R.layout.alarms_list, container, false);
 	}
 
 	@Override 
@@ -158,12 +156,12 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri baseUri;
 		if (this.currentFilter != null) {
-			baseUri = Uri.withAppendedPath(Uri.withAppendedPath(NodesListProvider.CONTENT_URI, "label"),
+			baseUri = Uri.withAppendedPath(Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, "severity"),
 					Uri.encode(this.currentFilter));
 		} else {
-			baseUri = NodesListProvider.CONTENT_URI;
+			baseUri = AlarmsListProvider.CONTENT_URI;
 		}
-		String[] projection = { OnmsDatabaseHelper.TABLE_NODES_ID, OnmsDatabaseHelper.COL_NODE_ID, OnmsDatabaseHelper.COL_TYPE, OnmsDatabaseHelper.COL_LABEL, OnmsDatabaseHelper.COL_CREATED_TIME, OnmsDatabaseHelper.COL_SYS_CONTACT, OnmsDatabaseHelper.COL_LABEL_SOURCE };
+		String[] projection = { OnmsDatabaseHelper.TABLE_ALARMS_ID, OnmsDatabaseHelper.COL_ALARM_ID, OnmsDatabaseHelper.COL_SEVERITY, OnmsDatabaseHelper.COL_DESCRIPTION, OnmsDatabaseHelper.COL_LOG_MESSAGE };
 
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
 				baseUri, projection, null, null, null);

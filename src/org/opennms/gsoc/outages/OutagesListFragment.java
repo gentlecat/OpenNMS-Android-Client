@@ -67,14 +67,17 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		String projection[] = { OnmsDatabaseHelper.COL_OUTAGE_ID,  OnmsDatabaseHelper.COL_IP_ADDRESS};
+		String projection[] = { OnmsDatabaseHelper.COL_OUTAGE_ID,  OnmsDatabaseHelper.COL_IP_ADDRESS, OnmsDatabaseHelper.COL_IF_REGAINED_SERVICE, OnmsDatabaseHelper.COL_SERVICE_TYPE_NAME, OnmsDatabaseHelper.COL_IF_LOST_SERVICE};
 		Cursor outagesCursor = getActivity().getContentResolver().query(
 				Uri.withAppendedPath(OutagesListProvider.CONTENT_URI,
 						String.valueOf(id)), projection, null, null, null);
 		if (outagesCursor.moveToFirst()) {
 			Integer outageId = outagesCursor.getInt(0);
 			String outageIpAddress = outagesCursor.getString(1);
-			OnmsOutage onmsoutage = new OnmsOutage(outageId, outageIpAddress);
+			String outageIfRegainedService = outagesCursor.getString(2);
+			String outageServiceTypeName = outagesCursor.getString(3);
+			String outageIfLostService = outagesCursor.getString(4);
+			OnmsOutage onmsoutage = new OnmsOutage(outageId, outageIpAddress, outageIfLostService, outageIfRegainedService, outageServiceTypeName);
 			Log.i("Outages list fragment", onmsoutage.toString());
 			this.outagesListSelectedListener.onOutageSelected(onmsoutage);
 		}
@@ -169,7 +172,7 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 		} else {
 			baseUri = OutagesListProvider.CONTENT_URI;
 		}
-		String[] projection = { OnmsDatabaseHelper.TABLE_OUTAGES_ID, OnmsDatabaseHelper.COL_OUTAGE_ID, OnmsDatabaseHelper.COL_IP_ADDRESS };
+		String[] projection = { OnmsDatabaseHelper.TABLE_OUTAGES_ID, OnmsDatabaseHelper.COL_OUTAGE_ID, OnmsDatabaseHelper.COL_IP_ADDRESS, OnmsDatabaseHelper.COL_IF_REGAINED_SERVICE, OnmsDatabaseHelper.COL_SERVICE_TYPE_NAME, OnmsDatabaseHelper.COL_IF_LOST_SERVICE };
 		CursorLoader cursorLoader = new CursorLoader(getActivity(),
 				baseUri, projection, null, null, null);
 		return cursorLoader;

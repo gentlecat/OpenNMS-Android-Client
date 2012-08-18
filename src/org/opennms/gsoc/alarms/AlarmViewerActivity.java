@@ -1,7 +1,7 @@
-package org.opennms.gsoc.nodes;
+package org.opennms.gsoc.alarms;
 
 import org.opennms.gsoc.R;
-import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.model.OnmsAlarm;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,17 +9,17 @@ import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class NodeViewerActivity extends SherlockFragmentActivity {
+public class AlarmViewerActivity extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.nodes_details);
+		setContentView(R.layout.alarms_details);
 
 		Intent launchingIntent = getIntent();
-		OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
+		OnmsAlarm content = (OnmsAlarm) launchingIntent.getSerializableExtra("onmsalarm");
 
-		NodeViewerFragment viewer = (NodeViewerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.nodesDetails);
+		AlarmViewerFragment viewer = (AlarmViewerFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.alarmsDetails);
 
 		viewer.updateUrl(content);
 	}

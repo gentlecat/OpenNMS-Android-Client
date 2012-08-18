@@ -43,6 +43,8 @@ public class OutagesService extends Service{
 			ContentValues tutorialData = new ContentValues();
 			tutorialData.put(OnmsDatabaseHelper.COL_OUTAGE_ID, outage.getId());
 			tutorialData.put(OnmsDatabaseHelper.COL_IP_ADDRESS, outage.getIpAddress());
+			tutorialData.put(OnmsDatabaseHelper.COL_IF_REGAINED_SERVICE, outage.getIfRegainedService());
+			tutorialData.put(OnmsDatabaseHelper.COL_SERVICE_TYPE_NAME, outage.getServiceTypeName());
 			getContentResolver().insert(OutagesListProvider.CONTENT_URI, tutorialData);
 		}
 	}

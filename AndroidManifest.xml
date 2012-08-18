@@ -27,13 +27,16 @@
         </service>
         <service android:name=".outages.OutagesService" >
         </service>
+        <service android:name=".alarms.AlarmsService" >
+        </service>
 
-        <activity
-            android:name=".nodes.NodeViewerActivity" >
+        <activity android:name=".nodes.NodeViewerActivity" >
         </activity>
         <activity android:name=".about.SettingsViewerActivity" >
         </activity>
         <activity android:name=".outages.OutageViewerActivity" >
+        </activity>
+        <activity android:name=".alarms.AlarmViewerActivity" >
         </activity>
 
         <provider
@@ -45,6 +48,12 @@
         <provider
             android:name="org.opennms.gsoc.outages.dao.OutagesListProvider"
             android:authorities="org.opennms.gsoc.outages.dao.OutagesListProvider"
+            android:multiprocess="true" >
+        </provider>
+        
+        <provider
+            android:name="org.opennms.gsoc.alarms.dao.AlarmsListProvider"
+            android:authorities="org.opennms.gsoc.alarms.dao.AlarmsListProvider"
             android:multiprocess="true" >
         </provider>
     </application>
