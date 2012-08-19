@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
+<RelativeLayout
+        android:id="@+id/form"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" >
+    
+    <TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:text="@string/about_information"
+    android:layout_alignParentTop="true"
+    android:maxLines="20"
+    android:id="@+id/aboutInformation">
+	</TextView>
     
     <Button
         android:layout_width="wrap_content"
@@ -14,6 +30,9 @@
         android:background="@android:color/transparent"
         android:drawableTop="@drawable/green_button_default"
         android:textSize="15dip"
+        android:textColor="#ffffff"
+        android:layout_below="@id/aboutInformation"
         android:text="@string/settings_button"></Button>
     
-</LinearLayout>
+</RelativeLayout>
+</ScrollView>

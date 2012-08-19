@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -39,7 +40,7 @@ public class AboutFragment extends SherlockFragment{
 
 		//checkHost();
 		//createAlertWindow();
-
+		TextView aboutTextView = (TextView)v.findViewById(R.id.aboutInformation);
 		Button button = (Button)v.findViewById(R.id.buttonSettings);
 		button.setOnClickListener(new OnClickListener() {
 

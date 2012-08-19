@@ -143,6 +143,7 @@
             android:paddingTop="12sp"
             android:paddingLeft="15sp"
             android:text="@string/update_button"
+            android:textColor="#ffffff"
             android:textSize="15dip" 
             android:onClick="updateServerConfigurations">
         </Button>
@@ -161,6 +162,7 @@
             android:paddingLeft="36sp"
             android:text="@string/update_cancel_button"
             android:textSize="15dip" 
+            android:textColor="#ffffff"
             android:onClick="updateServerConfigurations">
         </Button>
     </RelativeLayout>

@@ -32,7 +32,7 @@ public class SettingsViewerFragment extends SherlockFragment{
 			Bundle savedInstanceState) {
 
 		if (this.scrollView == null) {
-			this.scrollView = (ScrollView)inflater.inflate(R.layout.settings_view,
+			this.scrollView = (ScrollView)inflater.inflate(R.layout.about_settings_view,
 					container, false);
 			this.mFormView = (RelativeLayout) this.scrollView.findViewById(R.id.form);
 

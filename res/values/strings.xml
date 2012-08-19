@@ -15,4 +15,7 @@
     <string name="feedbacktype">Https?</string>
     <string name="update_button">Update</string>
     <string name="update_cancel_button">Cancel</string>
+    <string name="about_information">OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc. Copyright  (&#169;)  2009 The OpenNMS Group, Inc.  All rights reserved.\n\n
+        3rd-Party Inclusions: \n\n
+        Icons by Glyphish. Glyphish icons copyright (&#169;) Joseph Wain</string>
 </resources>
