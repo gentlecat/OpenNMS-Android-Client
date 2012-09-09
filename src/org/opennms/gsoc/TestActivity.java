@@ -35,12 +35,9 @@ private TabManager tabManager;
         
         tabManager = new TabManager(this, tabHost, R.id.realtabcontent);
 	    
-        tabManager.addTab(tabHost.newTabSpec("nodes").setIndicator("Nodes",
-                res.getDrawable(R.drawable.display)), NodesListFragment.class, null);
-        tabManager.addTab(tabHost.newTabSpec("outages").setIndicator("Outages",
-                res.getDrawable(R.drawable.ekg)), OutagesListFragment.class, null);
-        tabManager.addTab(tabHost.newTabSpec("about").setIndicator("About",
-                res.getDrawable(R.drawable.o)), AboutFragment.class, null);
+        tabManager.addTab(tabHost.newTabSpec("nodes").setIndicator("Nodes", null), NodesListFragment.class, null);
+        tabManager.addTab(tabHost.newTabSpec("outages").setIndicator("Outages", null), OutagesListFragment.class, null);
+        tabManager.addTab(tabHost.newTabSpec("about").setIndicator("About", null), AboutFragment.class, null);
         
         if (savedInstanceState != null) {
             tabHost.setCurrentTabByTag(savedInstanceState.getString("tab"));

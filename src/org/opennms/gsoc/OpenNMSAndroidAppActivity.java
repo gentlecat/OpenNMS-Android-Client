@@ -27,26 +27,22 @@ public class OpenNMSAndroidAppActivity extends SherlockFragmentActivity {
 		bar.addTab(bar.newTab()
 				.setText("about")
 				.setTabListener(new TabListener<AboutFragment>(
-						this, "About", AboutFragment.class))
-						.setIcon(R.drawable.o));
+						this, "About", AboutFragment.class)));
 
 		bar.addTab(bar.newTab()
 				.setText("Nodes")
 				.setTabListener(new TabListener<NodesListFragment>(
-						this, "Nodes", NodesListFragment.class))
-						.setIcon(R.drawable.display));
+						this, "Nodes", NodesListFragment.class)));
 
 		bar.addTab(bar.newTab()
 				.setText("Outages")
 				.setTabListener(new TabListener<OutagesListFragment>(
-						this, "Outages", OutagesListFragment.class))
-						.setIcon(R.drawable.ekg));
+						this, "Outages", OutagesListFragment.class)));
 
 		bar.addTab(bar.newTab()
 				.setText("Alarms")
 				.setTabListener(new TabListener<AlarmsListFragment>(
-						this, "Alarms", AlarmsListFragment.class))
-						.setIcon(R.drawable.clock));
+						this, "Alarms", AlarmsListFragment.class)));
 
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));

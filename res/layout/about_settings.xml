@@ -27,8 +27,6 @@
         android:paddingTop="12sp"
         android:drawablePadding="-35sp"
         android:clickable="true"
-        android:background="@android:color/transparent"
-        android:drawableTop="@drawable/green_button_default"
         android:textSize="15dip"
         android:textColor="#ffffff"
         android:layout_below="@id/aboutInformation"
