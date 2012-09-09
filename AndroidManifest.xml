@@ -29,8 +29,6 @@
         <service android:name=".outages.OutagesService"></service>
         <service android:name=".alarms.AlarmsService" ></service>
 
-
-
         <provider android:name="org.opennms.gsoc.nodes.dao.NodesListProvider"
                   android:authorities="org.opennms.gsoc.nodes.dao.NodesListProvider"
                   android:multiprocess="true" >
