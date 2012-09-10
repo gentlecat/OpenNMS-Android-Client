@@ -137,8 +137,8 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
 	@Override 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		MenuItem item = menu.add("Search");
-		item.setIcon(android.R.drawable.ic_menu_search);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		item.setIcon(getResources().getDrawable(R.drawable.menu_search));
+		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		SearchView sv = new SearchView(getActivity());
 		sv.setOnQueryTextListener(this);
 		item.setActionView(sv);
