@@ -20,9 +20,13 @@
     <string name="settings_user_dialog_title">Set username</string>
     <string name="settings_password">Password</string>
     <string name="settings_password_dialog_title">Set password</string>
-    <string name="settings_http">HTTP</string>
-    <string name="settings_http_on">Turned on</string>
-    <string name="settings_http_off">Turned off</string>
+    <string name="settings_https">HTTPS</string>
+    <string name="settings_https_on">Turned on</string>
+    <string name="settings_https_off">Turned off</string>
+
+    <string name="welcome_message">Welcome! There should be some kind of message, but it\'s not there yet.</string>
+    <string name="welcome_message_pos_button">Change settings</string>
+    <string name="welcome_message_neg_button">Use test server</string>
 
     <string name="about_information">
         OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc. Copyright (&#169;) 2009 The OpenNMS Group, Inc.

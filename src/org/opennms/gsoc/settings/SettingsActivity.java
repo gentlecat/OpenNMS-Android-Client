@@ -41,9 +41,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         findPreference("path").setSummary(sharedPref.getString("path", getResources().getString(R.string.default_path)));
         findPreference("user").setSummary(sharedPref.getString("user", getResources().getString(R.string.default_user)));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_http_on));
+            findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
         } else {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_http_off));
+            findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
         }
 
         // Set up a listener whenever a key changes
@@ -78,9 +78,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
             prefManager.findPreference(key).setSummary(sharedPreferences.getString(key, null));
         } else if (key.equals("https")) { // Boolean case
             if (sharedPreferences.getBoolean(key, false)) {
-                prefManager.findPreference(key).setSummary(getResources().getString(R.string.settings_http_on));
+                prefManager.findPreference(key).setSummary(getResources().getString(R.string.settings_https_on));
             } else {
-                prefManager.findPreference(key).setSummary(getResources().getString(R.string.settings_http_off));
+                prefManager.findPreference(key).setSummary(getResources().getString(R.string.settings_https_off));
             }
         }
     }

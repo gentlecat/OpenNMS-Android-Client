@@ -25,6 +25,6 @@
                         android:defaultValue="@string/default_password"
                         android:inputType="textPassword" />
     <CheckBoxPreference android:key="https"
-                        android:title="@string/settings_http"
+                        android:title="@string/settings_https"
                         android:defaultValue="@bool/default_https"/>
 </PreferenceScreen>
