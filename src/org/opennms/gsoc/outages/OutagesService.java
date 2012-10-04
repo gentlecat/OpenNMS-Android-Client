@@ -20,7 +20,7 @@ public class OutagesService extends Service{
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.outagesServer = new OutagesServerCommunicationImpl();
+		this.outagesServer = new OutagesServerCommunicationImpl(getApplicationContext());
 	}
 
 	@Override

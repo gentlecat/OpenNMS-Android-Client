@@ -23,7 +23,7 @@ public class NodesService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		this.nodesServer = new NodesServerCommunicationImpl();
+		this.nodesServer = new NodesServerCommunicationImpl(getApplicationContext());
 	}
 
 	@Override

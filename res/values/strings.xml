@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">OpenNMS</string>
+
+    <string name="alarms">Alarms</string>
+
+    <string name="outages">Outages</string>
+
     <string name="schedule">Nodes</string>
-    <string name="settings_button">Settings</string>
-    <string name="host">Host:</string>
-    <string name="port">Port:</string>
-    <string name="path">Path:</string>
-    <string name="user">User:</string>
-    <string name="pass">Pass:</string>
-    <string name="https">Https:</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="feedbacktype">Https?</string>
-    <string name="update_button">Update</string>
-    <string name="update_cancel_button">Cancel</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_host">Host</string>
+    <string name="settings_host_dialog_title">Set host</string>
+    <string name="settings_port">Port</string>
+    <string name="settings_port_dialog_title">Set port number</string>
+    <string name="settings_path">Path</string>
+    <string name="settings_path_dialog_title">Set path</string>
+    <string name="settings_user">User</string>
+    <string name="settings_user_dialog_title">Set username</string>
+    <string name="settings_password">Password</string>
+    <string name="settings_password_dialog_title">Set password</string>
+    <string name="settings_http">HTTP</string>
+    <string name="settings_http_on">Turned on</string>
+    <string name="settings_http_off">Turned off</string>
+
     <string name="about_information">
         OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc. Copyright (&#169;) 2009 The OpenNMS Group, Inc.
         All rights reserved.
     </string>
+
 </resources>

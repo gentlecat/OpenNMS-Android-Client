@@ -12,16 +12,16 @@
     <application
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
-            android:theme="@style/Sherlock.__Theme.Light">
+            android:theme="@style/Theme.Sherlock.Light">
 
-        <activity android:name=".OpenNMSAndroidAppActivity" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".nodes.NodeViewerActivity"></activity>
-        <activity android:name=".about.SettingsViewerActivity"></activity>
+        <activity android:name=".settings.SettingsActivity"></activity>
         <activity android:name=".outages.OutageViewerActivity"></activity>
         <activity android:name=".alarms.AlarmViewerActivity"></activity>
 
