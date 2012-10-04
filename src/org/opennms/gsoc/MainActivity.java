@@ -34,7 +34,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-                /*
+
         actionBar.addTab(actionBar.newTab()
                 .setText("Nodes")
                 .setTabListener(new TabListener<NodesListFragment>(
@@ -47,7 +47,7 @@ public class MainActivity extends SherlockFragmentActivity {
                 .setText("Alarms")
                 .setTabListener(new TabListener<AlarmsListFragment>(
                         this, "Alarms", AlarmsListFragment.class)));
-                  */
+
         if (savedInstanceState != null) {
             actionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
         }
