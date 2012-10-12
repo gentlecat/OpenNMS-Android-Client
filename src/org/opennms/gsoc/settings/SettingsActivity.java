@@ -37,7 +37,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         // Setup the initial values
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(Integer.toString(getResources().getInteger(R.integer.default_port)));
+        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
         findPreference("path").setSummary(sharedPref.getString("path", getResources().getString(R.string.default_path)));
         findPreference("user").setSummary(sharedPref.getString("user", getResources().getString(R.string.default_user)));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
@@ -74,7 +74,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         if (key.equals("host") || key.equals("path") || key.equals("user")) { // String cases
             prefManager.findPreference(key).setSummary(sharedPreferences.getString(key, null));
         } else if (key.equals("port")) { // Integer case
-            // TODO: Fix (if necessary)
             prefManager.findPreference(key).setSummary(sharedPreferences.getString(key, null));
         } else if (key.equals("https")) { // Boolean case
             if (sharedPreferences.getBoolean(key, false)) {
