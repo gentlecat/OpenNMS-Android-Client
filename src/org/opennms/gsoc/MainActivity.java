@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -32,7 +34,14 @@ public class MainActivity extends SherlockFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.getBoolean("is_first_launch", true)) {
+            showWelcomeDialog();
+            sharedPref.edit().putBoolean("is_first_launch", true).commit();
+        }
+
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         actionBar.addTab(actionBar.newTab()
@@ -147,6 +156,28 @@ public class MainActivity extends SherlockFragmentActivity {
             // TODO Auto-generated method stub
         }
 
+    }
+
+    private void showWelcomeDialog() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.main));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setMessage(getResources().getString(R.string.welcome_message))
+                .setPositiveButton(getResources().getString(R.string.welcome_message_pos_button),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                                startActivity(settingsIntent);
+                            }
+                        })
+                .setNegativeButton(getResources().getString(R.string.welcome_message_neg_button),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog aboutDialog = builder.create();
+        aboutDialog.show();
     }
 
 }

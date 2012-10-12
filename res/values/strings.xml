@@ -24,7 +24,7 @@
     <string name="settings_https_on">Turned on</string>
     <string name="settings_https_off">Turned off</string>
 
-    <string name="welcome_message">Welcome! There should be some kind of message, but it\'s not there yet.</string>
+    <string name="welcome_message">Do you want to use test server or change settings to use your server?</string>
     <string name="welcome_message_pos_button">Change settings</string>
     <string name="welcome_message_neg_button">Use test server</string>
 
