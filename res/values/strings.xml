@@ -3,11 +3,16 @@
 
     <string name="app_name">OpenNMS</string>
 
-    <string name="alarms">Alarms</string>
+    <string name="nodes">Nodes</string>
 
     <string name="outages">Outages</string>
 
-    <string name="schedule">Nodes</string>
+    <string name="alarms">Alarms</string>
+    <string name="alarms_info_noneselected">Please, select an alarm to view more info.</string>
+    <string name="alarms_info_id">Alarm #</string>
+    <string name="alarms_info_severity_unknown">Severity unknown</string>
+    <string name="alarms_info_no_description">No description</string>
+    <string name="alarms_info_no_message">No log message</string>
 
     <string name="settings">Settings</string>
     <string name="settings_host">Host</string>
@@ -28,7 +33,7 @@
     <string name="welcome_message_pos_button">Change settings</string>
     <string name="welcome_message_neg_button">Use test server</string>
 
-    <string name="about_information">
+    <string name="about_info">
         OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc. Copyright (&#169;) 2009 The OpenNMS Group, Inc.
         All rights reserved.
     </string>

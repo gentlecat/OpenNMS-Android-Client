@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nodeViewParent"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" 
-    android:id="@+id/nodeViewParent">
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/nodeView">
-</TextView>
+    android:orientation="vertical" >
 
-<TextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/nodeView2">
-</TextView>
+    <TextView
+        android:id="@+id/nodeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/nodeView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </TextView>
+
 </LinearLayout>

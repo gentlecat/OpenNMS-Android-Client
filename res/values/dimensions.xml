@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_width">162dp</dimen>
+    <dimen name="layout_padding">16dp</dimen>
+    <dimen name="alarm_description_padding">8dp</dimen>
+</resources>

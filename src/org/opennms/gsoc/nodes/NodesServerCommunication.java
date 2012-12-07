@@ -1,12 +1,14 @@
 package org.opennms.gsoc.nodes;
 
+import org.opennms.gsoc.model.Node;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.opennms.gsoc.model.OnmsNode;
-
-
 public interface NodesServerCommunication {
-	ArrayList<OnmsNode> getNodes(String url) throws InterruptedException, ExecutionException, IOException;
+
+    List<Node> getNodes(String url)
+            throws InterruptedException, ExecutionException, IOException;
+
 }

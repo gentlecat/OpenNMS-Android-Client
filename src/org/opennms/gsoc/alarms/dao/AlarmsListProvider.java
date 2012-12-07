@@ -1,7 +1,7 @@
 package org.opennms.gsoc.alarms.dao;
 
-import org.opennms.gsoc.dao.OnmsContentProvider;
-import org.opennms.gsoc.dao.OnmsDatabaseHelper;
+import org.opennms.gsoc.dao.AppContentProvider;
+import org.opennms.gsoc.dao.DatabaseHelper;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -15,7 +15,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class AlarmsListProvider extends OnmsContentProvider {
+public class AlarmsListProvider extends AppContentProvider {
 
 	private static final String AUTHORITY = "org.opennms.gsoc.alarms.dao.AlarmsListProvider";
 	public static final int ALARMS = 100;
@@ -40,28 +40,23 @@ public class AlarmsListProvider extends OnmsContentProvider {
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
-	}
-
-	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = AlarmsListProvider.sURIMatcher.match(uri);
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 		int rowsAffected = 0;
 		switch (uriType) {
 		case ALARMS:
-			rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_ALARMS,
+			rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_ALARMS,
 					selection, selectionArgs);
 			break;
 		case ALARM_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_ALARMS,
-						OnmsDatabaseHelper.TABLE_ALARMS_ID + "=" + id, null);
+				rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_ALARMS,
+						DatabaseHelper.TABLE_ALARMS_ID + "=" + id, null);
 			} else {
-				rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_ALARMS,
-						selection + " and " + OnmsDatabaseHelper.TABLE_ALARMS_ID + "=" + id,
+				rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_ALARMS,
+						selection + " and " + DatabaseHelper.TABLE_ALARMS_ID + "=" + id,
 						selectionArgs);
 			}
 			break;
@@ -91,11 +86,11 @@ public class AlarmsListProvider extends OnmsContentProvider {
 		if (uriType != AlarmsListProvider.ALARMS) {
 			throw new IllegalArgumentException("Invalid URI for insert");
 		}
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 		Uri newUri = null;
 		try {
 			long newID = sqlDB
-					.insertWithOnConflict(OnmsDatabaseHelper.TABLE_ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+					.insertWithOnConflict(DatabaseHelper.TABLE_ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 			if (newID > 0) {
 				newUri = ContentUris.withAppendedId(uri, newID);
 				getContext().getContentResolver().notifyChange(uri, null);
@@ -111,25 +106,25 @@ public class AlarmsListProvider extends OnmsContentProvider {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 		int uriType = AlarmsListProvider.sURIMatcher.match(uri);
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 
 		int rowsAffected = 0;
 
 		switch (uriType) {
 		case ALARM_ID:
 			String id = uri.getLastPathSegment();
-			StringBuilder modSelection = new StringBuilder(OnmsDatabaseHelper.TABLE_ALARMS_ID
+			StringBuilder modSelection = new StringBuilder(DatabaseHelper.TABLE_ALARMS_ID
 					+ "=" + id);
 
 			if (!TextUtils.isEmpty(selection)) {
 				modSelection.append(" AND " + selection);
 			}
 
-			rowsAffected = sqlDB.update(OnmsDatabaseHelper.TABLE_ALARMS,
+			rowsAffected = sqlDB.update(DatabaseHelper.TABLE_ALARMS,
 					values, modSelection.toString(), null);
 			break;
 		case ALARMS:
-			rowsAffected = sqlDB.update(OnmsDatabaseHelper.TABLE_ALARMS,
+			rowsAffected = sqlDB.update(DatabaseHelper.TABLE_ALARMS,
 					values, selection, selectionArgs);
 			break;
 		default:
@@ -143,16 +138,16 @@ public class AlarmsListProvider extends OnmsContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(OnmsDatabaseHelper.TABLE_ALARMS);
+		queryBuilder.setTables(DatabaseHelper.TABLE_ALARMS);
 
 		int uriType = AlarmsListProvider.sURIMatcher.match(uri);
 		switch (uriType) {
 		case ALARM_ID:
-			queryBuilder.appendWhere(OnmsDatabaseHelper.TABLE_ALARMS_ID + "="
+			queryBuilder.appendWhere(DatabaseHelper.TABLE_ALARMS_ID + "="
 					+ uri.getLastPathSegment());
 			break;
 		case ALARM_SEVERITY:
-			queryBuilder.appendWhere(OnmsDatabaseHelper.COL_SEVERITY + " like '%"
+			queryBuilder.appendWhere(DatabaseHelper.COL_SEVERITY + " like '%"
 					+ uri.getLastPathSegment() + "%'");
 			break;
 		case ALARMS:
@@ -161,7 +156,7 @@ public class AlarmsListProvider extends OnmsContentProvider {
 			break;
 		}
 
-		Cursor cursor = queryBuilder.query(this.mDB.getReadableDatabase(),
+		Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
 				projection, selection, selectionArgs, null, null, sortOrder);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;

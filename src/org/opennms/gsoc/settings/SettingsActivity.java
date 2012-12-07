@@ -15,11 +15,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
     private PreferenceManager prefManager;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();

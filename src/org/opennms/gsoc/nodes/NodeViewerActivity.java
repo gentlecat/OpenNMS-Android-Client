@@ -1,33 +1,29 @@
 package org.opennms.gsoc.nodes;
 
-import org.opennms.gsoc.R;
-import org.opennms.gsoc.model.OnmsNode;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import org.opennms.gsoc.R;
+import org.opennms.gsoc.model.Node;
 
+/**
+ * This activity is used to display node details in case dual-pane layout is unavailable
+ */
 public class NodeViewerActivity extends SherlockFragmentActivity {
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.nodes_details);
 
-		Intent launchingIntent = getIntent();
-		OnmsNode content = (OnmsNode) launchingIntent.getSerializableExtra("onmsnode");
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.node_details);
 
-		NodeViewerFragment viewer = (NodeViewerFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.nodesDetails);
+        NodeDetailsFragment viewer = (NodeDetailsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.node_details_fragment);
+        Node content = (Node) getIntent().getSerializableExtra("node");
+        viewer.updateUrl(content);
+    }
 
-		viewer.updateUrl(content);
-	}
-
-	@Override
-	public void onBackPressed() {
-		Log.i("back pressed", "i'm pressed");
-		this.finish();
-	}
+    @Override
+    public void onBackPressed() {
+        this.finish();
+    }
 
 }

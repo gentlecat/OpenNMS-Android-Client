@@ -25,9 +25,7 @@
         <activity android:name=".outages.OutageViewerActivity"></activity>
         <activity android:name=".alarms.AlarmViewerActivity"></activity>
 
-        <service android:name=".nodes.NodesService"></service>
-        <service android:name=".outages.OutagesService"></service>
-        <service android:name=".alarms.AlarmsService" ></service>
+        <service android:name=".MainService"></service>
 
         <provider android:name="org.opennms.gsoc.nodes.dao.NodesListProvider"
                   android:authorities="org.opennms.gsoc.nodes.dao.NodesListProvider"

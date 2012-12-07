@@ -1,12 +1,14 @@
 package org.opennms.gsoc.alarms;
 
+import org.opennms.gsoc.model.Alarm;
+
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.opennms.gsoc.model.OnmsAlarm;
-
-
 public interface AlarmsServerCommunication {
-	ArrayList<OnmsAlarm> getAlarms(String url) throws InterruptedException, ExecutionException, IOException;
+
+    List<Alarm> getAlarms(String url)
+            throws InterruptedException, ExecutionException, IOException;
+
 }

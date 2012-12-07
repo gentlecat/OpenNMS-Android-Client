@@ -4,56 +4,61 @@ import java.util.ArrayList;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.opennms.gsoc.model.OnmsOutage;
-import org.opennms.gsoc.util.OnmsParserUtil;
+import org.opennms.gsoc.model.Outage;
+import org.opennms.gsoc.util.Parser;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.util.Log;
 
-public class OutagesParser {
-	private static final String OUTAGES_EXPRESSION = "/outages/outage";
-	private static final String OUTAGES_IF_LOST_SERVICE = "ifLostService";
-	private static final String OUTAGES_ID = "@id";
-	private static final String OUTAGES_IF_REGAINED_SERVICE = "ifRegainedService";
-	private static final String OUTAGES_IP_ADDRESS = "ipAddress";
-	private static final String SERVICE_TYPE_NAME = "monitoredService/serviceType/name";
+public class OutagesParser extends Parser {
 
-	public static ArrayList<OnmsOutage> parse(String is) {
-		ArrayList<OnmsOutage> values = new ArrayList<OnmsOutage>();
+    private static final String OUTAGES_EXPRESSION = "/outages/outage";
+    private static final String OUTAGES_IF_LOST_SERVICE = "ifLostService";
+    private static final String OUTAGES_ID = "@id";
+    private static final String OUTAGES_IF_REGAINED_SERVICE = "ifRegainedService";
+    private static final String OUTAGES_IP_ADDRESS = "ipAddress";
+    private static final String SERVICE_TYPE_NAME = "monitoredService/serviceType/name";
 
-		NodeList nodes = null;
-		try {
-			nodes = OnmsParserUtil.getXmlNodeSetForExpression(OutagesParser.OUTAGES_EXPRESSION, is);
-		} catch (XPathExpressionException e) {
-			Log.i("NodeParser.getXmlNodeSetForExpression", e.getMessage());
-		}
+    public static ArrayList<Outage> parse(String is) {
+        ArrayList<Outage> values = new ArrayList<Outage>();
 
-		try {
-			if(nodes != null) {
-				for (int i = 0; i < nodes.getLength(); i++) {
-					Node node = nodes.item(i);
+        NodeList nodes = null;
+        try {
+            nodes = getXmlNodeSetForExpression(OutagesParser.OUTAGES_EXPRESSION, is);
+        } catch (XPathExpressionException e) {
+            Log.i("NodeParser.getXmlNodeSetForExpression", e.getMessage());
+        }
 
-					Node id = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_ID, node);
-					Node ipAddress = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IP_ADDRESS, node);
-					Node ifLostService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_LOST_SERVICE, node);
-					Node ifRegainedService = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.OUTAGES_IF_REGAINED_SERVICE, node);
-					Node serviceTypeName = OnmsParserUtil.getXmlNodeForExpression(OutagesParser.SERVICE_TYPE_NAME, node);
+        try {
+            if (nodes != null) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Node currentNode = nodes.item(i);
+                    Node id = getXmlNodeForExpression(OutagesParser.OUTAGES_ID, currentNode);
+                    Node ipAddress = getXmlNodeForExpression(OutagesParser.OUTAGES_IP_ADDRESS, currentNode);
+                    Node ifLostService = getXmlNodeForExpression(OutagesParser.OUTAGES_IF_LOST_SERVICE, currentNode);
+                    Node ifRegainedService = getXmlNodeForExpression(OutagesParser.OUTAGES_IF_REGAINED_SERVICE, currentNode);
+                    Node serviceTypeName = getXmlNodeForExpression(OutagesParser.SERVICE_TYPE_NAME, currentNode);
 
-					OnmsOutage onmsOutage = new OnmsOutage(Integer.parseInt(id.getNodeValue()), ipAddress.getTextContent(), ifLostService.getTextContent(), ifRegainedService.getTextContent(), serviceTypeName.getTextContent());
-					values.add(onmsOutage);
-				}
-			}
-		} catch (XPathExpressionException e) {
-			Log.e("node attributes", e.getMessage(), e);
-		} catch (NumberFormatException e) {
-			Log.e("node attributes", e.getMessage(), e);
-		} catch (DOMException e) {
-			Log.e("node attributes", e.getMessage(), e);
-		} 
-
-		return values;
-	}
+                    Outage outage = new Outage(
+                            Integer.parseInt(id.getNodeValue()),
+                            ipAddress.getTextContent(),
+                            ifLostService.getTextContent(),
+                            ifRegainedService.getTextContent(),
+                            serviceTypeName.getTextContent()
+                    );
+                    values.add(outage);
+                }
+            }
+        } catch (XPathExpressionException e) {
+            Log.e("node attributes", e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            Log.e("node attributes", e.getMessage(), e);
+        } catch (DOMException e) {
+            Log.e("node attributes", e.getMessage(), e);
+        }
+        return values;
+    }
 
 }

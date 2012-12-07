@@ -1,12 +1,13 @@
 package org.opennms.gsoc.outages;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import org.opennms.gsoc.model.Outage;
 
-import org.opennms.gsoc.model.OnmsOutage;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface OutagesServerCommunication {
 
-	ArrayList<OnmsOutage> getOutages(String url) throws InterruptedException, ExecutionException;
+    List<Outage> getOutages(String url)
+            throws InterruptedException, ExecutionException;
 
 }

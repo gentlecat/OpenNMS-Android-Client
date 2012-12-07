@@ -2,8 +2,8 @@ package org.opennms.gsoc.outages.dao;
 
 
 
-import org.opennms.gsoc.dao.OnmsContentProvider;
-import org.opennms.gsoc.dao.OnmsDatabaseHelper;
+import org.opennms.gsoc.dao.AppContentProvider;
+import org.opennms.gsoc.dao.DatabaseHelper;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -17,7 +17,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class OutagesListProvider extends OnmsContentProvider {
+public class OutagesListProvider extends AppContentProvider {
 
 	private static final String AUTHORITY = "org.opennms.gsoc.outages.dao.OutagesListProvider";
 	public static final int OUTAGES = 200;
@@ -45,21 +45,21 @@ public class OutagesListProvider extends OnmsContentProvider {
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = OutagesListProvider.sURIMatcher.match(uri);
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 		int rowsAffected = 0;
 		switch (uriType) {
 		case OUTAGES:
-			rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_OUTAGES,
+			rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_OUTAGES,
 					selection, selectionArgs);
 			break;
 		case OUTAGE_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_OUTAGES,
-						OnmsDatabaseHelper.TABLE_OUTAGES_ID + "=" + id, null);
+				rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_OUTAGES,
+						DatabaseHelper.TABLE_OUTAGES_ID + "=" + id, null);
 			} else {
-				rowsAffected = sqlDB.delete(OnmsDatabaseHelper.TABLE_OUTAGES,
-						selection + " and " + OnmsDatabaseHelper.TABLE_OUTAGES_ID + "=" + id,
+				rowsAffected = sqlDB.delete(DatabaseHelper.TABLE_OUTAGES,
+						selection + " and " + DatabaseHelper.TABLE_OUTAGES_ID + "=" + id,
 						selectionArgs);
 			}
 			break;
@@ -89,11 +89,11 @@ public class OutagesListProvider extends OnmsContentProvider {
 		if (uriType != OutagesListProvider.OUTAGES) {
 			throw new IllegalArgumentException("Invalid URI for insert");
 		}
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 		Uri newUri = null;
 		try {
 			long newID = sqlDB
-					.insertWithOnConflict(OnmsDatabaseHelper.TABLE_OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+					.insertWithOnConflict(DatabaseHelper.TABLE_OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 			if (newID > 0) {
 				newUri = ContentUris.withAppendedId(uri, newID);
 				getContext().getContentResolver().notifyChange(uri, null);
@@ -109,25 +109,25 @@ public class OutagesListProvider extends OnmsContentProvider {
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 		int uriType = OutagesListProvider.sURIMatcher.match(uri);
-		SQLiteDatabase sqlDB = this.mDB.getWritableDatabase();
+		SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 
 		int rowsAffected = 0;
 
 		switch (uriType) {
 		case OUTAGE_ID:
 			String id = uri.getLastPathSegment();
-			StringBuilder modSelection = new StringBuilder(OnmsDatabaseHelper.TABLE_OUTAGES_ID
+			StringBuilder modSelection = new StringBuilder(DatabaseHelper.TABLE_OUTAGES_ID
 					+ "=" + id);
 
 			if (!TextUtils.isEmpty(selection)) {
 				modSelection.append(" AND " + selection);
 			}
 
-			rowsAffected = sqlDB.update(OnmsDatabaseHelper.TABLE_OUTAGES,
+			rowsAffected = sqlDB.update(DatabaseHelper.TABLE_OUTAGES,
 					values, modSelection.toString(), null);
 			break;
 		case OUTAGES:
-			rowsAffected = sqlDB.update(OnmsDatabaseHelper.TABLE_OUTAGES,
+			rowsAffected = sqlDB.update(DatabaseHelper.TABLE_OUTAGES,
 					values, selection, selectionArgs);
 			break;
 		default:
@@ -141,16 +141,16 @@ public class OutagesListProvider extends OnmsContentProvider {
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(OnmsDatabaseHelper.TABLE_OUTAGES);
+		queryBuilder.setTables(DatabaseHelper.TABLE_OUTAGES);
 
 		int uriType = OutagesListProvider.sURIMatcher.match(uri);
 		switch (uriType) {
 		case OUTAGE_ID:
-			queryBuilder.appendWhere(OnmsDatabaseHelper.TABLE_OUTAGES_ID + "="
+			queryBuilder.appendWhere(DatabaseHelper.TABLE_OUTAGES_ID + "="
 					+ uri.getLastPathSegment());
 			break;
 		case OUTAGE_IP_ADDRESS:
-			queryBuilder.appendWhere(OnmsDatabaseHelper.COL_IP_ADDRESS+ " like '%"
+			queryBuilder.appendWhere(DatabaseHelper.COL_IP_ADDRESS+ " like '%"
 					+ uri.getLastPathSegment() + "%'");
 			break;
 		case OUTAGES:
@@ -159,7 +159,7 @@ public class OutagesListProvider extends OnmsContentProvider {
 			break;
 		}
 
-		Cursor cursor = queryBuilder.query(this.mDB.getReadableDatabase(),
+		Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
 				projection, selection, selectionArgs, null, null, sortOrder);
 		cursor.setNotificationUri(getContext().getContentResolver(), uri);
 		return cursor;

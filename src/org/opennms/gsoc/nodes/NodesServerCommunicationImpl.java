@@ -8,28 +8,26 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import android.content.Context;
-import org.opennms.gsoc.RestingServerCommunication;
-import org.opennms.gsoc.model.OnmsNode;
+import org.opennms.gsoc.util.RestingServerCommunication;
+import org.opennms.gsoc.model.Node;
 
 import com.google.resting.component.impl.ServiceResponse;
 
 public class NodesServerCommunicationImpl implements NodesServerCommunication {
 
-    private Context appContext;
+    private final Context appContext;
 
     public NodesServerCommunicationImpl(Context appContext) {
         this.appContext = appContext;
     }
 
     @Override
-    public ArrayList<OnmsNode> getNodes(String url) throws InterruptedException, ExecutionException, IOException {
+    public ArrayList<Node> getNodes(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> nodesCommunication = executorService
                 .submit(new RestingServerCommunication("nodes", appContext));
-        ServiceResponse nodesServiceResponse = null;
-        nodesServiceResponse = nodesCommunication.get();
-
-        ArrayList<OnmsNode> nodesList = new ArrayList<OnmsNode>();
+        ServiceResponse nodesServiceResponse = nodesCommunication.get();
+        ArrayList<Node> nodesList = new ArrayList<Node>();
         if (nodesServiceResponse != null) {
             nodesList = NodesParser.parse(nodesServiceResponse.getContentData()
                     .getContentInString());
