@@ -56,8 +56,8 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         Intent serviceIntent = new Intent(getActivity().getApplicationContext(), MainService.class);
         getSherlockActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }

@@ -49,9 +49,9 @@ public class MainService extends Service {
     }
 
     public void refreshAlarms() {
-        Thread refresherThread = new Thread() {
+        new Thread(new Runnable() {
             public void run() {
-                Log.d(TAG, "Refreshing nodes...");
+                Log.d(TAG, "Refreshing alarms...");
                 try {
                     List<Alarm> alarms = alarmsServer.getAlarms("alarms");
                     for (Alarm alarm : alarms) {
@@ -77,12 +77,11 @@ public class MainService extends Service {
                 }
                 Log.d(TAG, "Huge success!");
             }
-        };
-        refresherThread.start();
+        }).start();
     }
 
     public void refreshNodes() {
-        Thread refresherThread = new Thread() {
+        new Thread(new Runnable() {
             public void run() {
                 Log.d(TAG, "Refreshing nodes...");
                 try {
@@ -112,12 +111,11 @@ public class MainService extends Service {
                 }
                 Log.d(TAG, "Huge success!");
             }
-        };
-        refresherThread.start();
+        }).start();
     }
 
     public void refreshOutages() {
-        Thread refresherThread = new Thread() {
+        new Thread(new Runnable() {
             public void run() {
                 Log.d(TAG, "Refreshing outages...");
                 try {
@@ -137,8 +135,7 @@ public class MainService extends Service {
                 }
                 Log.d(TAG, "Huge success!");
             }
-        };
-        refresherThread.start();
+        }).start();
     }
 
     @Override
