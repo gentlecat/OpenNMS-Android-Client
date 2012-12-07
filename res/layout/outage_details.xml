@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
           android:id="@+id/outage_details_fragment"
-          android:name="org.opennms.gsoc.outages.OutageViewerFragment"
+          android:name="org.opennms.gsoc.outages.OutageDetailsFragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent">
 
