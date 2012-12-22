@@ -28,17 +28,23 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.gsoc.MainService;
 import org.opennms.gsoc.R;
+import org.opennms.gsoc.alarms.AlarmViewerActivity;
 import org.opennms.gsoc.dao.DatabaseHelper;
+import org.opennms.gsoc.model.Node;
 import org.opennms.gsoc.model.Outage;
+import org.opennms.gsoc.nodes.NodeDetailsFragment;
+import org.opennms.gsoc.nodes.NodesListFragment;
 import org.opennms.gsoc.outages.dao.OutagesListProvider;
 
 public class OutagesListFragment extends SherlockListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int LOADER_ID = 2;
     MainService service;
     boolean bound = false;
-    private SimpleCursorAdapter adapter;
-    private String currentFilter;
     private OnOutagesListSelectedListener outagesListSelectedListener;
+    private String currentFilter;
+    private SimpleCursorAdapter adapter;
+    private OutageDetailsFragment detailsFragment;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -63,16 +69,60 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        outagesListSelectedListener = new OnOutagesListSelectedListener() {
+            boolean isInfoVisible = false;
+
+            @Override
+            public void onOutageSelected(Outage outage) {
+                detailsFragment = (OutageDetailsFragment) getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.outage_details_fragment);
+                if (detailsFragment != null) {
+                    // If details fragment is available, we're in two-pane layout...
+                    // Updating info on the right pane
+                    detailsFragment.show(outage);
+                    if (!isInfoVisible) {
+                        getActivity().findViewById(R.id.outages_info_noneselected).setVisibility(View.GONE);
+                        getActivity().findViewById(R.id.outage_info).setVisibility(View.VISIBLE);
+                        isInfoVisible = true;
+                    }
+                } else {
+                    // Otherwise, we're in the one-pane layout and must start a separate activity...
+                    Intent showContent = new Intent(getActivity().getApplicationContext(), AlarmViewerActivity.class);
+                    showContent.putExtra("outage", outage);
+                    startActivity(showContent);
+                }
+            }
+        };
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        detailsFragment = (OutageDetailsFragment) getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.outage_details_fragment);
+        return inflater.inflate(R.layout.list, container, false);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
-        this.adapter = new SimpleCursorAdapter(getActivity(),
+        adapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_2, null,
                 new String[]{DatabaseHelper.COL_OUTAGE_ID, DatabaseHelper.COL_IP_ADDRESS},
                 new int[]{android.R.id.text1, android.R.id.text2}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(this.adapter);
-        getActivity().getSupportLoaderManager().initLoader(1, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (bound) {
+            getSherlockActivity().unbindService(serviceConnection);
+            bound = false;
+        }
     }
 
     @Override
@@ -98,49 +148,6 @@ public class OutagesListFragment extends SherlockListFragment implements OnQuery
             this.outagesListSelectedListener.onOutageSelected(outage);
         }
         outagesCursor.close();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            this.outagesListSelectedListener = new OnOutagesListSelectedListener() {
-
-                @Override
-                public void onOutageSelected(Outage outage) {
-                    OutageDetailsFragment viewer = (OutageDetailsFragment) getActivity().getSupportFragmentManager()
-                            .findFragmentById(R.id.outage_details_fragment);
-
-                    if (viewer == null || !viewer.isInLayout()) {
-                        Intent showContent = new Intent(getActivity().getApplicationContext(),
-                                OutageViewerActivity.class);
-                        showContent.putExtra("outage", outage);
-                        startActivity(showContent);
-                    } else {
-                        viewer.updateUrl(outage);
-                    }
-
-                }
-            };
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnOutagesSelectedListener");
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (bound) {
-            getSherlockActivity().unbindService(serviceConnection);
-            bound = false;
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.outages_list, container, false);
     }
 
     @Override

@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/outage_details_fragment"
-          android:name="org.opennms.gsoc.outages.OutageDetailsFragment"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-</fragment>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/outage_info"
+        android:visibility="gone"
+        android:padding="@dimen/layout_padding">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/outages_info_noneselected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/outages_info_noneselected"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+</RelativeLayout>

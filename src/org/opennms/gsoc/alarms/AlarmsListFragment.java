@@ -1,10 +1,14 @@
 package org.opennms.gsoc.alarms;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,6 +25,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import org.opennms.gsoc.MainService;
 import org.opennms.gsoc.R;
 import org.opennms.gsoc.alarms.dao.AlarmsListProvider;
 import org.opennms.gsoc.dao.DatabaseHelper;
@@ -33,6 +38,32 @@ public class AlarmsListFragment extends SherlockListFragment
     private String currentFilter;
     private SimpleCursorAdapter adapter;
     private AlarmDetailsFragment detailsFragment;
+    private static final int LOADER_ID = 3;
+    MainService service;
+    boolean bound = false;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            MainService.LocalBinder binder = (MainService.LocalBinder) service;
+            AlarmsListFragment.this.service = binder.getService();
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent serviceIntent = new Intent(getActivity().getApplicationContext(), MainService.class);
+        getSherlockActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -67,7 +98,7 @@ public class AlarmsListFragment extends SherlockListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         detailsFragment = (AlarmDetailsFragment) getActivity().getSupportFragmentManager()
                 .findFragmentById(R.id.alarm_details_fragment);
-        return inflater.inflate(R.layout.alarms_list, container, false);
+        return inflater.inflate(R.layout.list, container, false);
     }
 
     @Override
@@ -83,8 +114,20 @@ public class AlarmsListFragment extends SherlockListFragment
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
         getListView().setAdapter(adapter);
-        getActivity().getSupportLoaderManager().initLoader(3, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (bound) {
+            getSherlockActivity().unbindService(serviceConnection);
+            bound = false;
+        }
+    }
+
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -111,12 +154,26 @@ public class AlarmsListFragment extends SherlockListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.alarms, menu);
         MenuItem searchItem = menu.add("Search");
         searchItem.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         SearchView search = new SearchView(getActivity());
         search.setOnQueryTextListener(this);
         searchItem.setActionView(search);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh_alarms:
+                if (bound) {
+                    service.refreshAlarms();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

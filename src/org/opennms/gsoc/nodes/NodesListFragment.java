@@ -27,17 +27,20 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.gsoc.MainService;
 import org.opennms.gsoc.R;
+import org.opennms.gsoc.alarms.AlarmViewerActivity;
 import org.opennms.gsoc.dao.DatabaseHelper;
 import org.opennms.gsoc.model.Node;
 import org.opennms.gsoc.nodes.dao.NodesListProvider;
 
 public class NodesListFragment extends SherlockListFragment implements OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int LOADER_ID = 1;
     MainService service;
     boolean bound = false;
     private OnNodesListSelectedListener nodesListSelectedListener;
     private String currentFilter;
     private SimpleCursorAdapter adapter;
+    private NodeDetailsFragment detailsFragment;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -64,41 +67,50 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            this.nodesListSelectedListener = new OnNodesListSelectedListener() {
-                @Override
-                public void onNodeSelected(Node node) {
-                    NodeDetailsFragment viewer = (NodeDetailsFragment) getActivity().getSupportFragmentManager()
-                            .findFragmentById(R.id.node_details_fragment);
+        nodesListSelectedListener = new OnNodesListSelectedListener() {
+            boolean isInfoVisible = false;
 
-                    if (viewer == null || !viewer.isInLayout()) {
-                        Intent showContent = new Intent(getActivity().getApplicationContext(),
-                                NodeViewerActivity.class);
-                        showContent.putExtra("node", node);
-                        startActivity(showContent);
-                    } else {
-                        viewer.updateUrl(node);
+            @Override
+            public void onNodeSelected(Node node) {
+                detailsFragment = (NodeDetailsFragment) getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.node_details_fragment);
+                if (detailsFragment != null) {
+                    // If details fragment is available, we're in two-pane layout...
+                    // Updating info on the right pane
+                    detailsFragment.show(node);
+                    if (!isInfoVisible) {
+                        getActivity().findViewById(R.id.nodes_info_noneselected).setVisibility(View.GONE);
+                        getActivity().findViewById(R.id.node_info).setVisibility(View.VISIBLE);
+                        isInfoVisible = true;
                     }
+                } else {
+                    // Otherwise, we're in the one-pane layout and must start a separate activity...
+                    Intent showContent = new Intent(getActivity().getApplicationContext(), AlarmViewerActivity.class);
+                    showContent.putExtra("node", node);
+                    startActivity(showContent);
                 }
-            };
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnNodesSelectedListener");
-        }
+            }
+        };
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        detailsFragment = (NodeDetailsFragment) getActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.node_details_fragment);
+        return inflater.inflate(R.layout.list, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
-
-        this.adapter = new SimpleCursorAdapter(getActivity(),
+        adapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_2, null,
                 new String[]{DatabaseHelper.COL_NODE_ID, DatabaseHelper.COL_LABEL},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(this.adapter);
-        getActivity().getSupportLoaderManager().initLoader(0, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -134,12 +146,6 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
             this.nodesListSelectedListener.onNodeSelected(node);
         }
         nodesCursor.close();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.nodes_list, container, false);
     }
 
     @Override
@@ -211,8 +217,13 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        this.adapter.swapCursor(cursor);
-
+        adapter.swapCursor(cursor);
+        if (cursor.getColumnCount() > 0) {
+            // If details fragment is available, show info about first alarm...
+            if (detailsFragment != null) {
+                onListItemClick(getListView(), null, 0, 0);
+            }
+        }
     }
 
     @Override
@@ -225,3 +236,4 @@ public class NodesListFragment extends SherlockListFragment implements OnQueryTe
     }
 
 }
+

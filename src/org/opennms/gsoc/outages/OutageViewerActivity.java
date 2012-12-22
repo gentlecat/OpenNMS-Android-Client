@@ -18,7 +18,7 @@ public class OutageViewerActivity extends SherlockFragmentActivity {
         OutageDetailsFragment viewer = (OutageDetailsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.outage_details_fragment);
         Outage content = (Outage) getIntent().getSerializableExtra("outage");
-        viewer.updateUrl(content);
+        viewer.show(content);
     }
 
     @Override

@@ -11,24 +11,24 @@ import org.opennms.gsoc.model.Outage;
 
 public class OutageDetailsFragment extends SherlockFragment {
 
-    private View viewer = null;
+    private View view = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewer = inflater.inflate(R.layout.outage_view, container, false);
-        viewer.setFocusableInTouchMode(true);
-        viewer.requestFocus();
-        return viewer;
+        view = inflater.inflate(R.layout.outage_details, container, false);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        return view;
     }
 
-    public void updateUrl(Outage newOutage) {
-        if (this.viewer != null) {
-            TextView idTextView = (TextView) viewer.findViewById(R.id.outageView);
-            idTextView.setText(printOutage(newOutage));
+    public void show(Outage newOutage) {
+        if (view != null) {
+            TextView idTextView = (TextView) view.findViewById(R.id.outage_info);
+            idTextView.setText(printOutageInfo(newOutage));
         }
     }
 
-    private String printOutage(Outage newOutage) {
+    private String printOutageInfo(Outage newOutage) {
         StringBuilder builder = new StringBuilder();
         builder.append("Outage ID: " + newOutage.getId() + "\n");
         builder.append("IP address: " + newOutage.getIpAddress() + "\n");

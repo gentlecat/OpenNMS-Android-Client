@@ -18,7 +18,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.gsoc.alarms.AlarmsFragment;
+import org.opennms.gsoc.nodes.NodesFragment;
 import org.opennms.gsoc.nodes.NodesListFragment;
+import org.opennms.gsoc.outages.OutagesFragment;
 import org.opennms.gsoc.outages.OutagesListFragment;
 import org.opennms.gsoc.settings.SettingsActivity;
 
@@ -48,9 +50,9 @@ public class MainActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.addTab(actionBar.newTab().setText(R.string.nodes).setTabListener(
-                new TabListener<NodesListFragment>(this, "Nodes", NodesListFragment.class)));
+                new TabListener<NodesFragment>(this, "Nodes", NodesFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.outages).setTabListener(
-                new TabListener<OutagesListFragment>(this, "Outages", OutagesListFragment.class)));
+                new TabListener<OutagesFragment>(this, "Outages", OutagesFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.alarms).setTabListener(
                 new TabListener<AlarmsFragment>(this, "Alarms", AlarmsFragment.class)));
 

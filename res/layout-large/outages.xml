@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+    <fragment
+        android:id="@+id/outages_list_fragment"
+        android:layout_width="@dimen/list_width"
+        android:layout_height="match_parent"
+        class="org.opennms.gsoc.outages.OutagesListFragment"/>
+
+    <fragment
+        android:id="@+id/outage_details_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="org.opennms.gsoc.outages.OutageDetailsFragment"/>
+
+</LinearLayout>

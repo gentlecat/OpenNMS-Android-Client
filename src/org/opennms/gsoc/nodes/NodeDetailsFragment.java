@@ -11,28 +11,24 @@ import org.opennms.gsoc.model.Node;
 
 public class NodeDetailsFragment extends SherlockFragment {
 
-    private View viewer = null;
+    private View view = null;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        this.viewer = inflater.inflate(R.layout.node_view,
-                container, false);
-        this.viewer.setFocusableInTouchMode(true);
-        this.viewer.requestFocus();
-
-        return this.viewer;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,       Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.node_details, container, false);
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        return view;
     }
 
-    public void updateUrl(Node newNode) {
-        if (this.viewer != null) {
-            TextView idTextView = (TextView) this.viewer.findViewById(R.id.nodeView);
-            idTextView.setText(printNode(newNode));
+    public void show(Node newNode) {
+        if (view != null) {
+            TextView idTextView = (TextView) view.findViewById(R.id.node_info);
+            idTextView.setText(printNodeInfo(newNode));
         }
     }
 
-    private String printNode(Node newNode) {
+    private String printNodeInfo(Node newNode) {
         StringBuilder builder = new StringBuilder();
         builder.append("Node ID: " + newNode.getId() + "\n");
         builder.append("Label: " + newNode.getLabel() + "\n");

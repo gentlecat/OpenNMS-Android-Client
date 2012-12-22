@@ -18,7 +18,7 @@ public class NodeViewerActivity extends SherlockFragmentActivity {
         NodeDetailsFragment viewer = (NodeDetailsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.node_details_fragment);
         Node content = (Node) getIntent().getSerializableExtra("node");
-        viewer.updateUrl(content);
+        viewer.show(content);
     }
 
     @Override

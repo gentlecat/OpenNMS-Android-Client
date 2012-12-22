@@ -4,8 +4,10 @@
     <string name="app_name">OpenNMS</string>
 
     <string name="nodes">Nodes</string>
+    <string name="nodes_info_noneselected">Please, select a node to view more info.</string>
 
     <string name="outages">Outages</string>
+    <string name="outages_info_noneselected">Please, select an outage to view more info.</string>
 
     <string name="alarms">Alarms</string>
     <string name="alarms_info_noneselected">Please, select an alarm to view more info.</string>
