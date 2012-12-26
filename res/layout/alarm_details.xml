@@ -1,73 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/alarm_info"
+             android:visibility="gone"
+             android:padding="@dimen/layout_padding">
 
-    <TableLayout
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/alarm_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarms_info_id"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/alarm_severity_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/alarm_severity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarms_info_severity_unknown"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+    </TableRow>
+
+    <TableRow
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/alarm_info"
-        android:visibility="gone"
-        android:padding="@dimen/layout_padding">
+        android:paddingBottom="@dimen/alarm_description_padding"
+        android:paddingTop="@dimen/alarm_description_padding">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/alarm_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/alarms_info_id"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/alarm_severity_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/alarm_severity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/alarms_info_severity_unknown"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/alarm_description"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/alarm_description_padding"
-            android:paddingTop="@dimen/alarm_description_padding">
+            android:text="@string/alarms_info_no_description"/>
+    </TableRow>
 
-            <TextView
-                android:id="@+id/alarm_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/alarms_info_no_description"/>
-        </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/alarm_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/alarms_info_no_message"/>
-        </TableRow>
-    </TableLayout>
-
-    <TextView
-        android:id="@+id/alarms_info_noneselected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/alarms_info_noneselected"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-</RelativeLayout>
+        <TextView
+            android:id="@+id/alarm_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarms_info_no_message"/>
+    </TableRow>
+</TableLayout>

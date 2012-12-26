@@ -19,9 +19,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.gsoc.alarms.AlarmsFragment;
 import org.opennms.gsoc.nodes.NodesFragment;
-import org.opennms.gsoc.nodes.NodesListFragment;
 import org.opennms.gsoc.outages.OutagesFragment;
-import org.opennms.gsoc.outages.OutagesListFragment;
 import org.opennms.gsoc.settings.SettingsActivity;
 
 /**
@@ -95,7 +93,7 @@ public class MainActivity extends SherlockFragmentActivity {
                 return true;
             case R.id.menu_about:
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.main));
+                View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.about));
                 AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(layout).setNeutralButton(
                         "Close",
                         new DialogInterface.OnClickListener() {
@@ -162,7 +160,7 @@ public class MainActivity extends SherlockFragmentActivity {
                 mFragment = Fragment.instantiate(mActivity, mClass.getName());
                 ft.add(android.R.id.content, mFragment, mTag);
             } else {
-                // If it exists, simply attach it in order to show it
+                // If it exists, simply attach it in order to showDetails it
                 ft.attach(mFragment);
             }
         }

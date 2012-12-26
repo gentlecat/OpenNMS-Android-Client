@@ -1,6 +1,7 @@
 package org.opennms.gsoc.outages;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.Outage;
@@ -15,10 +16,9 @@ public class OutageViewerActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.outage_details);
 
-        OutageDetailsFragment viewer = (OutageDetailsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.outage_details_fragment);
-        Outage content = (Outage) getIntent().getSerializableExtra("outage");
-        viewer.show(content);
+        TextView info = (TextView) findViewById(R.id.outage_info);
+        Outage node = (Outage) getIntent().getSerializableExtra("outage");
+        info.setText(node.toString());
     }
 
     @Override

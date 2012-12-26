@@ -65,9 +65,14 @@ public class Node implements Serializable, Comparable<Node> {
 
     @Override
     public String toString() {
-        return "Node [id=" + this.id + ", type=" + this.type + ", label=" + this.label
-                + ", createTime=" + this.createTime + ", labelSource=" + this.labelSource
-                + ", sysContact=" + this.sysContact + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Node ID: " + id + "\n");
+        builder.append("Label: " + label + "\n");
+        builder.append("Type: " + type + "\n");
+        builder.append("Creation time: " + createTime + "\n");
+        builder.append("Sys. contact: " + sysContact + "\n");
+        builder.append("Label source: " + labelSource + "\n");
+        return builder.toString();
     }
 
 }

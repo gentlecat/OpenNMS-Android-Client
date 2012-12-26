@@ -1,6 +1,7 @@
 package org.opennms.gsoc.nodes;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import org.opennms.gsoc.R;
 import org.opennms.gsoc.model.Node;
@@ -15,10 +16,9 @@ public class NodeViewerActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.node_details);
 
-        NodeDetailsFragment viewer = (NodeDetailsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.node_details_fragment);
-        Node content = (Node) getIntent().getSerializableExtra("node");
-        viewer.show(content);
+        TextView info = (TextView) findViewById(R.id.node_info);
+        Node node = (Node) getIntent().getSerializableExtra("node");
+        info.setText(node.toString());
     }
 
     @Override

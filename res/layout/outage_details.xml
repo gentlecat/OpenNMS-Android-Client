@@ -4,21 +4,10 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/outage_info"
-        android:visibility="gone"
-        android:padding="@dimen/layout_padding">
-
-    </TextView>
-
-    <TextView
-        android:id="@+id/outages_info_noneselected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:text="@string/outages_info_noneselected"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:id="@+id/outages_info"
+        android:padding="@dimen/layout_padding"/>
 
 </RelativeLayout>

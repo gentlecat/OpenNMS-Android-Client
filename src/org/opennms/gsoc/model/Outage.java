@@ -40,9 +40,13 @@ public class Outage implements Serializable, Comparable<Outage> {
 
 	@Override
 	public String toString() {
-		return "Outage [id=" + this.id + ", ipAddress=" + this.ipAddress
-				+ ", ifLostService=" + this.ifLostService + ", ifRegainedService="
-				+ this.ifRegainedService + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Outage ID: " + id + "\n");
+        builder.append("IP address: " + ipAddress + "\n");
+        builder.append("If lost service: " + ifLostService + "\n");
+        builder.append("If regained service: " + ifRegainedService + "\n");
+        builder.append("Service type name: " + serviceTypeName + "\n");
+        return builder.toString();
 	}
 
 	@Override
