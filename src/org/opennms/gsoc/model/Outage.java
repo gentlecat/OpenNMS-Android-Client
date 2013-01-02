@@ -2,44 +2,44 @@ package org.opennms.gsoc.model;
 
 import java.io.Serializable;
 
-public class Outage implements Serializable, Comparable<Outage> {
+public class Outage implements Serializable {
 
-	private Integer id;
-	private String ipAddress;
-	private String ifLostService;
-	private String ifRegainedService;
-	private String serviceTypeName;
+    private Integer id;
+    private String ipAddress;
+    private String ifLostService;
+    private String ifRegainedService;
+    private String serviceTypeName;
 
-	public Outage(Integer id, String ipAddress, String ifLostService, String ifRegainedService, String serviceTypeName) {
-		this.id = id;
-		this.ipAddress = ipAddress;
-		this.ifLostService = ifLostService;
-		this.ifRegainedService = ifRegainedService;
-		this.serviceTypeName = serviceTypeName;
-	}
+    public Outage(Integer id, String ipAddress, String ifLostService, String ifRegainedService, String serviceTypeName) {
+        this.id = id;
+        this.ipAddress = ipAddress;
+        this.ifLostService = ifLostService;
+        this.ifRegainedService = ifRegainedService;
+        this.serviceTypeName = serviceTypeName;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getIpAddress() {
-		return this.ipAddress;
-	}
+    public String getIpAddress() {
+        return ipAddress;
+    }
 
-	public String getIfLostService() {
-		return this.ifLostService;
-	}
+    public String getIfLostService() {
+        return ifLostService;
+    }
 
-	public String getIfRegainedService() {
-		return this.ifRegainedService;
-	}
+    public String getIfRegainedService() {
+        return ifRegainedService;
+    }
 
-	public String getServiceTypeName() {
-		return this.serviceTypeName;
-	}
+    public String getServiceTypeName() {
+        return serviceTypeName;
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Outage ID: " + id + "\n");
         builder.append("IP address: " + ipAddress + "\n");
@@ -47,17 +47,6 @@ public class Outage implements Serializable, Comparable<Outage> {
         builder.append("If regained service: " + ifRegainedService + "\n");
         builder.append("Service type name: " + serviceTypeName + "\n");
         return builder.toString();
-	}
-
-	@Override
-	public int compareTo(Outage o) {
-		Integer compareId = 0;
-
-		if (o != null) {
-			compareId = o.getId();
-		}
-
-		return this.getId().compareTo(compareId);
-	}
+    }
 
 }

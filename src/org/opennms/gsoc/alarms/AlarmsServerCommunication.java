@@ -11,4 +11,5 @@ public interface AlarmsServerCommunication {
     List<Alarm> getAlarms(String url)
             throws InterruptedException, ExecutionException, IOException;
 
+
 }

@@ -10,15 +10,15 @@
         android:layout_height="fill_parent"/>
 
     <FrameLayout
-        android:id="@+id/outage_details_layout"
+        android:id="@+id/details_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/outages_info_noneselected"
-            android:id="@+id/outage_info"
+            android:text="@string/nodes_info_noneselected"
+            android:id="@+id/main_info"
             android:padding="@dimen/layout_padding"/>
 
     </FrameLayout>

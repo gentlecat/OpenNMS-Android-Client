@@ -1,9 +1,8 @@
 package org.opennms.gsoc.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
-public class Node implements Serializable, Comparable<Node> {
+public class Node implements Serializable {
 
     private Integer id;
     private String type;
@@ -22,45 +21,27 @@ public class Node implements Serializable, Comparable<Node> {
     }
 
     public Integer getId() {
-        return this.id;
+        return id;
     }
 
     public String getCreateTime() {
-        return this.createTime;
+        return createTime;
     }
 
     public String getType() {
-        return this.type;
+        return type;
     }
 
     public String getSysContact() {
-        return this.sysContact;
+        return sysContact;
     }
 
     public String getLabel() {
-        return this.label;
+        return label;
     }
 
     public String getLabelSource() {
-        return this.labelSource;
-    }
-
-    @Override
-    public int compareTo(Node o) {
-        String compareLabel = "";
-        Integer compareId = 0;
-
-        if (o != null) {
-            compareLabel = o.getLabel();
-            compareId = o.getId();
-        }
-
-        int returnval = this.getLabel().compareToIgnoreCase(compareLabel);
-        if (returnval == 0) {
-            return this.getId().compareTo(compareId);
-        } else {
-            return returnval;
-        }
+        return labelSource;
     }
 
     @Override

@@ -2,8 +2,8 @@ package org.opennms.gsoc.alarms;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
-import org.opennms.gsoc.util.RestingServerCommunication;
 import org.opennms.gsoc.model.Alarm;
+import org.opennms.gsoc.util.RestingServerCommunication;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -20,10 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".nodes.NodeViewerActivity"></activity>
-        <activity android:name=".settings.SettingsActivity"></activity>
-        <activity android:name=".outages.OutageViewerActivity"></activity>
-        <activity android:name=".alarms.AlarmViewerActivity"></activity>
+        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".DetailsViewerActivity"></activity>
 
         <service android:name=".MainService"></service>
 

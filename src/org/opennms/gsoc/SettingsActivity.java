@@ -1,4 +1,4 @@
-package org.opennms.gsoc.settings;
+package org.opennms.gsoc;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
