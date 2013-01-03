@@ -83,7 +83,7 @@ public class MainActivity extends SherlockFragmentActivity
         serviceIntent = new Intent(getApplicationContext(), MainService.class);
         list = (ListView) findViewById(android.R.id.list);
         detailsContainer = (FrameLayout) findViewById(R.id.details_fragment_container);
-        //isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+        isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -326,10 +326,8 @@ public class MainActivity extends SherlockFragmentActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_refresh_nodes:
-                if (bound) {
-                    service.refreshNodes();
-                }
+            case R.id.menu_refresh:
+                refreshList();
                 return true;
             case R.id.menu_settings:
                 Intent settingsIntent = new Intent(getApplicationContext(),
@@ -341,6 +339,18 @@ public class MainActivity extends SherlockFragmentActivity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refreshList() {
+        if (bound) {
+            if (activeTab.getText().equals(getString(R.string.nodes))) {
+                service.refreshNodes();
+            } else if (activeTab.getText().equals(getString(R.string.outages))) {
+                service.refreshOutages();
+            } else if (activeTab.getText().equals(getString(R.string.alarms))) {
+                service.refreshAlarms();
+            }
         }
     }
 
