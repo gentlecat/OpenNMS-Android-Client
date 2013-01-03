@@ -6,7 +6,12 @@
 
     <ListView
         android:id="@android:id/list"
-        android:layout_width="fill_parent"
+        android:layout_width="@dimen/list_width"
         android:layout_height="fill_parent"/>
+
+    <FrameLayout
+        android:id="@+id/details_fragment_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 
 </LinearLayout>
