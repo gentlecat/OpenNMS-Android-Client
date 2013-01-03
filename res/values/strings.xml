@@ -5,11 +5,14 @@
 
     <string name="nodes">Nodes</string>
     <string name="nodes_info_noneselected">Please, select a node to view more info.</string>
+    <string name="node_details">Details about node #</string>
 
     <string name="outages">Outages</string>
+    <string name="outage_details">Details about outage #</string>
     <string name="outages_info_noneselected">Please, select an outage to view more info.</string>
 
     <string name="alarms">Alarms</string>
+    <string name="alarm_details">Details about alarm #</string>
     <string name="alarms_info_noneselected">Please, select an alarm to view more info.</string>
     <string name="alarms_info_id">Alarm #</string>
     <string name="alarms_info_severity_unknown">Severity unknown</string>

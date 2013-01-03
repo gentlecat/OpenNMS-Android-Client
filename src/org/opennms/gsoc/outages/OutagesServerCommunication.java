@@ -1,7 +1,5 @@
 package org.opennms.gsoc.outages;
 
-import org.opennms.gsoc.model.Outage;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

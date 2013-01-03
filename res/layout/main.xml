@@ -10,17 +10,8 @@
         android:layout_height="fill_parent"/>
 
     <FrameLayout
-        android:id="@+id/details_layout"
+        android:id="@+id/details_fragment_container"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/nodes_info_noneselected"
-            android:id="@+id/main_info"
-            android:padding="@dimen/layout_padding"/>
-
-    </FrameLayout>
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

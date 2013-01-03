@@ -1,7 +1,6 @@
 package org.opennms.gsoc.alarms;
 
 import android.util.Log;
-import org.opennms.gsoc.model.Alarm;
 import org.opennms.gsoc.util.Parser;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;

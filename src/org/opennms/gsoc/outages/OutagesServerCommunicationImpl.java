@@ -3,7 +3,6 @@ package org.opennms.gsoc.outages;
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.gsoc.util.RestingServerCommunication;
-import org.opennms.gsoc.model.Outage;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;

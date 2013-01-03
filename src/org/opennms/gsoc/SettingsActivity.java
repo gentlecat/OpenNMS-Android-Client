@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import org.opennms.gsoc.R;
 
 public class SettingsActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
@@ -21,7 +19,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         actionBar.setTitle(getResources().getString(R.string.settings));
         actionBar.setDisplayHomeAsUpEnabled(true);
         addPreferencesFromResource(R.xml.settings);
-
         prefManager = getPreferenceManager();
     }
 
@@ -48,11 +45,9 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
     @Override
     protected void onPause() {
         super.onPause();
-
         // Unregister the listener whenever a key changes
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

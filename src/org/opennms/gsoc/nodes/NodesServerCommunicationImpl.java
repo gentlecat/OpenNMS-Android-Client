@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 
 import android.content.Context;
 import org.opennms.gsoc.util.RestingServerCommunication;
-import org.opennms.gsoc.model.Node;
 
 import com.google.resting.component.impl.ServiceResponse;
 

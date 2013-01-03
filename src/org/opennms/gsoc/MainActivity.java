@@ -17,32 +17,42 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.SearchView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import org.opennms.gsoc.alarms.Alarm;
+import org.opennms.gsoc.alarms.AlarmDetailsFragment;
 import org.opennms.gsoc.alarms.dao.AlarmsListProvider;
 import org.opennms.gsoc.dao.DatabaseHelper;
-import org.opennms.gsoc.model.Alarm;
-import org.opennms.gsoc.model.Node;
-import org.opennms.gsoc.model.Outage;
+import org.opennms.gsoc.nodes.Node;
+import org.opennms.gsoc.nodes.NodeDetailsFragment;
 import org.opennms.gsoc.nodes.dao.NodesListProvider;
+import org.opennms.gsoc.outages.Outage;
+import org.opennms.gsoc.outages.OutageDetailsFragment;
 import org.opennms.gsoc.outages.dao.OutagesListProvider;
 
 public class MainActivity extends SherlockFragmentActivity
         implements ActionBar.TabListener, SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String ALARM = "alarm";
+    public static final String OUTAGE = "outage";
+    public static final String NODE = "node";
     public Intent serviceIntent;
-    MainService service;
-    boolean bound = false;
-    ListView list;
-    Tab activeTab;
+    FrameLayout detailsContainer;
+    private MainService service;
+    private boolean bound = false;
+    private ListView list;
+    private Tab activeTab;
     private boolean isDualPane = false;
     private String currentFilter;
     private SimpleCursorAdapter adapter;
-    private FrameLayout detailsLayout;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -71,10 +81,9 @@ public class MainActivity extends SherlockFragmentActivity
         }
 
         serviceIntent = new Intent(getApplicationContext(), MainService.class);
-
         list = (ListView) findViewById(android.R.id.list);
-        detailsLayout = (FrameLayout) findViewById(R.id.details_layout);
-        isDualPane = detailsLayout != null && detailsLayout.getVisibility() == View.VISIBLE;
+        detailsContainer = (FrameLayout) findViewById(R.id.details_fragment_container);
+        //isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -98,94 +107,45 @@ public class MainActivity extends SherlockFragmentActivity
     }
 
     private void displayDetails(long listItemId) {
-        if (activeTab.getText().equals(getString(R.string.nodes))) {
-            String projection[] = {
-                    DatabaseHelper.COL_NODE_ID,
-                    DatabaseHelper.COL_TYPE,
-                    DatabaseHelper.COL_LABEL,
-                    DatabaseHelper.COL_CREATED_TIME,
-                    DatabaseHelper.COL_SYS_CONTACT,
-                    DatabaseHelper.COL_LABEL_SOURCE
-            };
-            Cursor nodesCursor = getContentResolver().query(
-                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, String.valueOf(listItemId)),
-                    projection, null, null, null);
-            if (nodesCursor.moveToFirst()) {
-                Integer nodeId = nodesCursor.getInt(0);
-                String nodeType = nodesCursor.getString(1);
-                String nodeLabel = nodesCursor.getString(2);
-                String nodeCreatedTime = nodesCursor.getString(3);
-                String nodeSysContact = nodesCursor.getString(4);
-                String nodeLabelSource = nodesCursor.getString(5);
-                Node node = new Node(nodeId, nodeLabel, nodeType, nodeCreatedTime, nodeSysContact, nodeLabelSource);
-
-                if (isDualPane) {
-                    showDetails(node.toString());
-                } else {
-                    Intent showContent = new Intent(getApplicationContext(), DetailsViewerActivity.class);
-                    //showContent.putExtra("node", node);
-                    showContent.putExtra("details", node.toString());
-                    startActivity(showContent);
-                }
+        if (isDualPane) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            FrameLayout detailsContainer = (FrameLayout) findViewById(R.id.details_fragment_container);
+            detailsContainer.removeAllViews();
+            SherlockFragment fragment = null;
+            if (activeTab.getText().equals(getString(R.string.nodes))) {
+                Node node = new Node(getContentResolver(), listItemId);
+                NodeDetailsFragment newFragment = new NodeDetailsFragment();
+                newFragment.bindNode(node);
+                fragment = newFragment;
+            } else if (activeTab.getText().equals(getString(R.string.outages))) {
+                Outage outage = new Outage(getContentResolver(), listItemId);
+                OutageDetailsFragment newFragment = new OutageDetailsFragment();
+                newFragment.bindOutage(outage);
+                fragment = newFragment;
+            } else if (activeTab.getText().equals(getString(R.string.alarms))) {
+                Alarm alarm = new Alarm(getContentResolver(), listItemId);
+                AlarmDetailsFragment newFragment = new AlarmDetailsFragment();
+                newFragment.bindAlarm(alarm);
+                fragment = newFragment;
             }
-            nodesCursor.close();
-        } else if (activeTab.getText().equals(getString(R.string.outages))) {
-            String projection[] = {
-                    DatabaseHelper.COL_OUTAGE_ID,
-                    DatabaseHelper.COL_IP_ADDRESS,
-                    DatabaseHelper.COL_IF_REGAINED_SERVICE,
-                    DatabaseHelper.COL_SERVICE_TYPE_NAME,
-                    DatabaseHelper.COL_IF_LOST_SERVICE
-            };
-            Cursor outagesCursor = getContentResolver().query(
-                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(listItemId)),
-                    projection, null, null, null);
-            if (outagesCursor.moveToFirst()) {
-                Integer outageId = outagesCursor.getInt(0);
-                String outageIpAddress = outagesCursor.getString(1);
-                String outageIfRegainedService = outagesCursor.getString(2);
-                String outageServiceTypeName = outagesCursor.getString(3);
-                String outageIfLostService = outagesCursor.getString(4);
-                Outage outage = new Outage(outageId, outageIpAddress, outageIfLostService, outageIfRegainedService, outageServiceTypeName);
-
-                if (isDualPane) {
-                    showDetails(outage.toString());
-                } else {
-                    Intent showContent = new Intent(getApplicationContext(), DetailsViewerActivity.class);
-                    //showContent.putExtra("outage", outage);
-                    showContent.putExtra("details", outage.toString());
-                    startActivity(showContent);
-                }
+            fragmentTransaction.add(R.id.details_fragment_container, fragment);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getApplicationContext(), DetailsViewerActivity.class);
+            if (activeTab.getText().equals(getString(R.string.nodes))) {
+                Node node = new Node(getContentResolver(), listItemId);
+                detailsIntent.putExtra("type", NODE);
+                detailsIntent.putExtra(NODE, node);
+            } else if (activeTab.getText().equals(getString(R.string.outages))) {
+                Outage outage = new Outage(getContentResolver(), listItemId);
+                detailsIntent.putExtra("type", OUTAGE);
+                detailsIntent.putExtra(OUTAGE, outage);
+            } else if (activeTab.getText().equals(getString(R.string.alarms))) {
+                Alarm alarm = new Alarm(getContentResolver(), listItemId);
+                detailsIntent.putExtra("type", ALARM);
+                detailsIntent.putExtra(ALARM, alarm);
             }
-            outagesCursor.close();
-        } else if (activeTab.getText().equals(getString(R.string.alarms))) {
-            String projection[] = {
-                    DatabaseHelper.COL_ALARM_ID,
-                    DatabaseHelper.COL_SEVERITY,
-                    DatabaseHelper.COL_DESCRIPTION,
-                    DatabaseHelper.COL_LOG_MESSAGE
-            };
-            Cursor alarmsCursor = getContentResolver().query(
-                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, String.valueOf(listItemId)),
-                    projection,
-                    null, null, null);
-            if (alarmsCursor.moveToFirst()) {
-                Integer alarmId = alarmsCursor.getInt(0);
-                String alarmSeverity = alarmsCursor.getString(1);
-                String alarmDescription = alarmsCursor.getString(2);
-                String alarmLogMessage = alarmsCursor.getString(3);
-                Alarm alarm = new Alarm(alarmId, alarmSeverity, alarmDescription, alarmLogMessage);
-
-                if (isDualPane) {
-                    showDetails(alarm.toString());
-                } else {
-                    Intent showContent = new Intent(getApplicationContext(), DetailsViewerActivity.class);
-                    //showContent.putExtra("alarm", alarm);
-                    showContent.putExtra("details", alarm.toString());
-                    startActivity(showContent);
-                }
-            }
-            alarmsCursor.close();
+            startActivity(detailsIntent);
         }
     }
 
@@ -220,21 +180,21 @@ public class MainActivity extends SherlockFragmentActivity
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         activeTab = tab;
         if (activeTab.getText().equals(getString(R.string.nodes))) {
-            adapter = new SimpleCursorAdapter(getApplicationContext(),
+            adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
                     new String[]{DatabaseHelper.COL_NODE_ID, DatabaseHelper.COL_LABEL},
                     new int[]{android.R.id.text1, android.R.id.text2},
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         } else if (activeTab.getText().equals(getString(R.string.outages))) {
-            adapter = new SimpleCursorAdapter(getApplicationContext(),
+            adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
                     new String[]{DatabaseHelper.COL_OUTAGE_ID, DatabaseHelper.COL_IP_ADDRESS},
                     new int[]{android.R.id.text1, android.R.id.text2},
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         } else if (activeTab.getText().equals(getString(R.string.alarms))) {
-            adapter = new SimpleCursorAdapter(getApplicationContext(),
+            adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
                     new String[]{DatabaseHelper.COL_ALARM_ID, DatabaseHelper.COL_SEVERITY},
@@ -377,21 +337,24 @@ public class MainActivity extends SherlockFragmentActivity
                 startActivity(settingsIntent);
                 return true;
             case R.id.menu_about:
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.about));
-                AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(layout).setNeutralButton(
-                        "Close",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog aboutDialog = builder.create();
-                aboutDialog.show();
+                showAboutDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showAboutDialog() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.about));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(layout).setNeutralButton(
+                "Close",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        builder.create().show();
     }
 
     private void showWelcomeDialog() {
@@ -414,11 +377,6 @@ public class MainActivity extends SherlockFragmentActivity
                         });
         AlertDialog aboutDialog = builder.create();
         aboutDialog.show();
-    }
-
-    public void showDetails(String details) {
-        TextView detailsView = (TextView) detailsLayout.findViewById(R.id.main_info);
-        detailsView.setText(details);
     }
 
 }

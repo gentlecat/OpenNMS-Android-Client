@@ -1,4 +1,10 @@
-package org.opennms.gsoc.model;
+package org.opennms.gsoc.outages;
+
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
+import org.opennms.gsoc.dao.DatabaseHelper;
+import org.opennms.gsoc.outages.dao.OutagesListProvider;
 
 import java.io.Serializable;
 
@@ -16,6 +22,27 @@ public class Outage implements Serializable {
         this.ifLostService = ifLostService;
         this.ifRegainedService = ifRegainedService;
         this.serviceTypeName = serviceTypeName;
+    }
+
+    public Outage(ContentResolver contentResolver, long listItemId) {
+        String projection[] = {
+                DatabaseHelper.COL_OUTAGE_ID,
+                DatabaseHelper.COL_IP_ADDRESS,
+                DatabaseHelper.COL_IF_REGAINED_SERVICE,
+                DatabaseHelper.COL_SERVICE_TYPE_NAME,
+                DatabaseHelper.COL_IF_LOST_SERVICE
+        };
+        Cursor outagesCursor = contentResolver.query(
+                Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(listItemId)),
+                projection, null, null, null);
+        if (outagesCursor.moveToFirst()) {
+            id = outagesCursor.getInt(0);
+            ipAddress = outagesCursor.getString(1);
+            ifRegainedService = outagesCursor.getString(2);
+            serviceTypeName = outagesCursor.getString(3);
+            ifLostService = outagesCursor.getString(4);
+        }
+        outagesCursor.close();
     }
 
     public Integer getId() {
