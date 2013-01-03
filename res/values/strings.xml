@@ -3,6 +3,8 @@
 
     <string name="app_name">OpenNMS</string>
 
+    <string name="refresh">Refresh</string>
+
     <string name="nodes">Nodes</string>
     <string name="nodes_info_noneselected">Please, select a node to view more info.</string>
     <string name="node_details">Details about node #</string>
@@ -38,9 +40,10 @@
     <string name="welcome_message_pos_button">Change settings</string>
     <string name="welcome_message_neg_button">Use test server</string>
 
+    <string name="about">About</string>
     <string name="about_info">
-        OpenNMS(R) is a registered trademark of The OpenNMS Group, Inc. Copyright (&#169;) 2009 The OpenNMS Group, Inc.
-        All rights reserved.
+        OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
+        OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
     </string>
 
 </resources>
