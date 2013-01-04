@@ -14,12 +14,14 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
-import com.actionbarsherlock.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -27,6 +29,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.alarms.Alarm;
 import org.opennms.android.alarms.AlarmDetailsFragment;
 import org.opennms.android.alarms.dao.AlarmsListProvider;
@@ -39,9 +42,7 @@ import org.opennms.android.outages.OutageDetailsFragment;
 import org.opennms.android.outages.dao.OutagesListProvider;
 
 public class MainActivity extends SherlockFragmentActivity
-        implements ActionBar.TabListener,
-        SearchView.OnQueryTextListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        implements ActionBar.TabListener, SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String ALARM = "alarm";
     public static final String OUTAGE = "outage";
@@ -55,6 +56,7 @@ public class MainActivity extends SherlockFragmentActivity
     private boolean isDualPane = false;
     private String currentFilter;
     private SimpleCursorAdapter adapter;
+    private MenuItem refreshItem;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -215,24 +217,24 @@ public class MainActivity extends SherlockFragmentActivity
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
     }
 
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-            if (this.currentFilter == null && newFilter == null) {
-                return true;
-            }
-            if (this.currentFilter != null && this.currentFilter.equals(newFilter)) {
-                return true;
-            }
-            this.currentFilter = newFilter;
-            getSupportLoaderManager().restartLoader(0, null, this);
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+        if (this.currentFilter == null && newFilter == null) {
             return true;
         }
+        if (this.currentFilter != null && this.currentFilter.equals(newFilter)) {
+            return true;
+        }
+        this.currentFilter = newFilter;
+        getSupportLoaderManager().restartLoader(0, null, this);
+        return true;
+    }
 
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            return true;
-        }
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -298,6 +300,10 @@ public class MainActivity extends SherlockFragmentActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (refreshItem != null && refreshItem.getActionView() != null) {
+            refreshItem.getActionView().clearAnimation();
+            refreshItem.setActionView(null);
+        }
         adapter.swapCursor(cursor);
         if (cursor.getColumnCount() > 0) {
             if (isDualPane) {
@@ -329,6 +335,7 @@ public class MainActivity extends SherlockFragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
+                refreshItem = item;
                 refreshList();
                 return true;
             case R.id.menu_settings:
@@ -346,6 +353,12 @@ public class MainActivity extends SherlockFragmentActivity
 
     private void refreshList() {
         if (bound) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
+            Animation rotation = AnimationUtils.loadAnimation(this, R.anim.refresh);
+            rotation.setRepeatCount(Animation.INFINITE);
+            iv.startAnimation(rotation);
+            refreshItem.setActionView(iv);
             if (activeTab.getText().equals(getString(R.string.nodes))) {
                 service.refreshNodes();
             } else if (activeTab.getText().equals(getString(R.string.outages))) {
