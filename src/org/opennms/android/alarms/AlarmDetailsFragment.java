@@ -34,7 +34,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
         if (alarm != null) {
             // Alarm ID
             TextView id = (TextView) getActivity().findViewById(R.id.alarm_id);
-            id.setText(getResources().getString(R.string.alarms_info_id) + alarm.getId());
+            id.setText(getString(R.string.alarms_details_id) + alarm.getId());
 
             // Severity
             TextView severity = (TextView) getActivity().findViewById(R.id.alarm_severity);

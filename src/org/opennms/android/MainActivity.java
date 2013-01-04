@@ -333,6 +333,7 @@ public class MainActivity extends SherlockFragmentActivity
         getSupportMenuInflater().inflate(R.menu.main, menu);
         MenuItem item = menu.add("Search");
         item.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
+        item.setTitle(getString(R.string.search));
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         SearchView sv = new SearchView(this);
         sv.setOnQueryTextListener(this);

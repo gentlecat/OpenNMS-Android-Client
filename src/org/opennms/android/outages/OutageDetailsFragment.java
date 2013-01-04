@@ -29,8 +29,22 @@ public class OutageDetailsFragment extends SherlockFragment {
     }
 
     public void updateContent() {
-        TextView details = (TextView) getSherlockActivity().findViewById(R.id.outage_details_text);
-        if (details != null && outage != null) details.setText(outage.toString());
+        if (outage != null) {
+            TextView id = (TextView) getActivity().findViewById(R.id.outage_id);
+            id.setText(getString(R.string.outage_details_id) + outage.getId());
+
+            TextView ip = (TextView) getActivity().findViewById(R.id.outage_ip);
+            ip.setText(getString(R.string.outage_details_ip) + " " + outage.getIpAddress());
+
+            TextView ifLostService = (TextView) getActivity().findViewById(R.id.outage_if_lost_service);
+            ifLostService.setText(getString(R.string.outage_details_lost) + " " + outage.getIfLostService());
+
+            TextView ifRegainedService = (TextView) getActivity().findViewById(R.id.outage_if_regained_service);
+            ifRegainedService.setText(getString(R.string.outage_details_regained) + " " + outage.getIfRegainedService());
+
+            TextView type = (TextView) getActivity().findViewById(R.id.outage_service_type);
+            type.setText(getString(R.string.outage_details_type) + " " + outage.getServiceTypeName());
+        }
     }
 
 }
