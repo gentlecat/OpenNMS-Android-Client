@@ -187,21 +187,30 @@ public class MainActivity extends SherlockFragmentActivity
             adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
-                    new String[]{DatabaseHelper.COL_NODE_ID, DatabaseHelper.COL_LABEL},
+                    new String[]{
+                            DatabaseHelper.COL_NODE_ID,
+                            DatabaseHelper.COL_LABEL
+                    },
                     new int[]{android.R.id.text1, android.R.id.text2},
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         } else if (activeTab.getText().equals(getString(R.string.outages))) {
             adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
-                    new String[]{DatabaseHelper.COL_OUTAGE_ID, DatabaseHelper.COL_IP_ADDRESS},
+                    new String[]{
+                            DatabaseHelper.COL_IP_ADDRESS,
+                            DatabaseHelper.COL_SERVICE_TYPE_NAME
+                    },
                     new int[]{android.R.id.text1, android.R.id.text2},
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         } else if (activeTab.getText().equals(getString(R.string.alarms))) {
             adapter = new SimpleCursorAdapter(this,
                     android.R.layout.simple_list_item_2,
                     null,
-                    new String[]{DatabaseHelper.COL_ALARM_ID, DatabaseHelper.COL_SEVERITY},
+                    new String[]{
+                            DatabaseHelper.COL_ALARM_ID,
+                            DatabaseHelper.COL_SEVERITY
+                    },
                     new int[]{android.R.id.text1, android.R.id.text2},
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         }
