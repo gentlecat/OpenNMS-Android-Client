@@ -1,5 +1,9 @@
-#OpenNMS Android Client
-The application is a proof of concept for [OpenNMS](http://www.opennms.org/) Android client project proposed to Google Summer of Code 2012.
+# OpenNMS Android App
 
-##About fork
-Original project has been forked to make some improvements. You can track progress [on this Trello board](https://trello.com/b/AOeHOtwt).
+This app allows you to track your network remotely from Android device.
+
+## About this fork
+Original project has been forked to make some improvements.
+You can track progress [on this Trello board](https://trello.com/b/AOeHOtwt).
+
+![](http://i.imgur.com/oMhHr.png)
