@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="severity_cleared">#FFF</color>
+    <color name="severity_normal">#999</color>
+    <color name="severity_indeterminate">#360</color>
+    <color name="severity_warning">#FC0</color>
+    <color name="severity_minor">#F90</color>
+    <color name="severity_major">#F30</color>
+    <color name="severity_critical">#C00</color>
+</resources>

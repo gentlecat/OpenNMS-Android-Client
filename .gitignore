@@ -19,6 +19,7 @@ local.properties
 .classpath
 .project
 .settings
+project.properties
 
 #IntelliJ IDEA files
 .idea

@@ -48,7 +48,7 @@ public class MainActivity extends SherlockFragmentActivity
     public static final String OUTAGE = "outage";
     public static final String NODE = "node";
     public Intent serviceIntent;
-    FrameLayout detailsContainer;
+    private FrameLayout detailsContainer;
     private MainService service;
     private boolean bound = false;
     private ListView list;
