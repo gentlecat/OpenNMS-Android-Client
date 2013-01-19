@@ -6,6 +6,11 @@
     <string name="nodes">Nodes</string>
     <string name="node_details">Details about node #</string>
     <string name="node_details_id">Node #</string>
+    <string name="node_details_contact">System contact:</string>
+    <string name="node_details_creation_time">Creation time:</string>
+    <string name="node_details_label">Label:</string>
+    <string name="node_details_label_source">Label source:</string>
+    <string name="node_details_type">Type:</string>
 
     <string name="outages">Outages</string>
     <string name="outage_details">Details about outage #</string>

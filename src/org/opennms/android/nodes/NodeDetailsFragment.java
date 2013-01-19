@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
+import org.opennms.android.outages.Outage;
 
 public class NodeDetailsFragment extends SherlockFragment {
 
@@ -29,8 +30,25 @@ public class NodeDetailsFragment extends SherlockFragment {
     }
 
     public void updateContent() {
-        TextView details = (TextView) getSherlockActivity().findViewById(R.id.node_details_text);
-        if (details != null && node != null) details.setText(node.toString());
+        if (node != null) {
+            TextView id = (TextView) getActivity().findViewById(R.id.node_id);
+            id.setText(getString(R.string.node_details_id) + node.getId());
+
+            TextView sysContact = (TextView) getActivity().findViewById(R.id.node_contact);
+            sysContact.setText(getString(R.string.node_details_contact) + " " + node.getSysContact());
+
+            TextView creationTime = (TextView) getActivity().findViewById(R.id.node_creation_time);
+            creationTime.setText(getString(R.string.node_details_creation_time) + " " + node.getCreateTime());
+
+            TextView label = (TextView) getActivity().findViewById(R.id.node_label);
+            label.setText(getString(R.string.node_details_label) + " " + node.getLabel());
+
+            TextView labelSource = (TextView) getActivity().findViewById(R.id.node_label_source);
+            labelSource.setText(getString(R.string.node_details_label_source) + " " + node.getLabelSource());
+
+            TextView type = (TextView) getActivity().findViewById(R.id.node_type);
+            type.setText(getString(R.string.node_details_type) + " " + node.getType());
+        }
     }
 
 }
