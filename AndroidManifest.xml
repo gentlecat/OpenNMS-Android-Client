@@ -23,7 +23,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".DetailsViewerActivity"></activity>
+        <activity android:name=".nodes.NodeDetailsActivity"></activity>
+        <activity android:name=".outages.OutageDetailsActivity"></activity>
+        <activity android:name=".alarms.AlarmDetailsActivity"></activity>
 
         <service android:name=".MainService"></service>
 

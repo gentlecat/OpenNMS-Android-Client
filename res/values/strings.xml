@@ -48,4 +48,6 @@
         OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
     </string>
 
+    <string name="close_dialog">Close</string>
+
 </resources>

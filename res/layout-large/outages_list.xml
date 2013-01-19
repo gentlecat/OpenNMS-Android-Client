@@ -6,7 +6,7 @@
 
     <ListView
         android:id="@android:id/list"
-        android:layout_width="@dimen/list_width"
+        android:layout_width="@dimen/outages_list_width"
         android:layout_height="fill_parent"/>
 
     <ScrollView

@@ -14,7 +14,7 @@ public class NodeDetailsFragment extends SherlockFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.details_node, container, false);
+        return inflater.inflate(R.layout.node_details, container, false);
     }
 
     @Override

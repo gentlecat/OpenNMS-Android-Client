@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import org.opennms.android.R;
 
 public class SettingsActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
@@ -27,7 +26,6 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
     protected void onResume() {
         super.onResume();
 
-        // Setup the initial values
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
         findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
@@ -39,14 +37,12 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
             findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
         }
 
-        // Set up a listener whenever a key changes
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Unregister the listener whenever a key changes
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 

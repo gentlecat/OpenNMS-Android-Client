@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import org.opennms.android.alarms.Alarm;
 import org.opennms.android.alarms.AlarmsServerCommunication;
 import org.opennms.android.alarms.AlarmsServerCommunicationImpl;
@@ -75,7 +76,6 @@ public class MainService extends Service {
                     Log.i(TAG, e.getMessage());
                     getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
                 }
-                Log.d(TAG, "Huge success!");
             }
         }).start();
     }
