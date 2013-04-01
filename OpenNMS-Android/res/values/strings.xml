@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OpenNMS</string>
+
+    <string name="nodes">Nodes</string>
+    <string name="node_details">Details about node #</string>
+    <string name="node_details_id">Node #</string>
+    <string name="node_details_contact">System contact:</string>
+    <string name="node_details_creation_time">Creation time:</string>
+    <string name="node_details_label">Label:</string>
+    <string name="node_details_label_source">Label source:</string>
+    <string name="node_details_type">Type:</string>
+
+    <string name="outages">Outages</string>
+    <string name="outage_details">Details about outage #</string>
+    <string name="outage_details_id">Outage #</string>
+    <string name="outage_details_ip">IP address:</string>
+    <string name="outage_details_type">Service:</string>
+    <string name="outage_details_lost">If lost service:</string>
+    <string name="outage_details_regained">If regained service:</string>
+
+    <string name="alarms">Alarms</string>
+    <string name="alarm_details">Details about alarm #</string>
+    <string name="alarms_details_id">Alarm #</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_auth">Authentication</string>
+    <string name="settings_user">User</string>
+    <string name="settings_user_dialog_title">Set username</string>
+    <string name="settings_password">Password</string>
+    <string name="settings_password_dialog_title">Set password</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_host">Host</string>
+    <string name="settings_host_dialog_title">Set host</string>
+    <string name="settings_port">Port</string>
+    <string name="settings_port_dialog_title">Set port number</string>
+    <string name="settings_path">Path</string>
+    <string name="settings_path_dialog_title">Set path</string>
+    <string name="settings_https">HTTPS</string>
+    <string name="settings_https_on">Turned on</string>
+    <string name="settings_https_off">Turned off</string>
+
+    <string name="welcome_message">Do you want to use test server or change settings to use your server?</string>
+    <string name="welcome_message_pos_button">Change settings</string>
+    <string name="welcome_message_neg_button">Use test server</string>
+
+    <string name="refresh">Refresh</string>
+
+    <string name="search">Search</string>
+
+    <string name="about">About</string>
+    <string name="about_info">
+        OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
+        OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
+    </string>
+
+    <string name="close_dialog">Close</string>
+
+</resources>
