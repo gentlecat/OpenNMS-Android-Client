@@ -16,34 +16,34 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock.Light">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".nodes.NodeDetailsActivity"></activity>
-        <activity android:name=".outages.OutageDetailsActivity"></activity>
-        <activity android:name=".alarms.AlarmDetailsActivity"></activity>
+        <activity android:name=".ui.SettingsActivity"></activity>
+        <activity android:name=".ui.nodes.NodeDetailsActivity"></activity>
+        <activity android:name=".ui.outages.OutageDetailsActivity"></activity>
+        <activity android:name=".ui.alarms.AlarmDetailsActivity"></activity>
 
-        <service android:name=".MainService"></service>
+        <service android:name=".service.RefreshService"></service>
 
         <provider
-            android:name=".nodes.dao.NodesListProvider"
-            android:authorities="org.opennms.android.nodes.dao.NodesListProvider"
+            android:name=".dao.nodes.NodesListProvider"
+            android:authorities="org.opennms.android.dao.nodes.NodesListProvider"
             android:multiprocess="true">
         </provider>
 
         <provider
-            android:name=".outages.dao.OutagesListProvider"
-            android:authorities="org.opennms.android.outages.dao.OutagesListProvider"
+            android:name=".dao.outages.OutagesListProvider"
+            android:authorities="org.opennms.android.dao.outages.OutagesListProvider"
             android:multiprocess="true">
         </provider>
 
         <provider
-            android:name=".alarms.dao.AlarmsListProvider"
-            android:authorities="org.opennms.android.alarms.dao.AlarmsListProvider"
+            android:name=".dao.alarms.AlarmsListProvider"
+            android:authorities="org.opennms.android.dao.alarms.AlarmsListProvider"
             android:multiprocess="true">
         </provider>
 

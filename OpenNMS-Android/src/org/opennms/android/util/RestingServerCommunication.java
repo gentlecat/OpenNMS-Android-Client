@@ -45,4 +45,5 @@ public class RestingServerCommunication implements Callable<ServiceResponse> {
 
         return Resting.get(base + url, port, null, EncodingTypes.UTF8, headers);
     }
+
 }
