@@ -42,6 +42,12 @@
         </provider>
 
         <provider
+            android:name=".dao.events.EventsListProvider"
+            android:authorities="org.opennms.android.dao.events.EventsListProvider"
+            android:multiprocess="true">
+        </provider>
+
+        <provider
             android:name=".dao.alarms.AlarmsListProvider"
             android:authorities="org.opennms.android.dao.alarms.AlarmsListProvider"
             android:multiprocess="true">

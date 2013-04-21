@@ -29,20 +29,14 @@ public class NodesListProvider extends AppContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        NodesListProvider.sURIMatcher.addURI(NodesListProvider.AUTHORITY,
-                NodesListProvider.NODES_BASE_PATH,
-                NodesListProvider.NODES);
-        NodesListProvider.sURIMatcher.addURI(NodesListProvider.AUTHORITY,
-                NodesListProvider.NODES_BASE_PATH + "/#",
-                NodesListProvider.NODE_ID);
-        NodesListProvider.sURIMatcher.addURI(NodesListProvider.AUTHORITY,
-                NodesListProvider.NODES_BASE_PATH + "/label/*",
-                NodesListProvider.NODE_LABEL);
+        sURIMatcher.addURI(AUTHORITY, NODES_BASE_PATH, NODES);
+        sURIMatcher.addURI(AUTHORITY, NODES_BASE_PATH + "/#", NODE_ID);
+        sURIMatcher.addURI(AUTHORITY, NODES_BASE_PATH + "/label/*", NODE_LABEL);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int uriType = NodesListProvider.sURIMatcher.match(uri);
+        int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = this.db.getWritableDatabase();
         int rowsAffected = 0;
         switch (uriType) {
@@ -70,12 +64,12 @@ public class NodesListProvider extends AppContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        int uriType = NodesListProvider.sURIMatcher.match(uri);
+        int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case NODES:
-                return NodesListProvider.CONTENT_TYPE;
+                return CONTENT_TYPE;
             case NODE_ID:
-                return NodesListProvider.CONTENT_ITEM_TYPE;
+                return CONTENT_ITEM_TYPE;
             default:
                 return null;
         }
@@ -83,8 +77,8 @@ public class NodesListProvider extends AppContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        int uriType = NodesListProvider.sURIMatcher.match(uri);
-        if (uriType != NodesListProvider.NODES) {
+        int uriType = sURIMatcher.match(uri);
+        if (uriType != NODES) {
             throw new IllegalArgumentException("Invalid URI for insert");
         }
         SQLiteDatabase sqlDB = this.db.getWritableDatabase();
@@ -104,9 +98,8 @@ public class NodesListProvider extends AppContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
-        int uriType = NodesListProvider.sURIMatcher.match(uri);
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = this.db.getWritableDatabase();
 
         int rowsAffected = 0;
@@ -135,7 +128,7 @@ public class NodesListProvider extends AppContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(DatabaseHelper.Tables.NODES);
 
-        int uriType = NodesListProvider.sURIMatcher.match(uri);
+        int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case NODE_ID:
                 queryBuilder.appendWhere(Columns.NodeColumns.TABLE_NODES_ID + "=" + uri.getLastPathSegment());

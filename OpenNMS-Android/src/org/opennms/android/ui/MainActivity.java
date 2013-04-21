@@ -17,8 +17,8 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import org.opennms.android.service.RefreshService;
 import org.opennms.android.R;
+import org.opennms.android.service.RefreshService;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
@@ -48,10 +48,10 @@ public class MainActivity extends SherlockFragmentActivity {
                 new TabListener<NodesListFragment>(this, "nodes", NodesListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.outages).setTabListener(
                 new TabListener<OutagesListFragment>(this, "outages", OutagesListFragment.class)));
-        actionBar.addTab(actionBar.newTab().setText(R.string.alarms).setTabListener(
-                new TabListener<AlarmsListFragment>(this, "alarms", AlarmsListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.events).setTabListener(
                 new TabListener<EventsListFragment>(this, "events", EventsListFragment.class)));
+        actionBar.addTab(actionBar.newTab().setText(R.string.alarms).setTabListener(
+                new TabListener<AlarmsListFragment>(this, "alarms", AlarmsListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.notifications).setTabListener(
                 new TabListener<NotificationsListFragment>(this, "notifications", NotificationsListFragment.class)));
 

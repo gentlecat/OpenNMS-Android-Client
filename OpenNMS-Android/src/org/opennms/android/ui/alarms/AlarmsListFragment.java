@@ -29,16 +29,16 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.service.RefreshService;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
-import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
 
 public class AlarmsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LOADER_ID = 3;
+    private static final int LOADER_ID = 4;
     RefreshService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;

@@ -29,20 +29,89 @@ public class AlarmsListProvider extends AppContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
-        AlarmsListProvider.sURIMatcher.addURI(AlarmsListProvider.AUTHORITY,
-                AlarmsListProvider.ALARMS_BASE_PATH,
-                AlarmsListProvider.ALARMS);
-        AlarmsListProvider.sURIMatcher.addURI(AlarmsListProvider.AUTHORITY,
-                AlarmsListProvider.ALARMS_BASE_PATH + "/#",
-                AlarmsListProvider.ALARM_ID);
-        AlarmsListProvider.sURIMatcher.addURI(AlarmsListProvider.AUTHORITY,
-                AlarmsListProvider.ALARMS_BASE_PATH + "/severity/*",
-                AlarmsListProvider.ALARM_SEVERITY);
+        sURIMatcher.addURI(AUTHORITY, ALARMS_BASE_PATH, ALARMS);
+        sURIMatcher.addURI(AUTHORITY, ALARMS_BASE_PATH + "/#", ALARM_ID);
+        sURIMatcher.addURI(AUTHORITY, ALARMS_BASE_PATH + "/severity/*", ALARM_SEVERITY);
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(DatabaseHelper.Tables.ALARMS);
+
+        int uriType = sURIMatcher.match(uri);
+        switch (uriType) {
+            case ALARM_ID:
+                queryBuilder.appendWhere(Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + uri.getLastPathSegment());
+                break;
+            case ALARM_SEVERITY:
+                queryBuilder.appendWhere(Columns.AlarmColumns.COL_SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
+                break;
+            case ALARMS:
+                break;
+            default:
+                break;
+        }
+
+        Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
+                projection, selection, selectionArgs, null, null, sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        int uriType = sURIMatcher.match(uri);
+        if (uriType != ALARMS) {
+            throw new IllegalArgumentException("Invalid URI for insert");
+        }
+        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        Uri newUri = null;
+        try {
+            long newID = sqlDB
+                    .insertWithOnConflict(DatabaseHelper.Tables.ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            if (newID > 0) {
+                newUri = ContentUris.withAppendedId(uri, newID);
+                getContext().getContentResolver().notifyChange(uri, null);
+
+            }
+        } catch (SQLException e) {
+            Log.e("AlarmsListProvider", "Failed to insert row into " + uri + e.getMessage());
+        }
+        return newUri;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        int uriType = sURIMatcher.match(uri);
+        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+
+        int rowsAffected = 0;
+
+        switch (uriType) {
+            case ALARM_ID:
+                String id = uri.getLastPathSegment();
+                StringBuilder modSelection = new StringBuilder(Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + id);
+
+                if (!TextUtils.isEmpty(selection)) {
+                    modSelection.append(" AND " + selection);
+                }
+
+                rowsAffected = sqlDB.update(DatabaseHelper.Tables.ALARMS, values, modSelection.toString(), null);
+                break;
+            case ALARMS:
+                rowsAffected = sqlDB.update(DatabaseHelper.Tables.ALARMS, values, selection, selectionArgs);
+                break;
+            default:
+                break;
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return rowsAffected;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int uriType = AlarmsListProvider.sURIMatcher.match(uri);
+        int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = this.db.getWritableDatabase();
         int rowsAffected = 0;
         switch (uriType) {
@@ -70,92 +139,15 @@ public class AlarmsListProvider extends AppContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        int uriType = AlarmsListProvider.sURIMatcher.match(uri);
+        int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case ALARMS:
-                return AlarmsListProvider.CONTENT_TYPE;
+                return CONTENT_TYPE;
             case ALARM_ID:
-                return AlarmsListProvider.CONTENT_ITEM_TYPE;
+                return CONTENT_ITEM_TYPE;
             default:
                 return null;
         }
-    }
-
-    @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        int uriType = AlarmsListProvider.sURIMatcher.match(uri);
-        if (uriType != AlarmsListProvider.ALARMS) {
-            throw new IllegalArgumentException("Invalid URI for insert");
-        }
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
-        Uri newUri = null;
-        try {
-            long newID = sqlDB
-                    .insertWithOnConflict(DatabaseHelper.Tables.ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            if (newID > 0) {
-                newUri = ContentUris.withAppendedId(uri, newID);
-                getContext().getContentResolver().notifyChange(uri, null);
-
-            }
-        } catch (SQLException e) {
-            Log.e("ALARMSListProvider", "Failed to insert row into " + uri + e.getMessage());
-        }
-        return newUri;
-    }
-
-    @Override
-    public int update(Uri uri, ContentValues values, String selection,
-                      String[] selectionArgs) {
-        int uriType = AlarmsListProvider.sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
-
-        int rowsAffected = 0;
-
-        switch (uriType) {
-            case ALARM_ID:
-                String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.AlarmColumns.TABLE_ALARMS_ID
-                        + "=" + id);
-
-                if (!TextUtils.isEmpty(selection)) {
-                    modSelection.append(" AND " + selection);
-                }
-
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.ALARMS, values, modSelection.toString(), null);
-                break;
-            case ALARMS:
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.ALARMS, values, selection, selectionArgs);
-                break;
-            default:
-                break;
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return rowsAffected;
-    }
-
-    @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(DatabaseHelper.Tables.ALARMS);
-
-        int uriType = AlarmsListProvider.sURIMatcher.match(uri);
-        switch (uriType) {
-            case ALARM_ID:
-                queryBuilder.appendWhere(Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + uri.getLastPathSegment());
-                break;
-            case ALARM_SEVERITY:
-                queryBuilder.appendWhere(Columns.AlarmColumns.COL_SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
-                break;
-            case ALARMS:
-                break;
-            default:
-                break;
-        }
-
-        Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
-                projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return cursor;
     }
 
 }

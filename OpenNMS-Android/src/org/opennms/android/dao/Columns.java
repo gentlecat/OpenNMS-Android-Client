@@ -29,4 +29,11 @@ public class Columns {
         public static final String COL_IF_LOST_SERVICE = "if_lost_service";
     }
 
+    public interface EventColumns {
+        public static final String TABLE_EVENT_ID = "_id";
+        public static final String COL_EVENT_ID = "event_id";
+        public static final String COL_SEVERITY = "severity";
+        public static final String COL_DESCRIPTION = "description";
+    }
+
 }

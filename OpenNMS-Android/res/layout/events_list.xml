@@ -4,11 +4,6 @@
               android:layout_height="match_parent"
               android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Events will be there."/>
-
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"

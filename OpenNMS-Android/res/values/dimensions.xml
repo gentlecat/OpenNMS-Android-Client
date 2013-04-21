@@ -3,6 +3,7 @@
 
     <dimen name="nodes_list_width">220dp</dimen>
     <dimen name="outages_list_width">210dp</dimen>
+    <dimen name="events_list_width">100dp</dimen>
     <dimen name="alarms_list_width">100dp</dimen>
 
     <dimen name="frame_padding_top">16dp</dimen>

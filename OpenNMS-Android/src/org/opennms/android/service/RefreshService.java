@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.util.Log;
 import org.opennms.android.communication.alarms.AlarmsServerCommunication;
 import org.opennms.android.communication.alarms.AlarmsServerCommunicationImpl;
+import org.opennms.android.communication.events.EventsServerCommunication;
+import org.opennms.android.communication.events.EventsServerCommunicationImpl;
 import org.opennms.android.communication.nodes.NodesServerCommunication;
 import org.opennms.android.communication.nodes.NodesServerCommunicationImpl;
 import org.opennms.android.communication.outages.OutagesServerCommunication;
@@ -15,6 +17,8 @@ import org.opennms.android.communication.outages.OutagesServerCommunicationImpl;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
+import org.opennms.android.dao.events.Event;
+import org.opennms.android.dao.events.EventsListProvider;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
 import org.opennms.android.dao.outages.Outage;
@@ -30,6 +34,7 @@ public class RefreshService extends Service {
     private static final String TAG = "RefreshService";
     private final IBinder binder = new LocalBinder();
     private AlarmsServerCommunication alarmsServer;
+    private EventsServerCommunication eventsServer;
     private NodesServerCommunication nodesServer;
     private OutagesServerCommunication outagesServer;
 
@@ -37,6 +42,7 @@ public class RefreshService extends Service {
     public void onCreate() {
         super.onCreate();
         alarmsServer = new AlarmsServerCommunicationImpl(getApplicationContext());
+        eventsServer = new EventsServerCommunicationImpl(getApplicationContext());
         nodesServer = new NodesServerCommunicationImpl(getApplicationContext());
         outagesServer = new OutagesServerCommunicationImpl(getApplicationContext());
     }
@@ -76,6 +82,37 @@ public class RefreshService extends Service {
                     getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
                 }
                 Log.d(TAG, "Alarms refreshing completed.");
+            }
+        }).start();
+    }
+
+    public void refreshEvents() {
+        new Thread(new Runnable() {
+            public void run() {
+                Log.d(TAG, "Refreshing events...");
+                try {
+                    List<Event> events = eventsServer.getEvents("events");
+                    for (Event event : events) {
+                        ContentValues values = new ContentValues();
+                        values.put(Columns.EventColumns.COL_EVENT_ID, event.getId());
+                        values.put(Columns.EventColumns.COL_SEVERITY, event.getSeverity());
+                        values.put(Columns.EventColumns.COL_DESCRIPTION, event.getDescription());
+                        getContentResolver().insert(EventsListProvider.CONTENT_URI, values);
+                    }
+                } catch (UnknownHostException e) {
+                    Log.i(TAG, e.getMessage());
+                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                } catch (InterruptedException e) {
+                    Log.i(TAG, e.getMessage());
+                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                } catch (ExecutionException e) {
+                    Log.i(TAG, e.getMessage());
+                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                } catch (IOException e) {
+                    Log.i(TAG, e.getMessage());
+                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                }
+                Log.d(TAG, "Events refreshing completed.");
             }
         }).start();
     }

@@ -25,6 +25,8 @@
     <string name="alarms_details_id">Alarm #</string>
 
     <string name="events">Events</string>
+    <string name="event_details">Details about event #</string>
+    <string name="event_details_id">Event #</string>
 
     <string name="notifications">Notifications</string>
 
