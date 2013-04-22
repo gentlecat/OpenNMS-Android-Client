@@ -1,4 +1,4 @@
-package org.opennms.android.util;
+package org.opennms.android.communication;
 
 import java.io.StringReader;
 

@@ -1,4 +1,4 @@
-package org.opennms.android.util;
+package org.opennms.android.communication;
 
 import android.content.Context;
 import android.content.SharedPreferences;
