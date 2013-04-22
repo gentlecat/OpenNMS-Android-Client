@@ -22,7 +22,6 @@ import org.opennms.android.service.RefreshService;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
-import org.opennms.android.ui.notifications.NotificationsListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
@@ -52,8 +51,6 @@ public class MainActivity extends SherlockFragmentActivity {
                 new TabListener<EventsListFragment>(this, "events", EventsListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.alarms).setTabListener(
                 new TabListener<AlarmsListFragment>(this, "alarms", AlarmsListFragment.class)));
-        actionBar.addTab(actionBar.newTab().setText(R.string.notifications).setTabListener(
-                new TabListener<NotificationsListFragment>(this, "notifications", NotificationsListFragment.class)));
 
         if (savedInstanceState != null) {
             actionBar.setSelectedNavigationItem(savedInstanceState.getInt("active_tab", 0));
