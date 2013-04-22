@@ -24,7 +24,7 @@ public class EventsServerCommunicationImpl implements EventsServerCommunication 
     public ArrayList<Event> getEvents(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> eventsCommunication = executorService
-                .submit(new RestingServerCommunication("events", appContext));
+                .submit(new RestingServerCommunication("events?orderBy=id&order=desc", appContext));
         ServiceResponse events = eventsCommunication.get();
         ArrayList<Event> eventsList = new ArrayList<Event>();
         if (events != null) {
