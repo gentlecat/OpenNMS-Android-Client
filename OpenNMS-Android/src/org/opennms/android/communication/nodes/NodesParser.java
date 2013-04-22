@@ -2,7 +2,7 @@ package org.opennms.android.communication.nodes;
 
 import android.util.Log;
 import org.opennms.android.dao.nodes.Node;
-import org.opennms.android.util.Parser;
+import org.opennms.android.communication.Parser;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
 

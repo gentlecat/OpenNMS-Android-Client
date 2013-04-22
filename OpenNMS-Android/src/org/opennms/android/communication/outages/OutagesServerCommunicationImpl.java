@@ -3,7 +3,7 @@ package org.opennms.android.communication.outages;
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.dao.outages.Outage;
-import org.opennms.android.util.RestingServerCommunication;
+import org.opennms.android.communication.RestingServerCommunication;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;

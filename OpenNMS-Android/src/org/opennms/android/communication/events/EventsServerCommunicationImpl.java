@@ -3,7 +3,7 @@ package org.opennms.android.communication.events;
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.dao.events.Event;
-import org.opennms.android.util.RestingServerCommunication;
+import org.opennms.android.communication.RestingServerCommunication;
 
 import java.io.IOException;
 import java.util.ArrayList;

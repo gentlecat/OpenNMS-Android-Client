@@ -1,8 +1,8 @@
 package org.opennms.android.communication.outages;
 
 import android.util.Log;
+import org.opennms.android.communication.Parser;
 import org.opennms.android.dao.outages.Outage;
-import org.opennms.android.util.Parser;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
