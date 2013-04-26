@@ -26,6 +26,10 @@ import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
 
+    public static final String NODES_TAG = "nodes";
+    public static final String OUTAGES_TAG = "outages";
+    public static final String EVENTS_TAG = "events";
+    public static final String ALARMS_TAG = "alarms";
     public Intent serviceIntent;
 
     @Override
@@ -44,13 +48,13 @@ public class MainActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.addTab(actionBar.newTab().setText(R.string.nodes).setTabListener(
-                new TabListener<NodesListFragment>(this, "nodes", NodesListFragment.class)));
+                new TabListener<NodesListFragment>(this, NODES_TAG, NodesListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.outages).setTabListener(
-                new TabListener<OutagesListFragment>(this, "outages", OutagesListFragment.class)));
+                new TabListener<OutagesListFragment>(this, OUTAGES_TAG, OutagesListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.events).setTabListener(
-                new TabListener<EventsListFragment>(this, "events", EventsListFragment.class)));
+                new TabListener<EventsListFragment>(this, EVENTS_TAG, EventsListFragment.class)));
         actionBar.addTab(actionBar.newTab().setText(R.string.alarms).setTabListener(
-                new TabListener<AlarmsListFragment>(this, "alarms", AlarmsListFragment.class)));
+                new TabListener<AlarmsListFragment>(this, ALARMS_TAG, AlarmsListFragment.class)));
 
         if (savedInstanceState != null) {
             actionBar.setSelectedNavigationItem(savedInstanceState.getInt("active_tab", 0));
