@@ -33,7 +33,12 @@ public class Columns {
         public static final String TABLE_EVENT_ID = "_id";
         public static final String COL_EVENT_ID = "event_id";
         public static final String COL_SEVERITY = "severity";
+        public static final String COL_LOG_MESSAGE = "logMessage";
         public static final String COL_DESCRIPTION = "description";
+        public static final String COL_HOST = "host";
+        public static final String COL_IP_ADDRESS = "ipAddress";
+        public static final String COL_NODE_ID = "nodeId";
+        public static final String COL_NODE_LABEL = "nodeLabel";
     }
 
 }

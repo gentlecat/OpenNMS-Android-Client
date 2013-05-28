@@ -1,8 +1,8 @@
 package org.opennms.android.communication.events;
 
 import android.util.Log;
-import org.opennms.android.dao.events.Event;
 import org.opennms.android.communication.Parser;
+import org.opennms.android.dao.events.Event;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -11,11 +11,15 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 
 public class EventsParser extends Parser {
-
     private static final String EVENTS_EXPRESSION = "/events/event";
     private static final String EVENT_ID = "@id";
     private static final String EVENT_SEVERITY = "@severity";
+    private static final String EVENT_LOG_MESSAGE = "logMessage";
     private static final String EVENT_DESCRIPTION = "description";
+    private static final String EVENT_HOST = "host";
+    private static final String EVENT_IP_ADDRESS = "ipAddress";
+    private static final String EVENT_NODE_ID = "nodeId";
+    private static final String EVENT_NODE_LABEL = "nodeLabel";
 
     public static ArrayList<org.opennms.android.dao.events.Event> parse(String is) {
         ArrayList<org.opennms.android.dao.events.Event> values = new ArrayList<org.opennms.android.dao.events.Event>();
@@ -33,12 +37,22 @@ public class EventsParser extends Parser {
                     Node currentNode = nodes.item(i);
                     Node id = getXmlNodeForExpression(EVENT_ID, currentNode);
                     Node description = getXmlNodeForExpression(EVENT_DESCRIPTION, currentNode);
+                    Node logMessage = getXmlNodeForExpression(EVENT_LOG_MESSAGE, currentNode);
                     Node severity = getXmlNodeForExpression(EVENT_SEVERITY, currentNode);
+                    Node host = getXmlNodeForExpression(EVENT_HOST, currentNode);
+                    Node ipAddress = getXmlNodeForExpression(EVENT_IP_ADDRESS, currentNode);
+                    Node nodeId = getXmlNodeForExpression(EVENT_NODE_ID, currentNode);
+                    Node nodeLabel = getXmlNodeForExpression(EVENT_NODE_LABEL, currentNode);
                     Event event = new Event(
                             Integer.parseInt(id.getNodeValue()),
                             severity.getNodeValue(),
                             description.getTextContent()
                     );
+                    event.setLogMessage(logMessage.getNodeValue());
+                    event.setHost(host.getNodeValue());
+                    event.setIpAddress(ipAddress.getNodeValue());
+                    event.setNodeId(Integer.parseInt(nodeId.getNodeValue()));
+                    event.setNodeLabel(nodeLabel.getNodeValue());
                     values.add(event);
                 }
             }

@@ -96,7 +96,12 @@ public class RefreshService extends Service {
                         ContentValues values = new ContentValues();
                         values.put(Columns.EventColumns.COL_EVENT_ID, event.getId());
                         values.put(Columns.EventColumns.COL_SEVERITY, event.getSeverity());
+                        values.put(Columns.EventColumns.COL_LOG_MESSAGE, event.getLogMessage());
                         values.put(Columns.EventColumns.COL_DESCRIPTION, event.getDescription());
+                        values.put(Columns.EventColumns.COL_HOST, event.getHost());
+                        values.put(Columns.EventColumns.COL_IP_ADDRESS, event.getIpAddress());
+                        values.put(Columns.EventColumns.COL_NODE_ID, event.getNodeId());
+                        values.put(Columns.EventColumns.COL_NODE_LABEL, event.getNodeLabel());
                         getContentResolver().insert(EventsListProvider.CONTENT_URI, values);
                     }
                 } catch (UnknownHostException e) {

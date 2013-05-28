@@ -34,7 +34,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + EventColumns.TABLE_EVENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + EventColumns.COL_EVENT_ID + " INTEGER UNIQUE, "
             + EventColumns.COL_SEVERITY + " TEXT, "
-            + EventColumns.COL_DESCRIPTION + " TEXT"
+            + EventColumns.COL_LOG_MESSAGE + " TEXT, "
+            + EventColumns.COL_DESCRIPTION + " TEXT, "
+            + EventColumns.COL_HOST + " TEXT, "
+            + EventColumns.COL_IP_ADDRESS + " TEXT, "
+            + EventColumns.COL_NODE_ID + " INTEGER, "
+            + EventColumns.COL_NODE_LABEL + " TEXT"
             + ");";
     private static final String CREATE_ALARMS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
             + " ("
