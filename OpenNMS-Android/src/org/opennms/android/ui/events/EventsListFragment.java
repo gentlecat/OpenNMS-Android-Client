@@ -119,17 +119,25 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
         String projection[] = {
                 Columns.EventColumns.COL_EVENT_ID,
                 Columns.EventColumns.COL_SEVERITY,
-                Columns.EventColumns.COL_DESCRIPTION
+                Columns.EventColumns.COL_LOG_MESSAGE,
+                Columns.EventColumns.COL_DESCRIPTION,
+                Columns.EventColumns.COL_HOST,
+                Columns.EventColumns.COL_IP_ADDRESS,
+                Columns.EventColumns.COL_NODE_ID,
+                Columns.EventColumns.COL_NODE_LABEL,
         };
         Cursor eventsCursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(EventsListProvider.CONTENT_URI, String.valueOf(id)),
-                projection,
-                null, null, null);
+                projection, null, null, null);
         if (eventsCursor.moveToFirst()) {
-            Integer eventId = eventsCursor.getInt(0);
-            String eventSeverity = eventsCursor.getString(1);
-            String eventDescription = eventsCursor.getString(2);
-            Event event = new Event(eventId);
+            Event event = new Event(eventsCursor.getInt(0));
+            event.setSeverity(eventsCursor.getString(1));
+            event.setLogMessage(eventsCursor.getString(2));
+            event.setDescription(eventsCursor.getString(3));
+            event.setHost(eventsCursor.getString(4));
+            event.setIpAddress(eventsCursor.getString(5));
+            event.setNodeId(eventsCursor.getInt(6));
+            event.setNodeLabel(eventsCursor.getString(7));
             eventsListSelectedListener.onEventSelected(event);
         }
         eventsCursor.close();

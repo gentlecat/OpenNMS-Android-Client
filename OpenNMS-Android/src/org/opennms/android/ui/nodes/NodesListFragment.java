@@ -130,18 +130,12 @@ public class NodesListFragment extends SherlockListFragment
                 Uri.withAppendedPath(NodesListProvider.CONTENT_URI, String.valueOf(id)),
                 projection, null, null, null);
         if (nodesCursor.moveToFirst()) {
-            Integer nodeId = nodesCursor.getInt(0);
-            String nodeType = nodesCursor.getString(1);
-            String nodeLabel = nodesCursor.getString(2);
-            String nodeCreatedTime = nodesCursor.getString(3);
-            String nodeSysContact = nodesCursor.getString(4);
-            String nodeLabelSource = nodesCursor.getString(5);
-            Node node = new Node(nodeId);
-            node.setType(nodeType);
-            node.setLabel(nodeLabel);
-            node.setCreateTime(nodeCreatedTime);
-            node.setSysContact(nodeSysContact);
-            node.setLabelSource(nodeLabelSource);
+            Node node = new Node(nodesCursor.getInt(0));
+            node.setType(nodesCursor.getString(1));
+            node.setLabel(nodesCursor.getString(2));
+            node.setCreateTime(nodesCursor.getString(3));
+            node.setSysContact(nodesCursor.getString(4));
+            node.setLabelSource(nodesCursor.getString(5));
             this.nodesListSelectedListener.onNodeSelected(node);
         }
         nodesCursor.close();

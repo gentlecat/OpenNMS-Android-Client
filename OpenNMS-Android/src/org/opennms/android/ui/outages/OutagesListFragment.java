@@ -129,16 +129,11 @@ public class OutagesListFragment extends SherlockListFragment
                 Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(id)),
                 projection, null, null, null);
         if (outagesCursor.moveToFirst()) {
-            Integer outageId = outagesCursor.getInt(0);
-            String outageIpAddress = outagesCursor.getString(1);
-            String outageIfRegainedService = outagesCursor.getString(2);
-            String outageServiceTypeName = outagesCursor.getString(3);
-            String outageIfLostService = outagesCursor.getString(4);
-            Outage outage = new Outage(outageId);
-            outage.setIpAddress(outageIpAddress);
-            outage.setIfRegainedService(outageIfRegainedService);
-            outage.setServiceTypeName(outageServiceTypeName);
-            outage.setIfLostService(outageIfLostService);
+            Outage outage = new Outage(outagesCursor.getInt(0));
+            outage.setIpAddress(outagesCursor.getString(1));
+            outage.setIfRegainedService(outagesCursor.getString(2));
+            outage.setServiceTypeName(outagesCursor.getString(3));
+            outage.setIfLostService(outagesCursor.getString(4));
             this.outagesListSelectedListener.onOutageSelected(outage);
         }
         outagesCursor.close();

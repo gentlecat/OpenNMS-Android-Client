@@ -127,17 +127,12 @@ public class AlarmsListFragment extends SherlockListFragment
         };
         Cursor alarmsCursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, String.valueOf(id)),
-                projection,
-                null, null, null);
+                projection, null, null, null);
         if (alarmsCursor.moveToFirst()) {
-            Integer alarmId = alarmsCursor.getInt(0);
-            String alarmSeverity = alarmsCursor.getString(1);
-            String alarmDescription = alarmsCursor.getString(2);
-            String alarmLogMessage = alarmsCursor.getString(3);
-            Alarm alarm = new Alarm(alarmId);
-            alarm.setSeverity(alarmSeverity);
-            alarm.setDescription(alarmDescription);
-            alarm.setLogMessage(alarmLogMessage);
+            Alarm alarm = new Alarm(alarmsCursor.getInt(0));
+            alarm.setSeverity(alarmsCursor.getString(1));
+            alarm.setDescription(alarmsCursor.getString(2));
+            alarm.setLogMessage(alarmsCursor.getString(3));
             alarmsListSelectedListener.onAlarmSelected(alarm);
         }
         alarmsCursor.close();
