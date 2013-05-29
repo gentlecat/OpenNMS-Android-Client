@@ -57,9 +57,29 @@ public class EventDetailsFragment extends SherlockFragment {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
             }
 
+            // Log message
+            TextView logMessage = (TextView) getActivity().findViewById(R.id.event_log_message);
+            logMessage.setText(event.getLogMessage());
+
             // Description
             TextView description = (TextView) getActivity().findViewById(R.id.event_description);
             description.setText(Html.fromHtml(event.getDescription()));
+
+            // Host
+            TextView host = (TextView) getActivity().findViewById(R.id.event_host);
+            host.setText("Host: " + event.getHost());
+
+            // IP address
+            TextView ipAddress = (TextView) getActivity().findViewById(R.id.event_ip_address);
+            ipAddress.setText("IP address: " + event.getIpAddress());
+
+            // Node ID
+            TextView nodeId = (TextView) getActivity().findViewById(R.id.event_node_id);
+            nodeId.setText("Node ID: " + event.getNodeId());
+
+            // Node label
+            TextView nodeLabel = (TextView) getActivity().findViewById(R.id.event_node_label);
+            nodeLabel.setText("Node label: " + event.getNodeLabel());
         }
     }
 
