@@ -18,11 +18,8 @@ public class Event implements Serializable {
     private int nodeId;
     private String nodeLabel;
 
-    public Event(Integer id, String severity, String description) {
+    public Event(Integer id) {
         this.id = id;
-        this.severity = severity;
-        this.severity = logMessage;
-        this.description = description;
     }
 
     public Event(ContentResolver contentResolver, long listItemId) {

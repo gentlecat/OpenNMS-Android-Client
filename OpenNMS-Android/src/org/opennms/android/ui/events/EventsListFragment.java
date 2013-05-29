@@ -129,7 +129,7 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
             Integer eventId = eventsCursor.getInt(0);
             String eventSeverity = eventsCursor.getString(1);
             String eventDescription = eventsCursor.getString(2);
-            Event event = new Event(eventId, eventSeverity, eventDescription);
+            Event event = new Event(eventId);
             eventsListSelectedListener.onEventSelected(event);
         }
         eventsCursor.close();
