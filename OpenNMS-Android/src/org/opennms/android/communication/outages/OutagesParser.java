@@ -33,19 +33,22 @@ public class OutagesParser extends Parser {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node currentNode = nodes.item(i);
-                    Node id = getXmlNodeForExpression(OUTAGES_ID, currentNode);
-                    Node ipAddress = getXmlNodeForExpression(OUTAGES_IP_ADDRESS, currentNode);
-                    Node ifLostService = getXmlNodeForExpression(OUTAGES_IF_LOST_SERVICE, currentNode);
-                    Node ifRegainedService = getXmlNodeForExpression(OUTAGES_IF_REGAINED_SERVICE, currentNode);
-                    Node serviceTypeName = getXmlNodeForExpression(SERVICE_TYPE_NAME, currentNode);
 
-                    Outage outage = new Outage(
-                            Integer.parseInt(id.getNodeValue()),
-                            ipAddress.getTextContent(),
-                            ifLostService.getTextContent(),
-                            ifRegainedService.getTextContent(),
-                            serviceTypeName.getTextContent()
-                    );
+                    String id = getXmlNodeForExpression(OUTAGES_ID, currentNode).getNodeValue();
+                    Outage outage = new Outage(Integer.parseInt(id));
+
+                    Node ipAddress = getXmlNodeForExpression(OUTAGES_IP_ADDRESS, currentNode);
+                    if (ipAddress != null) outage.setIpAddress(ipAddress.getTextContent());
+
+                    Node ifLostService = getXmlNodeForExpression(OUTAGES_IF_LOST_SERVICE, currentNode);
+                    if (ifLostService != null) outage.setIfLostService(ifLostService.getTextContent());
+
+                    Node ifRegainedService = getXmlNodeForExpression(OUTAGES_IF_REGAINED_SERVICE, currentNode);
+                    if (ifRegainedService != null) outage.setIfRegainedService(ifRegainedService.getTextContent());
+
+                    Node serviceTypeName = getXmlNodeForExpression(SERVICE_TYPE_NAME, currentNode);
+                    if (serviceTypeName != null) outage.setServiceTypeName(serviceTypeName.getTextContent());
+
                     values.add(outage);
                 }
             }

@@ -22,23 +22,6 @@ public class Event implements Serializable {
         this.id = id;
     }
 
-    public Event(ContentResolver contentResolver, long listItemId) {
-        String projection[] = {
-                EventColumns.COL_EVENT_ID,
-                EventColumns.COL_SEVERITY,
-                EventColumns.COL_DESCRIPTION
-        };
-        Cursor eventsCursor = contentResolver.query(
-                Uri.withAppendedPath(EventsListProvider.CONTENT_URI, String.valueOf(listItemId)),
-                projection, null, null, null);
-        if (eventsCursor.moveToFirst()) {
-            id = eventsCursor.getInt(0);
-            severity = eventsCursor.getString(1);
-            description = eventsCursor.getString(2);
-        }
-        eventsCursor.close();
-    }
-
     public String getLogMessage() {
         return logMessage;
     }

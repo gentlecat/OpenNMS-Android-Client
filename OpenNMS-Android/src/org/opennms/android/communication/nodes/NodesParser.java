@@ -38,20 +38,25 @@ public class NodesParser extends Parser {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     org.w3c.dom.Node currentNode = nodes.item(i);
+
+                    String id = getXmlNodeForExpression(NODE_ID, currentNode).getNodeValue();
+                    Node node = new Node(Integer.parseInt(id));
+
                     org.w3c.dom.Node label = getXmlNodeForExpression(NODE_LABEL, currentNode);
-                    org.w3c.dom.Node id = getXmlNodeForExpression(NODE_ID, currentNode);
+                    if (label != null) node.setLabel(label.getNodeValue());
+
                     org.w3c.dom.Node type = getXmlNodeForExpression(NODE_TYPE, currentNode);
+                    if (type != null) node.setType(type.getNodeValue());
+
                     org.w3c.dom.Node createTime = getXmlNodeForExpression(NODE_CREATE_TIME, currentNode);
+                    if (createTime != null) node.setCreateTime(createTime.getTextContent());
+
                     org.w3c.dom.Node sysContact = getXmlNodeForExpression(NODE_SYS_CONTACT, currentNode);
+                    if (sysContact != null) node.setSysContact(sysContact.getTextContent());
+
                     org.w3c.dom.Node labelSource = getXmlNodeForExpression(NODE_LABEL_SOURCE, currentNode);
-                    Node node = new Node(
-                            Integer.parseInt(id.getNodeValue()),
-                            label.getNodeValue(),
-                            type.getNodeValue(),
-                            createTime.getTextContent(),
-                           "",
-                            labelSource.getTextContent()
-                    );
+                    if (labelSource != null) node.setLabelSource(labelSource.getTextContent());
+
                     values.add(node);
                 }
             }

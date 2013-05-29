@@ -134,7 +134,11 @@ public class OutagesListFragment extends SherlockListFragment
             String outageIfRegainedService = outagesCursor.getString(2);
             String outageServiceTypeName = outagesCursor.getString(3);
             String outageIfLostService = outagesCursor.getString(4);
-            Outage outage = new Outage(outageId, outageIpAddress, outageIfLostService, outageIfRegainedService, outageServiceTypeName);
+            Outage outage = new Outage(outageId);
+            outage.setIpAddress(outageIpAddress);
+            outage.setIfRegainedService(outageIfRegainedService);
+            outage.setServiceTypeName(outageServiceTypeName);
+            outage.setIfLostService(outageIfLostService);
             this.outagesListSelectedListener.onOutageSelected(outage);
         }
         outagesCursor.close();

@@ -134,7 +134,10 @@ public class AlarmsListFragment extends SherlockListFragment
             String alarmSeverity = alarmsCursor.getString(1);
             String alarmDescription = alarmsCursor.getString(2);
             String alarmLogMessage = alarmsCursor.getString(3);
-            Alarm alarm = new Alarm(alarmId, alarmSeverity, alarmDescription, alarmLogMessage);
+            Alarm alarm = new Alarm(alarmId);
+            alarm.setSeverity(alarmSeverity);
+            alarm.setDescription(alarmDescription);
+            alarm.setLogMessage(alarmLogMessage);
             alarmsListSelectedListener.onAlarmSelected(alarm);
         }
         alarmsCursor.close();

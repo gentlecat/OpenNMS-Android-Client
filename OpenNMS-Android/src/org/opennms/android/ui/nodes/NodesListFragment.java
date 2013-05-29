@@ -136,7 +136,12 @@ public class NodesListFragment extends SherlockListFragment
             String nodeCreatedTime = nodesCursor.getString(3);
             String nodeSysContact = nodesCursor.getString(4);
             String nodeLabelSource = nodesCursor.getString(5);
-            Node node = new Node(nodeId, nodeLabel, nodeType, nodeCreatedTime, nodeSysContact, nodeLabelSource);
+            Node node = new Node(nodeId);
+            node.setType(nodeType);
+            node.setLabel(nodeLabel);
+            node.setCreateTime(nodeCreatedTime);
+            node.setSysContact(nodeSysContact);
+            node.setLabelSource(nodeLabelSource);
             this.nodesListSelectedListener.onNodeSelected(node);
         }
         nodesCursor.close();

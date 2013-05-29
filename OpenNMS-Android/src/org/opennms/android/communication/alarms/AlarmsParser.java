@@ -37,16 +37,19 @@ public class AlarmsParser extends Parser {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node currentNode = nodes.item(i);
-                    Node id = getXmlNodeForExpression(ALARM_ID, currentNode);
+
+                    String id = getXmlNodeForExpression(ALARM_ID, currentNode).getNodeValue();
+                    Alarm alarm = new Alarm(Integer.parseInt(id));
+
                     Node description = getXmlNodeForExpression(ALARM_DESCRIPTION, currentNode);
+                    if (description != null) alarm.setDescription(description.getTextContent());
+
                     Node severity = getXmlNodeForExpression(ALARM_SEVERITY, currentNode);
+                    if (severity != null) alarm.setSeverity(severity.getNodeValue());
+
                     Node logMessage = getXmlNodeForExpression(ALARM_LOG_MESSAGE, currentNode);
-                    Alarm alarm = new Alarm(
-                            Integer.parseInt(id.getNodeValue()),
-                            severity.getNodeValue(),
-                            description.getTextContent(),
-                            logMessage.getTextContent()
-                    );
+                    if (logMessage != null) alarm.setLogMessage(logMessage.getTextContent());
+
                     values.add(alarm);
                 }
             }

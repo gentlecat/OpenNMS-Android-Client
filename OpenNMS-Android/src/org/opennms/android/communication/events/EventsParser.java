@@ -35,23 +35,30 @@ public class EventsParser extends Parser {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node currentNode = nodes.item(i);
-                    String id = getXmlNodeForExpression(EVENT_ID, currentNode).getNodeValue();
-                    String description = getXmlNodeForExpression(EVENT_DESCRIPTION, currentNode).getNodeValue();
-                    String logMessage = getXmlNodeForExpression(EVENT_LOG_MESSAGE, currentNode).getNodeValue();
-                    String severity = getXmlNodeForExpression(EVENT_SEVERITY, currentNode).getNodeValue();
-                    String host = getXmlNodeForExpression(EVENT_HOST, currentNode).getNodeValue();
-                    String ipAddress = getXmlNodeForExpression(EVENT_IP_ADDRESS, currentNode).getNodeValue();
-                    String nodeId = getXmlNodeForExpression(EVENT_NODE_ID, currentNode).getNodeValue();
-                    String nodeLabel = getXmlNodeForExpression(EVENT_NODE_LABEL, currentNode).getNodeValue();
 
+                    String id = getXmlNodeForExpression(EVENT_ID, currentNode).getNodeValue();
                     Event event = new Event(Integer.parseInt(id));
-                    if (description != null) event.setDescription(description);
-                    if (logMessage != null) event.setLogMessage(logMessage);
-                    if (severity != null) event.setSeverity(severity);
-                    if (host != null) event.setHost(host);
-                    if (ipAddress != null) event.setIpAddress(ipAddress);
-                    if (nodeId != null) event.setNodeId(Integer.parseInt(nodeId));
-                    if (nodeLabel != null) event.setNodeLabel(nodeLabel);
+
+                    Node description = getXmlNodeForExpression(EVENT_DESCRIPTION, currentNode);
+                    if (description != null) event.setDescription(description.getTextContent());
+
+                    Node logMessage = getXmlNodeForExpression(EVENT_LOG_MESSAGE, currentNode);
+                    if (logMessage != null) event.setLogMessage(logMessage.getTextContent());
+
+                    Node severity = getXmlNodeForExpression(EVENT_SEVERITY, currentNode);
+                    if (severity != null) event.setSeverity(severity.getNodeValue());
+
+                    Node host = getXmlNodeForExpression(EVENT_HOST, currentNode);
+                    if (host != null) event.setHost(host.getTextContent());
+
+                    Node ipAddress = getXmlNodeForExpression(EVENT_IP_ADDRESS, currentNode);
+                    if (ipAddress != null) event.setIpAddress(ipAddress.getTextContent());
+
+                    Node nodeId = getXmlNodeForExpression(EVENT_NODE_ID, currentNode);
+                    if (nodeId != null) event.setNodeId(Integer.parseInt(nodeId.getTextContent()));
+
+                    Node nodeLabel = getXmlNodeForExpression(EVENT_NODE_LABEL, currentNode);
+                    if (nodeLabel != null) event.setNodeLabel(nodeLabel.getTextContent());
 
                     values.add(event);
                 }
