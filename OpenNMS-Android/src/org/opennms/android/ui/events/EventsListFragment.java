@@ -15,6 +15,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +28,15 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.events.Event;
 import org.opennms.android.dao.events.EventsListProvider;
 import org.opennms.android.service.RefreshService;
 
-public class EventsListFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class EventsListFragment extends SherlockListFragment
+        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 3;
     RefreshService service;
@@ -164,6 +167,12 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.events, menu);
+        MenuItem searchItem = menu.add("Search");
+        searchItem.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
+        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        SearchView search = new SearchView(getActivity());
+        search.setOnQueryTextListener(this);
+        searchItem.setActionView(search);
     }
 
     @Override
@@ -188,6 +197,25 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
             refreshItem.setActionView(iv);
             service.refreshEvents();
         }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+        if (currentFilter == null && newFilter == null) {
+            return true;
+        }
+        if (currentFilter != null && currentFilter.equals(newFilter)) {
+            return true;
+        }
+        currentFilter = newFilter;
+        getActivity().getSupportLoaderManager().restartLoader(0, null, this);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
     }
 
     @Override
