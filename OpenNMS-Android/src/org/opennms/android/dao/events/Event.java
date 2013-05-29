@@ -1,10 +1,5 @@
 package org.opennms.android.dao.events;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-import org.opennms.android.dao.Columns.EventColumns;
-
 import java.io.Serializable;
 
 public class Event implements Serializable {
