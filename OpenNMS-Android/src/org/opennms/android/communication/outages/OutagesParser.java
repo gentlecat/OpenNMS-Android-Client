@@ -13,8 +13,8 @@ import java.util.ArrayList;
 public class OutagesParser extends Parser {
 
     private static final String OUTAGES_EXPRESSION = "/outages/outage";
-    private static final String OUTAGES_IF_LOST_SERVICE = "ifLostService";
     private static final String OUTAGES_ID = "@id";
+    private static final String OUTAGES_IF_LOST_SERVICE = "ifLostService";
     private static final String OUTAGES_IF_REGAINED_SERVICE = "ifRegainedService";
     private static final String OUTAGES_IP_ADDRESS = "ipAddress";
     private static final String SERVICE_TYPE_NAME = "monitoredService/serviceType/name";

@@ -2,8 +2,8 @@ package org.opennms.android.communication.alarms;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
-import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.communication.RestingServerCommunication;
+import org.opennms.android.dao.alarms.Alarm;
 
 import java.io.IOException;
 import java.util.ArrayList;

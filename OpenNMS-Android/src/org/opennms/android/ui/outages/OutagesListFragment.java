@@ -29,11 +29,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import org.opennms.android.service.RefreshService;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.outages.Outage;
 import org.opennms.android.dao.outages.OutagesListProvider;
+import org.opennms.android.service.RefreshService;
 
 public class OutagesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {

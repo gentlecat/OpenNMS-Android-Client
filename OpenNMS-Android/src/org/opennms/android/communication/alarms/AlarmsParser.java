@@ -1,8 +1,8 @@
 package org.opennms.android.communication.alarms;
 
 import android.util.Log;
-import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.communication.Parser;
+import org.opennms.android.dao.alarms.Alarm;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

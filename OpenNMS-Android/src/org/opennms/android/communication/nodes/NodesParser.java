@@ -1,8 +1,8 @@
 package org.opennms.android.communication.nodes;
 
 import android.util.Log;
-import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.communication.Parser;
+import org.opennms.android.dao.nodes.Node;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NodeList;
 
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public class NodesParser extends Parser {
 
     private static final String NODE_EXPRESSION = "/nodes/node";
-    private static final String NODE_LABEL = "@label";
     private static final String NODE_ID = "@id";
+    private static final String NODE_LABEL = "@label";
     private static final String NODE_TYPE = "@type";
     private static final String NODE_CREATE_TIME = "createTime";
     private static final String NODE_SYS_CONTACT = "sysContact";
