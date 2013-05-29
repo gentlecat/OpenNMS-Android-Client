@@ -12,9 +12,18 @@ public class Event implements Serializable {
     private String ipAddress;
     private int nodeId;
     private String nodeLabel;
+    private String createTime;
 
     public Event(Integer id) {
         this.id = id;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
     public String getLogMessage() {

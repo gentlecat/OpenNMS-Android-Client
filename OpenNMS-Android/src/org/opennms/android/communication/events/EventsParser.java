@@ -20,6 +20,7 @@ public class EventsParser extends Parser {
     private static final String EVENT_IP_ADDRESS = "ipAddress";
     private static final String EVENT_NODE_ID = "nodeId";
     private static final String EVENT_NODE_LABEL = "nodeLabel";
+    private static final String EVENT_CREATE_TIME = "createTime";
 
     public static ArrayList<org.opennms.android.dao.events.Event> parse(String xml) {
         ArrayList<org.opennms.android.dao.events.Event> values = new ArrayList<org.opennms.android.dao.events.Event>();
@@ -59,6 +60,9 @@ public class EventsParser extends Parser {
 
                     Node nodeLabel = getXmlNodeForExpression(EVENT_NODE_LABEL, currentNode);
                     if (nodeLabel != null) event.setNodeLabel(nodeLabel.getTextContent());
+
+                    Node createTime = getXmlNodeForExpression(EVENT_CREATE_TIME, currentNode);
+                    if (createTime != null) event.setCreateTime(createTime.getTextContent());
 
                     values.add(event);
                 }

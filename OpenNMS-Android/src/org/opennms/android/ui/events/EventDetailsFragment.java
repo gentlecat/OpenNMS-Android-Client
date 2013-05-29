@@ -57,6 +57,10 @@ public class EventDetailsFragment extends SherlockFragment {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
             }
 
+            // Creation time
+            TextView createTime = (TextView) getActivity().findViewById(R.id.event_create_time);
+            createTime.setText(event.getCreateTime());
+
             // Log message
             TextView logMessage = (TextView) getActivity().findViewById(R.id.event_log_message);
             logMessage.setText(event.getLogMessage());

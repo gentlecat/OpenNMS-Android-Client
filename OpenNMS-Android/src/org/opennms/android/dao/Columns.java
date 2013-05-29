@@ -39,6 +39,7 @@ public class Columns {
         public static final String COL_IP_ADDRESS = "ipAddress";
         public static final String COL_NODE_ID = "nodeId";
         public static final String COL_NODE_LABEL = "nodeLabel";
+        public static final String COL_CREATE_TIME = "createTime";
     }
 
 }

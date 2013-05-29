@@ -123,6 +123,7 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
                 Columns.EventColumns.COL_DESCRIPTION,
                 Columns.EventColumns.COL_HOST,
                 Columns.EventColumns.COL_IP_ADDRESS,
+                Columns.EventColumns.COL_CREATE_TIME,
                 Columns.EventColumns.COL_NODE_ID,
                 Columns.EventColumns.COL_NODE_LABEL,
         };
@@ -136,8 +137,9 @@ public class EventsListFragment extends SherlockListFragment implements LoaderMa
             event.setDescription(eventsCursor.getString(3));
             event.setHost(eventsCursor.getString(4));
             event.setIpAddress(eventsCursor.getString(5));
-            event.setNodeId(eventsCursor.getInt(6));
-            event.setNodeLabel(eventsCursor.getString(7));
+            event.setCreateTime(eventsCursor.getString(6));
+            event.setNodeId(eventsCursor.getInt(7));
+            event.setNodeLabel(eventsCursor.getString(8));
             eventsListSelectedListener.onEventSelected(event);
         }
         eventsCursor.close();
