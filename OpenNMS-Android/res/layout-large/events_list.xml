@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="@dimen/events_list_width"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent" />
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -16,11 +16,11 @@
         <FrameLayout
             android:id="@+id/details_fragment_container"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:paddingTop="@dimen/frame_padding_top"
             android:paddingBottom="@dimen/frame_padding_bottom"
             android:paddingLeft="@dimen/frame_padding_left"
-            android:paddingRight="@dimen/frame_padding_right"/>
+            android:paddingRight="@dimen/frame_padding_right" />
     </ScrollView>
 
 </LinearLayout>

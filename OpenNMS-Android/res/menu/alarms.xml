@@ -4,5 +4,5 @@
         android:id="@+id/menu_refresh_alarms"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"
-        android:title="@string/refresh"/>
+        android:title="@string/refresh" />
 </menu>

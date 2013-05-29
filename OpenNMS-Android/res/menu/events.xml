@@ -4,5 +4,5 @@
         android:id="@+id/menu_refresh_events"
         android:icon="@drawable/ic_action_refresh"
         android:showAsAction="always"
-        android:title="@string/refresh"/>
+        android:title="@string/refresh" />
 </menu>
