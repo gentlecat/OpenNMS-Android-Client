@@ -28,9 +28,9 @@ public class AlarmsParser extends Parser {
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeSetForExpression(ALARMS_EXPRESSION, is);
+            nodes = getXmlNodeListForExpression(ALARMS_EXPRESSION, is);
         } catch (XPathExpressionException e) {
-            Log.i("AlarmParser.getXmlNodeSetForExpression", e.getMessage());
+            Log.i("AlarmParser.getXmlNodeListForExpression", e.getMessage());
         }
 
         try {

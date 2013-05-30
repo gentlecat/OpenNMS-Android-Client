@@ -24,9 +24,9 @@ public class OutagesParser extends Parser {
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeSetForExpression(OUTAGES_EXPRESSION, is);
+            nodes = getXmlNodeListForExpression(OUTAGES_EXPRESSION, is);
         } catch (XPathExpressionException e) {
-            Log.i("NodeParser.getXmlNodeSetForExpression", e.getMessage());
+            Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
         }
 
         try {

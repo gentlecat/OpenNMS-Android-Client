@@ -27,9 +27,9 @@ public class EventsParser extends Parser {
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeSetForExpression(EVENTS_EXPRESSION, xml);
+            nodes = getXmlNodeListForExpression(EVENTS_EXPRESSION, xml);
         } catch (XPathExpressionException e) {
-            Log.i("NodeParser.getXmlNodeSetForExpression", e.getMessage());
+            Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
         }
 
         try {

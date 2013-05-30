@@ -29,9 +29,9 @@ public class NodesParser extends Parser {
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeSetForExpression(NODE_EXPRESSION, is);
+            nodes = getXmlNodeListForExpression(NODE_EXPRESSION, is);
         } catch (XPathExpressionException e) {
-            Log.i("NodeParser.getXmlNodeSetForExpression", e.getMessage());
+            Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
         }
 
         try {

@@ -12,15 +12,15 @@ import java.io.StringReader;
 
 public class Parser {
 
-    public static NodeList getXmlNodeSetForExpression(String expression, String xml) throws XPathExpressionException {
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    static XPath xPath = XPathFactory.newInstance().newXPath();
+
+    public static NodeList getXmlNodeListForExpression(String expression, String xml) throws XPathExpressionException {
         InputSource inputSource = new InputSource(new StringReader(xml));
-        return (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
+        return (NodeList) xPath.evaluate(expression, inputSource, XPathConstants.NODESET);
     }
 
     public static Node getXmlNodeForExpression(String expression, Node widgetNode) throws XPathExpressionException {
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        return (Node) xpath.evaluate(expression, widgetNode, XPathConstants.NODE);
+        return (Node) xPath.evaluate(expression, widgetNode, XPathConstants.NODE);
     }
 
 }
