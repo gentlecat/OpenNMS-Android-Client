@@ -24,7 +24,7 @@ public class AlarmsServerCommunicationImpl implements AlarmsServerCommunication 
     public ArrayList<Alarm> getAlarms(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> alarmsCommunication = executorService
-                .submit(new RestingServerCommunication("alarms", appContext));
+                .submit(new RestingServerCommunication("alarms?orderBy=id&order=desc&limit=0", appContext));
         ServiceResponse alarmsServiceResponse = alarmsCommunication.get();
         ArrayList<Alarm> alarmsList = new ArrayList<Alarm>();
         if (alarmsServiceResponse != null) {
