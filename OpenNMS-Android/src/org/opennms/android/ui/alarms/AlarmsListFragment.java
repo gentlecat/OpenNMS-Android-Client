@@ -226,7 +226,7 @@ public class AlarmsListFragment extends SherlockListFragment
                 Columns.AlarmColumns.COL_DESCRIPTION,
                 Columns.AlarmColumns.COL_LOG_MESSAGE
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,  Columns.AlarmColumns.COL_ALARM_ID + " DESC");
     }
 
     @Override
