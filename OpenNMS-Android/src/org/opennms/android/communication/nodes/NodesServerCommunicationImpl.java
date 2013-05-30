@@ -24,7 +24,7 @@ public class NodesServerCommunicationImpl implements NodesServerCommunication {
     public ArrayList<Node> getNodes(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> nodesCommunication = executorService
-                .submit(new RestingServerCommunication("nodes", appContext));
+                .submit(new RestingServerCommunication("nodes/?limit=0", appContext));
         ServiceResponse nodesServiceResponse = nodesCommunication.get();
         ArrayList<Node> nodesList = new ArrayList<Node>();
         if (nodesServiceResponse != null) {
