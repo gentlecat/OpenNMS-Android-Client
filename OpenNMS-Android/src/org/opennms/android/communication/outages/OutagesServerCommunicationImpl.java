@@ -23,7 +23,7 @@ public class OutagesServerCommunicationImpl implements OutagesServerCommunicatio
     public ArrayList<Outage> getOutages(String url) throws InterruptedException, ExecutionException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> outagesCommunication = executorService
-                .submit(new RestingServerCommunication("outages", appContext));
+                .submit(new RestingServerCommunication("outages?orderBy=id&order=desc", appContext));
         ServiceResponse outages = outagesCommunication.get();
         ArrayList<Outage> outagesList = new ArrayList<Outage>();
         if (outages != null) {

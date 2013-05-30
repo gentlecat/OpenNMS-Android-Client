@@ -100,7 +100,7 @@ public class OutagesListFragment extends SherlockListFragment
                 getSherlockActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Columns.OutageColumns.COL_IP_ADDRESS, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
+                new String[]{Columns.OutageColumns.COL_OUTAGE_ID, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -228,7 +228,7 @@ public class OutagesListFragment extends SherlockListFragment
                 Columns.OutageColumns.COL_SERVICE_TYPE_NAME,
                 Columns.OutageColumns.COL_IF_LOST_SERVICE
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.OutageColumns.COL_OUTAGE_ID + " DESC");
     }
 
     @Override
