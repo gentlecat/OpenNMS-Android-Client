@@ -235,7 +235,7 @@ public class EventsListFragment extends SherlockListFragment
                 Columns.EventColumns.COL_SEVERITY,
                 Columns.EventColumns.COL_DESCRIPTION
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.EventColumns.COL_EVENT_ID + " DESC");
     }
 
     @Override
