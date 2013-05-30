@@ -30,7 +30,7 @@ public class MainActivity extends SherlockFragmentActivity {
     public static final String OUTAGES_TAG = "outages";
     public static final String EVENTS_TAG = "events";
     public static final String ALARMS_TAG = "alarms";
-    public Intent serviceIntent;
+    public Intent refreshServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends SherlockFragmentActivity {
             showWelcomeDialog();
         }
 
-        serviceIntent = new Intent(getApplicationContext(), RefreshService.class);
+        refreshServiceIntent = new Intent(getApplicationContext(), RefreshService.class);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -64,13 +64,13 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        getApplicationContext().startService(serviceIntent);
+        getApplicationContext().startService(refreshServiceIntent);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getApplicationContext().stopService(serviceIntent);
+        getApplicationContext().stopService(refreshServiceIntent);
     }
 
     @Override
