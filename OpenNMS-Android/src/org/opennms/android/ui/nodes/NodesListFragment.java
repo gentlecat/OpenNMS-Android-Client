@@ -231,7 +231,7 @@ public class NodesListFragment extends SherlockListFragment
                 Columns.NodeColumns.COL_SYS_CONTACT,
                 Columns.NodeColumns.COL_LABEL_SOURCE
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, null);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.NodeColumns.COL_NODE_ID);
     }
 
     @Override
