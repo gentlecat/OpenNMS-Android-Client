@@ -1,6 +1,5 @@
 package org.opennms.android.ui.events;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,12 +41,9 @@ public class EventsListFragment extends SherlockListFragment
     RefreshService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;
-    ListView list;
-    FrameLayout detailsContainer;
     boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
-    private OnEventsListSelectedListener eventsListSelectedListener;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -67,19 +63,8 @@ public class EventsListFragment extends SherlockListFragment
     @Override
     public void onStart() {
         super.onStart();
-        Intent serviceIntent = new Intent(getActivity().getApplicationContext(), RefreshService.class);
-        getSherlockActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        eventsListSelectedListener = new OnEventsListSelectedListener() {
-            @Override
-            public void onEventSelected(Event event) {
-                displayDetails(event);
-            }
-        };
+        Intent refreshService = new Intent(getActivity().getApplicationContext(), RefreshService.class);
+        getSherlockActivity().bindService(refreshService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -90,22 +75,27 @@ public class EventsListFragment extends SherlockListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
-        list = (ListView) getSherlockActivity().findViewById(android.R.id.list);
-        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+
+        if (isDualPane) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_2,
+                android.R.layout.simple_list_item_activated_2,
                 null,
                 new String[]{Columns.EventColumns.COL_EVENT_ID, Columns.EventColumns.COL_SEVERITY},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
         getListView().setAdapter(adapter);
+
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -120,6 +110,32 @@ public class EventsListFragment extends SherlockListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
+    private void showDetails(int position) {
+        getListView().setItemChecked(position, true);
+        showDetails(getListView().getItemIdAtPosition(position));
+    }
+
+    private void showDetails(long id) {
+        Event event = getEvent(id);
+        if (isDualPane) {
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+            detailsContainer.removeAllViews();
+            EventDetailsFragment detailsFragment = new EventDetailsFragment();
+            detailsFragment.bindEvent(event);
+            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getSherlockActivity(), EventDetailsActivity.class);
+            detailsIntent.putExtra("event", event);
+            startActivity(detailsIntent);
+        }
+    }
+
+    private Event getEvent(long id) {
         String projection[] = {
                 Columns.EventColumns.COL_EVENT_ID,
                 Columns.EventColumns.COL_SEVERITY,
@@ -144,25 +160,11 @@ public class EventsListFragment extends SherlockListFragment
             event.setCreateTime(eventsCursor.getString(6));
             event.setNodeId(eventsCursor.getInt(7));
             event.setNodeLabel(eventsCursor.getString(8));
-            eventsListSelectedListener.onEventSelected(event);
+            eventsCursor.close();
+            return event;
         }
         eventsCursor.close();
-    }
-
-    private void displayDetails(Event event) {
-        if (isDualPane) {
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
-            detailsContainer.removeAllViews();
-            EventDetailsFragment detailsFragment = new EventDetailsFragment();
-            detailsFragment.bindEvent(event);
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), EventDetailsActivity.class);
-            detailsIntent.putExtra("event", event);
-            startActivity(detailsIntent);
-        }
+        return null;
     }
 
     @Override
@@ -219,7 +221,7 @@ public class EventsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, "severity"),
+                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Columns.EventColumns.COL_SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
@@ -259,10 +261,6 @@ public class EventsListFragment extends SherlockListFragment
             refreshItem.getActionView().clearAnimation();
             refreshItem.setActionView(null);
         }
-    }
-
-    public interface OnEventsListSelectedListener {
-        void onEventSelected(Event event);
     }
 
 }

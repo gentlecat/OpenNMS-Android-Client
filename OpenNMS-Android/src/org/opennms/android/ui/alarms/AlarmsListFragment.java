@@ -1,6 +1,5 @@
 package org.opennms.android.ui.alarms;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,12 +41,9 @@ public class AlarmsListFragment extends SherlockListFragment
     RefreshService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;
-    ListView list;
-    FrameLayout detailsContainer;
     boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
-    private OnAlarmsListSelectedListener alarmsListSelectedListener;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -67,19 +63,8 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public void onStart() {
         super.onStart();
-        Intent serviceIntent = new Intent(getActivity().getApplicationContext(), RefreshService.class);
-        getSherlockActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        alarmsListSelectedListener = new OnAlarmsListSelectedListener() {
-            @Override
-            public void onAlarmSelected(Alarm alarm) {
-                displayDetails(alarm);
-            }
-        };
+        Intent refreshService = new Intent(getActivity().getApplicationContext(), RefreshService.class);
+        getSherlockActivity().bindService(refreshService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -90,22 +75,27 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
-        list = (ListView) getSherlockActivity().findViewById(android.R.id.list);
-        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+
+        if (isDualPane) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_2,
+                android.R.layout.simple_list_item_activated_2,
                 null,
                 new String[]{Columns.AlarmColumns.COL_ALARM_ID, Columns.AlarmColumns.COL_SEVERITY},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
         getListView().setAdapter(adapter);
+
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -120,6 +110,32 @@ public class AlarmsListFragment extends SherlockListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
+    private void showDetails(int position) {
+        getListView().setItemChecked(position, true);
+        showDetails(getListView().getItemIdAtPosition(position));
+    }
+
+    private void showDetails(long id) {
+        Alarm alarm = getAlarm(id);
+        if (isDualPane) {
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+            detailsContainer.removeAllViews();
+            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment();
+            detailsFragment.bindAlarm(alarm);
+            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getSherlockActivity(), AlarmDetailsActivity.class);
+            detailsIntent.putExtra("alarm", alarm);
+            startActivity(detailsIntent);
+        }
+    }
+
+    private Alarm getAlarm(long id) {
         String projection[] = {
                 Columns.AlarmColumns.COL_ALARM_ID,
                 Columns.AlarmColumns.COL_SEVERITY,
@@ -134,25 +150,11 @@ public class AlarmsListFragment extends SherlockListFragment
             alarm.setSeverity(alarmsCursor.getString(1));
             alarm.setDescription(alarmsCursor.getString(2));
             alarm.setLogMessage(alarmsCursor.getString(3));
-            alarmsListSelectedListener.onAlarmSelected(alarm);
+            alarmsCursor.close();
+            return alarm;
         }
         alarmsCursor.close();
-    }
-
-    private void displayDetails(Alarm alarm) {
-        if (isDualPane) {
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
-            detailsContainer.removeAllViews();
-            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment();
-            detailsFragment.bindAlarm(alarm);
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), AlarmDetailsActivity.class);
-            detailsIntent.putExtra("alarm", alarm);
-            startActivity(detailsIntent);
-        }
+        return null;
     }
 
     @Override
@@ -209,7 +211,7 @@ public class AlarmsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, "severity"),
+                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.COL_SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
@@ -228,9 +230,6 @@ public class AlarmsListFragment extends SherlockListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefreshAnimation();
         adapter.swapCursor(cursor);
-        if (cursor.getColumnCount() > 0) {
-            // TODO: Activate first item in list
-        }
     }
 
     @Override
@@ -252,10 +251,6 @@ public class AlarmsListFragment extends SherlockListFragment
             refreshItem.getActionView().clearAnimation();
             refreshItem.setActionView(null);
         }
-    }
-
-    public interface OnAlarmsListSelectedListener {
-        void onAlarmSelected(Alarm alarm);
     }
 
 }

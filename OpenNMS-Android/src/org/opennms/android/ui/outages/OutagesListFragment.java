@@ -1,6 +1,5 @@
 package org.opennms.android.ui.outages;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,12 +41,9 @@ public class OutagesListFragment extends SherlockListFragment
     RefreshService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;
-    ListView list;
-    FrameLayout detailsContainer;
     boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
-    private OnOutagesListSelectedListener outagesListSelectedListener;
     private ServiceConnection serviceConnection = new ServiceConnection() {
 
         @Override
@@ -67,19 +63,8 @@ public class OutagesListFragment extends SherlockListFragment
     @Override
     public void onStart() {
         super.onStart();
-        Intent serviceIntent = new Intent(getActivity().getApplicationContext(), RefreshService.class);
-        getSherlockActivity().bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        outagesListSelectedListener = new OnOutagesListSelectedListener() {
-            @Override
-            public void onOutageSelected(Outage outage) {
-                displayDetails(outage);
-            }
-        };
+        Intent refreshService = new Intent(getActivity().getApplicationContext(), RefreshService.class);
+        getSherlockActivity().bindService(refreshService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -90,21 +75,26 @@ public class OutagesListFragment extends SherlockListFragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
 
-        list = (ListView) getSherlockActivity().findViewById(android.R.id.list);
-        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+
+        if (isDualPane) {
+            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        }
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_2,
+                android.R.layout.simple_list_item_activated_2,
                 null,
                 new String[]{Columns.OutageColumns.COL_OUTAGE_ID, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
+
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -119,6 +109,32 @@ public class OutagesListFragment extends SherlockListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
+    private void showDetails(int position) {
+        getListView().setItemChecked(position, true);
+        showDetails(getListView().getItemIdAtPosition(position));
+    }
+
+    private void showDetails(long id) {
+        Outage outage = getOutage(id);
+        if (isDualPane) {
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+            detailsContainer.removeAllViews();
+            OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
+            detailsFragment.bindOutage(outage);
+            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
+            detailsIntent.putExtra("outage", outage);
+            startActivity(detailsIntent);
+        }
+    }
+
+    private Outage getOutage(long id) {
         String projection[] = {
                 Columns.OutageColumns.COL_OUTAGE_ID,
                 Columns.OutageColumns.COL_IP_ADDRESS,
@@ -135,25 +151,11 @@ public class OutagesListFragment extends SherlockListFragment
             outage.setIfRegainedService(outagesCursor.getString(2));
             outage.setServiceTypeName(outagesCursor.getString(3));
             outage.setIfLostService(outagesCursor.getString(4));
-            this.outagesListSelectedListener.onOutageSelected(outage);
+            outagesCursor.close();
+            return outage;
         }
         outagesCursor.close();
-    }
-
-    private void displayDetails(Outage outage) {
-        if (isDualPane) {
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
-            detailsContainer.removeAllViews();
-            OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
-            detailsFragment.bindOutage(outage);
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra("outage", outage);
-            startActivity(detailsIntent);
-        }
+        return null;
     }
 
     @Override
@@ -210,7 +212,7 @@ public class OutagesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, "ipaddress"),
+                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, Columns.OutageColumns.COL_OUTAGE_ID),
                     Uri.encode(this.currentFilter)
             );
         } else {
@@ -229,9 +231,6 @@ public class OutagesListFragment extends SherlockListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefreshAnimation();
         adapter.swapCursor(cursor);
-        if (cursor.getColumnCount() > 0) {
-            // TODO: Activate first item in list
-        }
     }
 
     @Override
@@ -253,10 +252,6 @@ public class OutagesListFragment extends SherlockListFragment
             refreshItem.getActionView().clearAnimation();
             refreshItem.setActionView(null);
         }
-    }
-
-    public interface OnOutagesListSelectedListener {
-        void onOutageSelected(Outage outage);
     }
 
 }
