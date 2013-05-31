@@ -218,11 +218,10 @@ public class AlarmsListFragment extends SherlockListFragment
         String[] projection = {
                 Columns.AlarmColumns.TABLE_ALARMS_ID,
                 Columns.AlarmColumns.COL_ALARM_ID,
-                Columns.AlarmColumns.COL_SEVERITY,
-                Columns.AlarmColumns.COL_DESCRIPTION,
-                Columns.AlarmColumns.COL_LOG_MESSAGE
+                Columns.AlarmColumns.COL_SEVERITY
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.AlarmColumns.COL_ALARM_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                Columns.AlarmColumns.COL_ALARM_ID + " DESC");
     }
 
     @Override

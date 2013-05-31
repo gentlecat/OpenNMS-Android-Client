@@ -219,12 +219,10 @@ public class OutagesListFragment extends SherlockListFragment
         String[] projection = {
                 Columns.OutageColumns.TABLE_OUTAGES_ID,
                 Columns.OutageColumns.COL_OUTAGE_ID,
-                Columns.OutageColumns.COL_IP_ADDRESS,
-                Columns.OutageColumns.COL_IF_REGAINED_SERVICE,
-                Columns.OutageColumns.COL_SERVICE_TYPE_NAME,
-                Columns.OutageColumns.COL_IF_LOST_SERVICE
+                Columns.OutageColumns.COL_SERVICE_TYPE_NAME
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.OutageColumns.COL_OUTAGE_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                Columns.OutageColumns.COL_OUTAGE_ID + " DESC");
     }
 
     @Override

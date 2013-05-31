@@ -228,10 +228,10 @@ public class EventsListFragment extends SherlockListFragment
         String[] projection = {
                 Columns.EventColumns.TABLE_EVENT_ID,
                 Columns.EventColumns.COL_EVENT_ID,
-                Columns.EventColumns.COL_SEVERITY,
-                Columns.EventColumns.COL_DESCRIPTION
+                Columns.EventColumns.COL_SEVERITY
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.EventColumns.COL_EVENT_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                Columns.EventColumns.COL_EVENT_ID + " DESC");
     }
 
     @Override

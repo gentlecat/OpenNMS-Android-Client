@@ -221,13 +221,10 @@ public class NodesListFragment extends SherlockListFragment
         String[] projection = {
                 Columns.NodeColumns.TABLE_NODES_ID,
                 Columns.NodeColumns.COL_NODE_ID,
-                Columns.NodeColumns.COL_TYPE,
-                Columns.NodeColumns.COL_LABEL,
-                Columns.NodeColumns.COL_CREATED_TIME,
-                Columns.NodeColumns.COL_SYS_CONTACT,
-                Columns.NodeColumns.COL_LABEL_SOURCE
+                Columns.NodeColumns.COL_LABEL
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.NodeColumns.COL_NODE_ID);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                Columns.NodeColumns.COL_NODE_ID);
     }
 
     @Override
