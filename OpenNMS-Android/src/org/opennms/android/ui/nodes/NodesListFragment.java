@@ -29,11 +29,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import org.opennms.android.service.RefreshService;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
+import org.opennms.android.service.RefreshService;
 
 public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -110,6 +110,7 @@ public class NodesListFragment extends SherlockListFragment
     @Override
     public void onStop() {
         super.onStop();
+        stopRefreshAnimation();
         if (bound) {
             getSherlockActivity().unbindService(serviceConnection);
             bound = false;
@@ -182,12 +183,7 @@ public class NodesListFragment extends SherlockListFragment
 
     private void refreshList() {
         if (bound) {
-            LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-            Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
-            rotation.setRepeatCount(Animation.INFINITE);
-            iv.startAnimation(rotation);
-            refreshItem.setActionView(iv);
+            startRefreshAnimation();
             service.refreshNodes();
         }
     }
@@ -236,10 +232,7 @@ public class NodesListFragment extends SherlockListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
-        }
+        stopRefreshAnimation();
         adapter.swapCursor(cursor);
         if (cursor.getColumnCount() > 0) {
             // TODO: Activate first item in list
@@ -249,6 +242,22 @@ public class NodesListFragment extends SherlockListFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    private void startRefreshAnimation() {
+        LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
+        Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+        refreshItem.setActionView(iv);
+    }
+
+    private void stopRefreshAnimation() {
+        if (refreshItem != null && refreshItem.getActionView() != null) {
+            refreshItem.getActionView().clearAnimation();
+            refreshItem.setActionView(null);
+        }
     }
 
     public interface OnNodesListSelectedListener {

@@ -111,6 +111,7 @@ public class EventsListFragment extends SherlockListFragment
     @Override
     public void onStop() {
         super.onStop();
+        stopRefreshAnimation();
         if (bound) {
             getSherlockActivity().unbindService(serviceConnection);
             bound = false;
@@ -189,12 +190,7 @@ public class EventsListFragment extends SherlockListFragment
 
     private void refreshList() {
         if (bound) {
-            LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-            Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
-            rotation.setRepeatCount(Animation.INFINITE);
-            iv.startAnimation(rotation);
-            refreshItem.setActionView(iv);
+            startRefreshAnimation();
             service.refreshEvents();
         }
     }
@@ -240,10 +236,7 @@ public class EventsListFragment extends SherlockListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
-        }
+        stopRefreshAnimation();
         adapter.swapCursor(cursor);
     }
 
@@ -252,9 +245,24 @@ public class EventsListFragment extends SherlockListFragment
         adapter.swapCursor(null);
     }
 
+    private void startRefreshAnimation() {
+        LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
+        Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+        refreshItem.setActionView(iv);
+    }
+
+    private void stopRefreshAnimation() {
+        if (refreshItem != null && refreshItem.getActionView() != null) {
+            refreshItem.getActionView().clearAnimation();
+            refreshItem.setActionView(null);
+        }
+    }
+
     public interface OnEventsListSelectedListener {
         void onEventSelected(Event event);
     }
-
 
 }

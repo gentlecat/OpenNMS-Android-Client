@@ -111,6 +111,7 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public void onStop() {
         super.onStop();
+        stopRefreshAnimation();
         if (bound) {
             getSherlockActivity().unbindService(serviceConnection);
             bound = false;
@@ -179,12 +180,7 @@ public class AlarmsListFragment extends SherlockListFragment
 
     private void refreshList() {
         if (bound) {
-            LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-            Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
-            rotation.setRepeatCount(Animation.INFINITE);
-            iv.startAnimation(rotation);
-            refreshItem.setActionView(iv);
+            startRefreshAnimation();
             service.refreshAlarms();
         }
     }
@@ -226,15 +222,12 @@ public class AlarmsListFragment extends SherlockListFragment
                 Columns.AlarmColumns.COL_DESCRIPTION,
                 Columns.AlarmColumns.COL_LOG_MESSAGE
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null,  Columns.AlarmColumns.COL_ALARM_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Columns.AlarmColumns.COL_ALARM_ID + " DESC");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
-        }
+        stopRefreshAnimation();
         adapter.swapCursor(cursor);
         if (cursor.getColumnCount() > 0) {
             // TODO: Activate first item in list
@@ -244,6 +237,22 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    private void startRefreshAnimation() {
+        LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
+        Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+        refreshItem.setActionView(iv);
+    }
+
+    private void stopRefreshAnimation() {
+        if (refreshItem != null && refreshItem.getActionView() != null) {
+            refreshItem.getActionView().clearAnimation();
+            refreshItem.setActionView(null);
+        }
     }
 
     public interface OnAlarmsListSelectedListener {
