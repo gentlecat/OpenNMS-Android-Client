@@ -7,9 +7,6 @@
         android:id="@+id/details_activity_fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/frame_padding_top"
-        android:paddingBottom="@dimen/frame_padding_bottom"
-        android:paddingLeft="@dimen/frame_padding_left"
-        android:paddingRight="@dimen/frame_padding_right" />
+        android:padding="@dimen/frame_padding" />
 
 </ScrollView>
