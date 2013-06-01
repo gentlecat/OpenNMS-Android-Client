@@ -1,5 +1,3 @@
 # OpenNMS Android App
 
-This app allows you to track your network remotely from Android device.
-
-![](http://i.imgur.com/VcM6ILC.png)
+[Google Summer of Code 2013 project](https://www.google-melange.com/gsoc/project/google/gsoc2013/tsukanov/42001).
