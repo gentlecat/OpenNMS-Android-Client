@@ -73,6 +73,7 @@
     <string name="search">Search</string>
 
     <string name="about">About</string>
+    <string name="opennms_logo">OpenNMS logo</string>
     <string name="about_info">
         OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
         OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
