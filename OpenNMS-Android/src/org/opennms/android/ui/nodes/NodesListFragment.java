@@ -61,6 +61,12 @@ public class NodesListFragment extends SherlockListFragment
     };
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         Intent refreshService = new Intent(getActivity().getApplicationContext(), RefreshService.class);
@@ -93,8 +99,6 @@ public class NodesListFragment extends SherlockListFragment
         getListView().setAdapter(adapter);
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -162,19 +166,20 @@ public class NodesListFragment extends SherlockListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.nodes, menu);
+        inflater.inflate(R.menu.list, menu);
         MenuItem searchItem = menu.add("Search");
         searchItem.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
         searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         SearchView search = new SearchView(getActivity());
         search.setOnQueryTextListener(this);
         searchItem.setActionView(search);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_refresh_nodes:
+            case R.id.menu_refresh:
                 refreshItem = item;
                 refreshList();
                 return true;
