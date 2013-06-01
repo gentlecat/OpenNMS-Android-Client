@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="severity_cleared">#999</color>
-    <color name="severity_normal">#999</color>
-    <color name="severity_indeterminate">#360</color>
-    <color name="severity_warning">#FC0</color>
-    <color name="severity_minor">#F90</color>
-    <color name="severity_major">#F30</color>
-    <color name="severity_critical">#C00</color>
+
+    <!-- http://www.opennms.org/wiki/Severity -->
+    <color name="severity_critical">#c00</color>
+    <color name="severity_major">#f30</color>
+    <color name="severity_minor">#f90</color>
+    <color name="severity_warning">#fc0</color>
+    <color name="severity_normal">#360</color>
+    <color name="severity_cleared">#ccc</color>
+    <color name="severity_indeterminate">#990</color>
+
 </resources>

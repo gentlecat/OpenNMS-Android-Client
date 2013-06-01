@@ -5,6 +5,9 @@
         <!-- -->
     </style>
 
+
+    <!-- Notifications -->
+
     <style name="NotificationText">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>

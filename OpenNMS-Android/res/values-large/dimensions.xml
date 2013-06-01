@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="frame_padding_top">24dp</dimen>
-    <dimen name="frame_padding_bottom">24dp</dimen>
-    <dimen name="frame_padding_left">48dp</dimen>
-    <dimen name="frame_padding_right">48dp</dimen>
-</resources>
