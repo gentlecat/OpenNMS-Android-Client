@@ -41,7 +41,7 @@ public class NodeDetailsFragment extends SherlockFragment {
             creationTime.setText(getString(R.string.node_details_creation_time) + " " + node.getCreateTime());
 
             TextView label = (TextView) getActivity().findViewById(R.id.node_label);
-            label.setText(getString(R.string.node_details_label) + " " + node.getLabel());
+            label.setText(node.getLabel());
 
             TextView labelSource = (TextView) getActivity().findViewById(R.id.node_label_source);
             labelSource.setText(getString(R.string.node_details_label_source) + " " + node.getLabelSource());

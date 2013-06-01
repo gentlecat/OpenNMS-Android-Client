@@ -6,11 +6,11 @@
 
     <ListView
         android:id="@android:id/list"
-        android:layout_width="@dimen/nodes_list_width"
+        android:layout_width="@dimen/list_width"
         android:layout_height="fill_parent" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
         <FrameLayout
@@ -21,6 +21,7 @@
             android:paddingBottom="@dimen/frame_padding_bottom"
             android:paddingLeft="@dimen/frame_padding_left"
             android:paddingRight="@dimen/frame_padding_right" />
+
     </ScrollView>
 
 </LinearLayout>

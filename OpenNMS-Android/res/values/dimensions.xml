@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <dimen name="nodes_list_width">220dp</dimen>
-    <dimen name="outages_list_width">210dp</dimen>
-    <dimen name="events_list_width">100dp</dimen>
-    <dimen name="alarms_list_width">100dp</dimen>
-
-    <dimen name="frame_padding">8dp</dimen>
-
+    <dimen name="list_width">320dp</dimen>
 </resources>
