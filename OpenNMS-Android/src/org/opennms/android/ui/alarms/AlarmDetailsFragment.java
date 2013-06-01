@@ -8,12 +8,21 @@ import android.view.ViewGroup;
 import android.widget.TableRow;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
 import org.opennms.android.dao.alarms.Alarm;
 
 public class AlarmDetailsFragment extends SherlockFragment {
 
     Alarm alarm;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,6 +33,23 @@ public class AlarmDetailsFragment extends SherlockFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         updateContent();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.alarm, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_acknowledge_alarm:
+                // TODO: Implement
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void bindAlarm(Alarm alarm) {
