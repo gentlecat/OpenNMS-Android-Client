@@ -208,7 +208,8 @@ public class MainActivity extends SherlockFragmentActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
-                        });
+                        })
+                .setCancelable(false);
         AlertDialog aboutDialog = builder.create();
         aboutDialog.show();
     }
