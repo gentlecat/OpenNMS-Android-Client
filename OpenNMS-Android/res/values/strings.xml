@@ -59,6 +59,15 @@
     <string name="notification_title">Notification</string>
     <string name="notification_text">Notification text</string>
 
+    <string-array name="navigation_items">
+        <item>Nodes</item>
+        <item>Outages</item>
+        <item>Events</item>
+        <item>Alarms</item>
+    </string-array>
+    <string name="drawer_open">Open navigation</string>
+    <string name="drawer_close">Close navigation</string>
+
     <string name="refresh">Refresh</string>
 
     <string name="search">Search</string>

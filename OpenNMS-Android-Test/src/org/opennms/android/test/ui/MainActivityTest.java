@@ -39,26 +39,6 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         assertTrue("SettingsActivity was not found", solo.waitForActivity("SettingsActivity"));
     }
 
-    public void testTabs() throws Exception {
-        final int TIMEOUT = 300; // ms
-
-        // Nodes
-        solo.clickOnText(solo.getString(R.string.nodes));
-        assertTrue(solo.waitForFragmentByTag(MainActivity.NODES_TAG, TIMEOUT));
-
-        // Outages
-        solo.clickOnText(solo.getString(R.string.outages));
-        assertTrue(solo.waitForFragmentByTag(MainActivity.OUTAGES_TAG, TIMEOUT));
-
-        // Events
-        solo.clickOnText(solo.getString(R.string.events));
-        assertTrue(solo.waitForFragmentByTag(MainActivity.EVENTS_TAG, TIMEOUT));
-
-        // Alarms
-        solo.clickOnText(solo.getString(R.string.alarms));
-        assertTrue(solo.waitForFragmentByTag(MainActivity.ALARMS_TAG, TIMEOUT));
-    }
-
     @Override
     protected void tearDown() throws Exception {
         solo.finishOpenedActivities();
