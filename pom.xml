@@ -8,6 +8,19 @@
     <packaging>apk</packaging>
     <name>OpenNMS Android</name>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>in-project</id>
+            <name>Project repository</name>
+            <url>file://${project.basedir}/libraries</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>android</groupId>
@@ -37,11 +50,9 @@
 
         <!-- Resting https://code.google.com/p/resting/wiki/Dependencies -->
         <dependency>
-            <groupId>com.google</groupId>
+            <groupId>google</groupId>
             <artifactId>resting</artifactId>
             <version>0.7</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/resting-0.7.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -88,4 +99,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
