@@ -2,8 +2,8 @@ package org.opennms.android.communication.nodes;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.nodes.Node;
-import org.opennms.android.communication.RestingServerCommunication;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class NodesServerCommunicationImpl implements NodesServerCommunication {
     public ArrayList<Node> getNodes(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> nodesCommunication = executorService
-                .submit(new RestingServerCommunication("nodes/?limit=0", appContext));
+                .submit(new ServerCommunication("nodes/?limit=0", appContext));
         ServiceResponse nodesServiceResponse = nodesCommunication.get();
         ArrayList<Node> nodesList = new ArrayList<Node>();
         if (nodesServiceResponse != null) {

@@ -2,7 +2,7 @@ package org.opennms.android.communication.events;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
-import org.opennms.android.communication.RestingServerCommunication;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.events.Event;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class EventsServerCommunicationImpl implements EventsServerCommunication 
     public ArrayList<Event> getEvents(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> eventsCommunication = executorService
-                .submit(new RestingServerCommunication("events?orderBy=id&order=desc", appContext));
+                .submit(new ServerCommunication("events?orderBy=id&order=desc", appContext));
         ServiceResponse events = eventsCommunication.get();
         ArrayList<Event> eventsList = new ArrayList<Event>();
         if (events != null) {

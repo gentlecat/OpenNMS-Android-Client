@@ -2,7 +2,7 @@ package org.opennms.android.communication.alarms;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
-import org.opennms.android.communication.RestingServerCommunication;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.alarms.Alarm;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class AlarmsServerCommunicationImpl implements AlarmsServerCommunication 
     public ArrayList<Alarm> getAlarms(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> alarmsCommunication = executorService
-                .submit(new RestingServerCommunication("alarms?orderBy=id&order=desc&limit=0", appContext));
+                .submit(new ServerCommunication("alarms?orderBy=id&order=desc&limit=0", appContext));
         ServiceResponse alarmsServiceResponse = alarmsCommunication.get();
         ArrayList<Alarm> alarmsList = new ArrayList<Alarm>();
         if (alarmsServiceResponse != null) {

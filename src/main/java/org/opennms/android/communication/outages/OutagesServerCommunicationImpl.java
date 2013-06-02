@@ -2,8 +2,8 @@ package org.opennms.android.communication.outages;
 
 import android.content.Context;
 import com.google.resting.component.impl.ServiceResponse;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.outages.Outage;
-import org.opennms.android.communication.RestingServerCommunication;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +23,7 @@ public class OutagesServerCommunicationImpl implements OutagesServerCommunicatio
     public ArrayList<Outage> getOutages(String url) throws InterruptedException, ExecutionException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> outagesCommunication = executorService
-                .submit(new RestingServerCommunication("outages?orderBy=id&order=desc", appContext));
+                .submit(new ServerCommunication("outages?orderBy=id&order=desc", appContext));
         ServiceResponse outages = outagesCommunication.get();
         ArrayList<Outage> outagesList = new ArrayList<Outage>();
         if (outages != null) {

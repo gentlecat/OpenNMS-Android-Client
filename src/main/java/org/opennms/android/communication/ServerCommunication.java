@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class RestingServerCommunication implements Callable<ServiceResponse> {
+public class ServerCommunication implements Callable<ServiceResponse> {
 
     private String url;
     private Context appContext;
 
-    public RestingServerCommunication(String url, Context appContext) {
+    public ServerCommunication(String url, Context appContext) {
         this.url = url;
         this.appContext = appContext;
     }
