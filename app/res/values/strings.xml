@@ -49,6 +49,14 @@
     <string name="settings_https">HTTPS</string>
     <string name="settings_https_on">Turned on</string>
     <string name="settings_https_off">Turned off</string>
+    <string name="settings_alarm_notifications">Alarm notifications</string>
+    <string name="settings_notifications_enabled">Notifications enabled</string>
+    <string name="settings_notifications_enabled_true">Alarm notifications enabled</string>
+    <string name="settings_notifications_enabled_false">Alarm notifications disabled</string>
+    <string name="settings_wifi_only">Wi-Fi only</string>
+    <string name="settings_refresh_rate">Refresh rate</string>
+    <string name="settings_refresh_rate_dialog_title">Alarms refresh rate (minutes)</string>
+    <string name="settings_refresh_rate_minutes">minutes</string>
 
     <!-- "Welcome" dialog -->
     <string name="welcome_message">Do you want to use test server or change settings to use your server?</string>
