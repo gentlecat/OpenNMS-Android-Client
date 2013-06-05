@@ -32,13 +32,13 @@ import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
-import org.opennms.android.service.RefreshService;
+import org.opennms.android.service.SyncService;
 
 public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 1;
-    RefreshService service;
+    SyncService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;
     boolean isDualPane = false;
@@ -48,7 +48,7 @@ public class NodesListFragment extends SherlockListFragment
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            RefreshService.LocalBinder binder = (RefreshService.LocalBinder) service;
+            SyncService.LocalBinder binder = (SyncService.LocalBinder) service;
             NodesListFragment.this.service = binder.getService();
             bound = true;
         }
@@ -69,7 +69,7 @@ public class NodesListFragment extends SherlockListFragment
     @Override
     public void onStart() {
         super.onStart();
-        Intent refreshService = new Intent(getActivity().getApplicationContext(), RefreshService.class);
+        Intent refreshService = new Intent(getActivity().getApplicationContext(), SyncService.class);
         getSherlockActivity().bindService(refreshService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 

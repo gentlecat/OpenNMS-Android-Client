@@ -22,7 +22,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.service.RefreshService;
+import org.opennms.android.service.SyncService;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
@@ -73,7 +73,7 @@ public class MainActivity extends SherlockFragmentActivity {
         };
         navigationLayout.setDrawerListener(navigationToggle);
 
-        refreshServiceIntent = new Intent(getApplicationContext(), RefreshService.class);
+        refreshServiceIntent = new Intent(getApplicationContext(), SyncService.class);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean("is_first_launch", true)) {
