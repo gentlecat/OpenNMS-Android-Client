@@ -29,7 +29,7 @@ import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
-    public Intent refreshServiceIntent;
+    public Intent syncServiceIntent;
     private DrawerLayout navigationLayout;
     private ListView navigationList;
     private ActionBarDrawerToggle navigationToggle;
@@ -73,8 +73,6 @@ public class MainActivity extends SherlockFragmentActivity {
         };
         navigationLayout.setDrawerListener(navigationToggle);
 
-        refreshServiceIntent = new Intent(getApplicationContext(), SyncService.class);
-
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean("is_first_launch", true)) {
             sharedPref.edit().putBoolean("is_first_launch", false).commit();
@@ -89,13 +87,18 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        getApplicationContext().startService(refreshServiceIntent);
+        // Setting up service
+        syncServiceIntent = new Intent(getApplicationContext(), SyncService.class);
+        getApplicationContext().startService(syncServiceIntent);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getApplicationContext().stopService(refreshServiceIntent);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (!settings.getBoolean("notifications_on", true)) {
+            getApplicationContext().stopService(syncServiceIntent);
+        }
     }
 
     @Override

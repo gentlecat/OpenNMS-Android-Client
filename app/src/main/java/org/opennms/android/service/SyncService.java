@@ -54,6 +54,18 @@ public class SyncService extends Service {
         return START_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "SyncService is destroyed.");
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "SyncService is bound.");
+        return binder;
+    }
+
     public void refreshAlarms() {
         new Thread(new Runnable() {
             public void run() {
@@ -178,18 +190,6 @@ public class SyncService extends Service {
                 Log.d(TAG, "Outages refreshing completed.");
             }
         }).start();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "SyncService destroyed.");
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "SyncService binded.");
-        return binder;
     }
 
     public class LocalBinder extends Binder {

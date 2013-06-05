@@ -31,8 +31,12 @@
         <activity android:name=".ui.events.EventDetailsActivity" />
         <activity android:name=".ui.alarms.AlarmDetailsActivity" />
 
-        <service android:name=".service.SyncService" />
-        <service android:name=".service.NotificationService" />
+        <service
+            android:name=".service.SyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.NotificationService"
+            android:exported="false" />
 
         <provider
             android:name=".dao.nodes.NodesListProvider"
