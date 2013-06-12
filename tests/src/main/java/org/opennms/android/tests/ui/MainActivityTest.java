@@ -64,7 +64,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         });
         String nodesString = solo.getString(R.string.nodes);
         solo.clickOnText(nodesString);
-        solo.waitForText(nodesString);
+        assertTrue(solo.waitForText(nodesString));
         Spoon.screenshot(activity, "nodes_opened");
 
         // Outages
@@ -75,7 +75,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         });
         String outagesString = solo.getString(R.string.outages);
         solo.clickOnText(outagesString);
-        solo.waitForText(outagesString);
+        assertTrue(solo.waitForText(outagesString));
         Spoon.screenshot(activity, "outages_opened");
 
         // Events
@@ -86,7 +86,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         });
         String eventsString = solo.getString(R.string.events);
         solo.clickOnText(eventsString);
-        solo.waitForText(eventsString);
+        assertTrue(solo.waitForText(eventsString));
         Spoon.screenshot(activity, "events_opened");
 
         // Alarms
@@ -97,7 +97,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         });
         String alarmsString = solo.getString(R.string.alarms);
         solo.clickOnText(alarmsString);
-        solo.waitForText(alarmsString);
+        assertTrue(solo.waitForText(alarmsString));
         Spoon.screenshot(activity, "end_state");
     }
 
