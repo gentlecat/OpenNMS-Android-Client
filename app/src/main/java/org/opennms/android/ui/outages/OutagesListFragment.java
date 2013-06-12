@@ -91,7 +91,7 @@ public class OutagesListFragment extends SherlockListFragment
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_activated_2,
+                android.R.layout.simple_list_item_2,
                 null,
                 new String[]{Columns.OutageColumns.COL_OUTAGE_ID, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},

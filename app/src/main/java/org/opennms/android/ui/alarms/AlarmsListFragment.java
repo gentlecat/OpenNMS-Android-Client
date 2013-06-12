@@ -91,7 +91,7 @@ public class AlarmsListFragment extends SherlockListFragment
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_activated_2,
+                android.R.layout.simple_list_item_2,
                 null,
                 new String[]{Columns.AlarmColumns.COL_ALARM_ID, Columns.AlarmColumns.COL_SEVERITY},
                 new int[]{android.R.id.text1, android.R.id.text2},

@@ -91,7 +91,7 @@ public class NodesListFragment extends SherlockListFragment
 
         adapter = new SimpleCursorAdapter(
                 getSherlockActivity(),
-                android.R.layout.simple_list_item_activated_2,
+                android.R.layout.simple_list_item_2,
                 null,
                 new String[]{Columns.NodeColumns.COL_NODE_ID, Columns.NodeColumns.COL_LABEL},
                 new int[]{android.R.id.text1, android.R.id.text2},
