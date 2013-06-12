@@ -24,8 +24,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         activity = getActivity();
         solo = new Solo(getInstrumentation(), activity);
 
-        if (solo.searchText(solo.getString(R.string.welcome_message)))
-        {
+        if (solo.searchText(solo.getString(R.string.welcome_message))) {
             solo.clickOnButton(solo.getString(R.string.welcome_message_neg_button));
         }
     }
@@ -52,6 +51,54 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         solo.clickOnMenuItem(solo.getString(R.string.settings), true);
         assertTrue("SettingsActivity was not found", solo.waitForActivity("SettingsActivity"));
         Spoon.screenshot(activity, "settings_activity_opened");
+    }
+
+    public void testNavigation() throws Exception {
+        Spoon.screenshot(activity, "initial_state");
+
+        // Nodes
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                solo.clickOnActionBarHomeButton();
+            }
+        });
+        String nodesString = solo.getString(R.string.nodes);
+        solo.clickOnText(nodesString);
+        solo.waitForText(nodesString);
+        Spoon.screenshot(activity, "nodes_opened");
+
+        // Outages
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                solo.clickOnActionBarHomeButton();
+            }
+        });
+        String outagesString = solo.getString(R.string.outages);
+        solo.clickOnText(outagesString);
+        solo.waitForText(outagesString);
+        Spoon.screenshot(activity, "outages_opened");
+
+        // Events
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                solo.clickOnActionBarHomeButton();
+            }
+        });
+        String eventsString = solo.getString(R.string.events);
+        solo.clickOnText(eventsString);
+        solo.waitForText(eventsString);
+        Spoon.screenshot(activity, "events_opened");
+
+        // Alarms
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                solo.clickOnActionBarHomeButton();
+            }
+        });
+        String alarmsString = solo.getString(R.string.alarms);
+        solo.clickOnText(alarmsString);
+        solo.waitForText(alarmsString);
+        Spoon.screenshot(activity, "end_state");
     }
 
     @Override
