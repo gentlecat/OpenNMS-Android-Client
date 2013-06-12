@@ -112,6 +112,7 @@ public class SyncService extends Service {
                         values.put(Columns.EventColumns.COL_DESCRIPTION, event.getDescription());
                         values.put(Columns.EventColumns.COL_HOST, event.getHost());
                         values.put(Columns.EventColumns.COL_IP_ADDRESS, event.getIpAddress());
+                        values.put(Columns.EventColumns.COL_CREATE_TIME, event.getCreateTime());
                         values.put(Columns.EventColumns.COL_NODE_ID, event.getNodeId());
                         values.put(Columns.EventColumns.COL_NODE_LABEL, event.getNodeLabel());
                         getContentResolver().insert(EventsListProvider.CONTENT_URI, values);
@@ -179,6 +180,7 @@ public class SyncService extends Service {
                         values.put(Columns.OutageColumns.COL_OUTAGE_ID, outage.getId());
                         values.put(Columns.OutageColumns.COL_IP_ADDRESS, outage.getIpAddress());
                         values.put(Columns.OutageColumns.COL_IF_REGAINED_SERVICE, outage.getIfRegainedService());
+                        values.put(Columns.OutageColumns.COL_IF_LOST_SERVICE, outage.getIfRegainedService());
                         values.put(Columns.OutageColumns.COL_SERVICE_TYPE_NAME, outage.getServiceTypeName());
                         getContentResolver().insert(OutagesListProvider.CONTENT_URI, values);
                     }
