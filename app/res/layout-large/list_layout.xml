@@ -17,10 +17,7 @@
             android:id="@+id/details_fragment_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
-            android:paddingLeft="48dp"
-            android:paddingRight="48dp" />
+            android:padding="24dp" />
 
     </ScrollView>
 
