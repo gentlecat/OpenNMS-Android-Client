@@ -1,4 +1,4 @@
-package org.opennms.android.ui.outages;
+package org.opennms.android.ui.events;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,14 +30,14 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
-import org.opennms.android.dao.outages.Outage;
-import org.opennms.android.dao.outages.OutagesListProvider;
+import org.opennms.android.dao.events.Event;
+import org.opennms.android.dao.events.EventsListProvider;
 import org.opennms.android.service.SyncService;
 
-public class OutagesListFragment extends SherlockListFragment
+public class EventsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int LOADER_ID = 2;
+    private static final int LOADER_ID = 3;
     SyncService service;
     boolean bound = false;
     SimpleCursorAdapter adapter;
@@ -49,7 +49,7 @@ public class OutagesListFragment extends SherlockListFragment
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             SyncService.LocalBinder binder = (SyncService.LocalBinder) service;
-            OutagesListFragment.this.service = binder.getService();
+            EventsListFragment.this.service = binder.getService();
             bound = true;
         }
 
@@ -93,9 +93,10 @@ public class OutagesListFragment extends SherlockListFragment
                 getSherlockActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Columns.OutageColumns.COL_OUTAGE_ID, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
+                new String[]{Columns.EventColumns.COL_EVENT_ID, Columns.EventColumns.COL_SEVERITY},
                 new int[]{android.R.id.text1, android.R.id.text2},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        );
         getListView().setAdapter(adapter);
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
@@ -118,47 +119,55 @@ public class OutagesListFragment extends SherlockListFragment
 
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
-        showDetails(getListView().getItemIdAtPosition(position));
+        Event event = getEvent(getListView().getItemIdAtPosition(position));
+        showDetails(event);
     }
 
-    private void showDetails(long id) {
-        Outage outage = getOutage(id);
+    private void showDetails(Event event) {
         if (isDualPane) {
             FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
             FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
             detailsContainer.removeAllViews();
-            OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
-            detailsFragment.bindOutage(outage);
+            EventDetailsFragment detailsFragment = new EventDetailsFragment();
+            detailsFragment.bindEvent(event);
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.commit();
         } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra("outage", outage);
+            Intent detailsIntent = new Intent(getSherlockActivity(), EventDetailsActivity.class);
+            detailsIntent.putExtra("event", event);
             startActivity(detailsIntent);
         }
     }
 
-    private Outage getOutage(long id) {
+    private Event getEvent(long id) {
         String projection[] = {
-                Columns.OutageColumns.COL_OUTAGE_ID,
-                Columns.OutageColumns.COL_IP_ADDRESS,
-                Columns.OutageColumns.COL_IF_REGAINED_SERVICE,
-                Columns.OutageColumns.COL_SERVICE_TYPE_NAME,
-                Columns.OutageColumns.COL_IF_LOST_SERVICE
+                Columns.EventColumns.COL_EVENT_ID,
+                Columns.EventColumns.COL_SEVERITY,
+                Columns.EventColumns.COL_LOG_MESSAGE,
+                Columns.EventColumns.COL_DESCRIPTION,
+                Columns.EventColumns.COL_HOST,
+                Columns.EventColumns.COL_IP_ADDRESS,
+                Columns.EventColumns.COL_CREATE_TIME,
+                Columns.EventColumns.COL_NODE_ID,
+                Columns.EventColumns.COL_NODE_LABEL,
         };
-        Cursor outagesCursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(id)),
+        Cursor eventsCursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(EventsListProvider.CONTENT_URI, String.valueOf(id)),
                 projection, null, null, null);
-        if (outagesCursor.moveToFirst()) {
-            Outage outage = new Outage(outagesCursor.getInt(0));
-            outage.setIpAddress(outagesCursor.getString(1));
-            outage.setIfRegainedService(outagesCursor.getString(2));
-            outage.setServiceTypeName(outagesCursor.getString(3));
-            outage.setIfLostService(outagesCursor.getString(4));
-            outagesCursor.close();
-            return outage;
+        if (eventsCursor.moveToFirst()) {
+            Event event = new Event(eventsCursor.getInt(0));
+            event.setSeverity(eventsCursor.getString(1));
+            event.setLogMessage(eventsCursor.getString(2));
+            event.setDescription(eventsCursor.getString(3));
+            event.setHost(eventsCursor.getString(4));
+            event.setIpAddress(eventsCursor.getString(5));
+            event.setCreateTime(eventsCursor.getString(6));
+            event.setNodeId(eventsCursor.getInt(7));
+            event.setNodeLabel(eventsCursor.getString(8));
+            eventsCursor.close();
+            return event;
         }
-        outagesCursor.close();
+        eventsCursor.close();
         return null;
     }
 
@@ -189,7 +198,7 @@ public class OutagesListFragment extends SherlockListFragment
     private void refreshList() {
         if (bound) {
             startRefreshAnimation();
-            service.refreshOutages();
+            service.refreshEvents();
         }
     }
 
@@ -215,21 +224,21 @@ public class OutagesListFragment extends SherlockListFragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri baseUri;
-        if (this.currentFilter != null) {
+        if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, Columns.OutageColumns.COL_OUTAGE_ID),
-                    Uri.encode(this.currentFilter)
+                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Columns.EventColumns.COL_SEVERITY),
+                    Uri.encode(currentFilter)
             );
         } else {
-            baseUri = OutagesListProvider.CONTENT_URI;
+            baseUri = EventsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.OutageColumns.TABLE_OUTAGES_ID,
-                Columns.OutageColumns.COL_OUTAGE_ID,
-                Columns.OutageColumns.COL_SERVICE_TYPE_NAME
+                Columns.EventColumns.TABLE_EVENT_ID,
+                Columns.EventColumns.COL_EVENT_ID,
+                Columns.EventColumns.COL_SEVERITY
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.OutageColumns.COL_OUTAGE_ID + " DESC");
+                Columns.EventColumns.COL_EVENT_ID + " DESC");
     }
 
     @Override
