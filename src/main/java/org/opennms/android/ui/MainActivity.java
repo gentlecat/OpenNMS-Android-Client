@@ -1,8 +1,5 @@
 package org.opennms.android.ui;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,9 +9,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -24,6 +19,8 @@ import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
 import org.opennms.android.service.SyncService;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
+import org.opennms.android.ui.dialogs.AboutDialog;
+import org.opennms.android.ui.dialogs.WelcomeDialog;
 import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
@@ -181,40 +178,14 @@ public class MainActivity extends SherlockFragmentActivity {
         navigationToggle.onConfigurationChanged(newConfig);
     }
 
-    private void showAboutDialog() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.about, (ViewGroup) findViewById(R.layout.about));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(layout).setNeutralButton(
-                getString(R.string.close_dialog),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        builder.create().show();
+    public void showAboutDialog() {
+        AboutDialog dialog = new AboutDialog();
+        dialog.show(getSupportFragmentManager(), AboutDialog.TAG);
     }
 
-    private void showWelcomeDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage(getResources().getString(R.string.welcome_message))
-                .setPositiveButton(
-                        getResources().getString(R.string.welcome_message_pos_button),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
-                                startActivity(settingsIntent);
-                            }
-                        })
-                .setNegativeButton(
-                        getResources().getString(R.string.welcome_message_neg_button),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setCancelable(false);
-        AlertDialog aboutDialog = builder.create();
-        aboutDialog.show();
+    public void showWelcomeDialog() {
+        WelcomeDialog dialog = new WelcomeDialog();
+        dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
