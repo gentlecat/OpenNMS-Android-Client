@@ -30,9 +30,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>android.support</groupId>
-            <artifactId>compatibility-v4</artifactId>
-            <version>13</version>
+            <groupId>google</groupId>
+            <artifactId>android-support</artifactId>
+            <version>v4</version>
         </dependency>
 
         <dependency>
