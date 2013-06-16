@@ -1,11 +1,17 @@
 package org.opennms.android.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import org.opennms.android.R;
 import org.opennms.android.communication.alarms.AlarmsServerCommunication;
 import org.opennms.android.communication.alarms.AlarmsServerCommunicationImpl;
 import org.opennms.android.communication.events.EventsServerCommunication;
@@ -23,6 +29,7 @@ import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
 import org.opennms.android.dao.outages.Outage;
 import org.opennms.android.dao.outages.OutagesListProvider;
+import org.opennms.android.ui.MainActivity;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -32,19 +39,24 @@ import java.util.concurrent.ExecutionException;
 public class SyncService extends Service {
 
     private static final String TAG = "SyncService";
+    private static final int ALARM_NOTIFICATION_ID = 1;
     private final IBinder binder = new LocalBinder();
     private AlarmsServerCommunication alarmsServer;
     private EventsServerCommunication eventsServer;
     private NodesServerCommunication nodesServer;
     private OutagesServerCommunication outagesServer;
+    private ContentResolver contentResolver;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         alarmsServer = new AlarmsServerCommunicationImpl(getApplicationContext());
         eventsServer = new EventsServerCommunicationImpl(getApplicationContext());
         nodesServer = new NodesServerCommunicationImpl(getApplicationContext());
         outagesServer = new OutagesServerCommunicationImpl(getApplicationContext());
+
+        contentResolver = getContentResolver();
     }
 
     @Override
@@ -78,22 +90,25 @@ public class SyncService extends Service {
                         values.put(Columns.AlarmColumns.COL_SEVERITY, alarm.getSeverity());
                         values.put(Columns.AlarmColumns.COL_DESCRIPTION, alarm.getDescription());
                         values.put(Columns.AlarmColumns.COL_LOG_MESSAGE, alarm.getLogMessage());
-                        getContentResolver().insert(AlarmsListProvider.CONTENT_URI, values);
+                        contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
                     }
                 } catch (UnknownHostException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
                 } catch (InterruptedException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
                 } catch (ExecutionException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
                 } catch (IOException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(AlarmsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
                 }
                 Log.d(TAG, "Alarms refreshing completed.");
+
+                // TODO: Count number of new alarms
+                issueNewAlarmsNotification();
             }
         }).start();
     }
@@ -115,20 +130,20 @@ public class SyncService extends Service {
                         values.put(Columns.EventColumns.COL_CREATE_TIME, event.getCreateTime());
                         values.put(Columns.EventColumns.COL_NODE_ID, event.getNodeId());
                         values.put(Columns.EventColumns.COL_NODE_LABEL, event.getNodeLabel());
-                        getContentResolver().insert(EventsListProvider.CONTENT_URI, values);
+                        contentResolver.insert(EventsListProvider.CONTENT_URI, values);
                     }
                 } catch (UnknownHostException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
                 } catch (InterruptedException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
                 } catch (ExecutionException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
                 } catch (IOException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(EventsListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
                 }
                 Log.d(TAG, "Events refreshing completed.");
             }
@@ -149,20 +164,20 @@ public class SyncService extends Service {
                         values.put(Columns.NodeColumns.COL_CREATED_TIME, node.getCreateTime());
                         values.put(Columns.NodeColumns.COL_SYS_CONTACT, node.getSysContact());
                         values.put(Columns.NodeColumns.COL_LABEL_SOURCE, node.getLabelSource());
-                        getContentResolver().insert(NodesListProvider.CONTENT_URI, values);
+                        contentResolver.insert(NodesListProvider.CONTENT_URI, values);
                     }
                 } catch (UnknownHostException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
                 } catch (InterruptedException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
                 } catch (ExecutionException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
                 } catch (IOException e) {
                     Log.i(TAG, e.getMessage());
-                    getContentResolver().delete(NodesListProvider.CONTENT_URI, null, null);
+                    contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
                 }
                 Log.d(TAG, "Node refreshing completed.");
             }
@@ -182,7 +197,7 @@ public class SyncService extends Service {
                         values.put(Columns.OutageColumns.COL_IF_REGAINED_SERVICE, outage.getIfRegainedService());
                         values.put(Columns.OutageColumns.COL_IF_LOST_SERVICE, outage.getIfRegainedService());
                         values.put(Columns.OutageColumns.COL_SERVICE_TYPE_NAME, outage.getServiceTypeName());
-                        getContentResolver().insert(OutagesListProvider.CONTENT_URI, values);
+                        contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
                     }
                 } catch (InterruptedException e) {
                     Log.i(TAG, e.getMessage());
@@ -192,6 +207,36 @@ public class SyncService extends Service {
                 Log.d(TAG, "Outages refreshing completed.");
             }
         }).start();
+    }
+
+    private void issueNewAlarmsNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        // Constructs the Builder object.
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setContentTitle(getString(R.string.alarms_notification_title))
+                .setContentText(getString(R.string.alarms_notification_text))
+                .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
+
+        // Clicking the notification itself displays MainActivity.
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        /*
+         * Because clicking the notification opens a new ("special") activity,
+         * there's no need to create an artificial back stack.
+         */
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        builder.setContentIntent(resultPendingIntent);
+
+        notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build());
     }
 
     public class LocalBinder extends Binder {

@@ -64,8 +64,8 @@
     <string name="welcome_message_neg_button">Use test server</string>
 
     <!-- Notification -->
-    <string name="notification_title">Notification</string>
-    <string name="notification_text">Notification text</string>
+    <string name="alarms_notification_title">New alarms</string>
+    <string name="alarms_notification_text">There are new alarms!</string>
 
     <string-array name="navigation_items">
         <item>Nodes</item>

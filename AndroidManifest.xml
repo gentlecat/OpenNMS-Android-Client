@@ -35,9 +35,6 @@
         <service
             android:name=".service.SyncService"
             android:exported="false" />
-        <service
-            android:name=".service.NotificationService"
-            android:exported="false" />
 
         <provider
             android:name=".dao.nodes.NodesListProvider"
