@@ -7,8 +7,10 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import org.opennms.android.R;
@@ -46,6 +48,7 @@ public class SyncService extends Service {
     private NodesServerCommunication nodesServer;
     private OutagesServerCommunication outagesServer;
     private ContentResolver contentResolver;
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate() {
@@ -57,6 +60,7 @@ public class SyncService extends Service {
         outagesServer = new OutagesServerCommunicationImpl(getApplicationContext());
 
         contentResolver = getContentResolver();
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
 
     @Override
@@ -81,6 +85,9 @@ public class SyncService extends Service {
     public void refreshAlarms() {
         new Thread(new Runnable() {
             public void run() {
+                int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
+                int newAlarmsCount = 0, maxId = 0;
+
                 Log.d(TAG, "Refreshing alarms...");
                 try {
                     List<Alarm> alarms = alarmsServer.getAlarms("alarms");
@@ -91,6 +98,9 @@ public class SyncService extends Service {
                         values.put(Columns.AlarmColumns.COL_DESCRIPTION, alarm.getDescription());
                         values.put(Columns.AlarmColumns.COL_LOG_MESSAGE, alarm.getLogMessage());
                         contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
+
+                        if (alarm.getId() > latestShownAlarmId) newAlarmsCount++;
+                        if (alarm.getId() > maxId) maxId = alarm.getId();
                     }
                 } catch (UnknownHostException e) {
                     Log.i(TAG, e.getMessage());
@@ -107,8 +117,8 @@ public class SyncService extends Service {
                 }
                 Log.d(TAG, "Alarms refreshing completed.");
 
-                // TODO: Count number of new alarms
-                issueNewAlarmsNotification();
+                sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
+                if (newAlarmsCount > 0) issueNewAlarmsNotification(newAlarmsCount);
             }
         }).start();
     }
@@ -209,14 +219,14 @@ public class SyncService extends Service {
         }).start();
     }
 
-    private void issueNewAlarmsNotification() {
+    private void issueNewAlarmsNotification(int newAlarmsCount) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Constructs the Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(getString(R.string.alarms_notification_title))
-                .setContentText(getString(R.string.alarms_notification_text))
+                .setContentText(String.format(getString(R.string.alarms_notification_text), newAlarmsCount))
                 .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
 
         // Clicking the notification itself displays MainActivity.

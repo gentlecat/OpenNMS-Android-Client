@@ -65,7 +65,7 @@
 
     <!-- Notification -->
     <string name="alarms_notification_title">New alarms</string>
-    <string name="alarms_notification_text">There are new alarms!</string>
+    <string name="alarms_notification_text">There are %d new alarms!</string>
 
     <string-array name="navigation_items">
         <item>Nodes</item>
