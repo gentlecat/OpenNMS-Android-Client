@@ -33,24 +33,30 @@
         <activity android:name=".ui.alarms.AlarmDetailsActivity" />
 
         <service
-            android:name=".service.SyncService"
+            android:name=".service.AlarmsSyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.EventsSyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.NodesSyncService"
+            android:exported="false" />
+        <service
+            android:name=".service.OutagesSyncService"
             android:exported="false" />
 
         <provider
             android:name=".dao.nodes.NodesListProvider"
             android:authorities="org.opennms.android.dao.nodes.NodesListProvider"
             android:multiprocess="true" />
-
         <provider
             android:name=".dao.outages.OutagesListProvider"
             android:authorities="org.opennms.android.dao.outages.OutagesListProvider"
             android:multiprocess="true" />
-
         <provider
             android:name=".dao.events.EventsListProvider"
             android:authorities="org.opennms.android.dao.events.EventsListProvider"
             android:multiprocess="true" />
-
         <provider
             android:name=".dao.alarms.AlarmsListProvider"
             android:authorities="org.opennms.android.dao.alarms.AlarmsListProvider"

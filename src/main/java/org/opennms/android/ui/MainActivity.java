@@ -1,5 +1,8 @@
 package org.opennms.android.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,11 +16,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.service.SyncService;
+import org.opennms.android.service.AlarmReceiver;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.dialogs.AboutDialog;
 import org.opennms.android.ui.dialogs.WelcomeDialog;
@@ -25,13 +29,16 @@ import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 public class MainActivity extends SherlockFragmentActivity {
-    public Intent syncServiceIntent;
     private DrawerLayout navigationLayout;
     private ListView navigationList;
     private ActionBarDrawerToggle navigationToggle;
     private CharSequence title;
     private String[] navigationItems;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +54,11 @@ public class MainActivity extends SherlockFragmentActivity {
         navigationList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_list_item, navigationItems));
         navigationList.setOnItemClickListener(new DrawerItemClickListener());
 
+        actionBar = getSupportActionBar();
+
         // Enable ActionBar app icon to behave as action to toggle navigation
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         navigationToggle = new ActionBarDrawerToggle(
                 this,
@@ -59,12 +68,12 @@ public class MainActivity extends SherlockFragmentActivity {
                 R.string.drawer_close
         ) {
             public void onDrawerClosed(View view) {
-                getSupportActionBar().setTitle(title);
+                actionBar.setTitle(title);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getSupportActionBar().setTitle(drawerTitle);
+                actionBar.setTitle(drawerTitle);
                 invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
@@ -78,23 +87,6 @@ public class MainActivity extends SherlockFragmentActivity {
 
         if (savedInstanceState == null) {
             selectItem(0);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Setting up service
-        syncServiceIntent = new Intent(getApplicationContext(), SyncService.class);
-        getApplicationContext().startService(syncServiceIntent);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (!settings.getBoolean("notifications_on", true)) {
-            getApplicationContext().stopService(syncServiceIntent);
         }
     }
 
@@ -155,7 +147,7 @@ public class MainActivity extends SherlockFragmentActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         // update selected item and title, then close the drawer
-        navigationList.setItemChecked(position, true);
+        //navigationList.setItemChecked(position, true);
         setTitle(navigationItems[position]);
         navigationLayout.closeDrawer(navigationList);
     }
@@ -163,7 +155,7 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public void setTitle(CharSequence title) {
         this.title = title;
-        getSupportActionBar().setTitle(this.title);
+        actionBar.setTitle(this.title);
     }
 
     @Override

@@ -1,13 +1,10 @@
 package org.opennms.android.ui.nodes;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -32,45 +29,21 @@ import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
-import org.opennms.android.service.SyncService;
+import org.opennms.android.service.NodesSyncService;
 
 public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 1;
-    SyncService service;
-    boolean bound = false;
     SimpleCursorAdapter adapter;
     boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            SyncService.LocalBinder binder = (SyncService.LocalBinder) service;
-            NodesListFragment.this.service = binder.getService();
-            bound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            bound = false;
-        }
-
-    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Intent refreshService = new Intent(getActivity().getApplicationContext(), SyncService.class);
-        getSherlockActivity().bindService(refreshService, serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -105,10 +78,6 @@ public class NodesListFragment extends SherlockListFragment
     public void onStop() {
         super.onStop();
         stopRefreshAnimation();
-        if (bound) {
-            getSherlockActivity().unbindService(serviceConnection);
-            bound = false;
-        }
     }
 
     @Override
@@ -189,10 +158,9 @@ public class NodesListFragment extends SherlockListFragment
     }
 
     private void refreshList() {
-        if (bound) {
-            startRefreshAnimation();
-            service.refreshNodes();
-        }
+        startRefreshAnimation();
+        Intent intent = new Intent(getActivity(), NodesSyncService.class);
+        getActivity().startService(intent);
     }
 
     @Override
