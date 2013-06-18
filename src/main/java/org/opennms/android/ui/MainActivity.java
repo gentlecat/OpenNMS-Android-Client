@@ -186,7 +186,6 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     private void setRecurringAlarm(Context context) {
-        Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
