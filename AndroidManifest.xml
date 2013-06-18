@@ -45,6 +45,8 @@
             android:name=".service.OutagesSyncService"
             android:exported="false" />
 
+        <receiver android:name=".service.AlarmReceiver" />
+
         <provider
             android:name=".dao.nodes.NodesListProvider"
             android:authorities="org.opennms.android.dao.nodes.NodesListProvider"

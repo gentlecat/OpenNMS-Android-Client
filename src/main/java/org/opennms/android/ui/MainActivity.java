@@ -30,7 +30,6 @@ import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 public class MainActivity extends SherlockFragmentActivity {
     private DrawerLayout navigationLayout;
@@ -39,6 +38,7 @@ public class MainActivity extends SherlockFragmentActivity {
     private CharSequence title;
     private String[] navigationItems;
     private ActionBar actionBar;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +79,15 @@ public class MainActivity extends SherlockFragmentActivity {
         };
         navigationLayout.setDrawerListener(navigationToggle);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         if (sharedPref.getBoolean("is_first_launch", true)) {
             sharedPref.edit().putBoolean("is_first_launch", false).commit();
             showWelcomeDialog();
+        }
+
+        if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
+            setRecurringAlarm(this);
         }
 
         if (savedInstanceState == null) {
@@ -178,6 +183,20 @@ public class MainActivity extends SherlockFragmentActivity {
     public void showWelcomeDialog() {
         WelcomeDialog dialog = new WelcomeDialog();
         dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
+    }
+
+    private void setRecurringAlarm(Context context) {
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        int interval = sharedPref.getInt("refresh_rate", Integer.valueOf(getString(R.string.default_refresh_rate)));
+        alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                Calendar.getInstance().getTimeInMillis(),
+                interval * 60 * 1000,
+                pendingIntent
+        );
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
