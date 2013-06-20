@@ -40,7 +40,7 @@ public class NodeDetailsFragment extends SherlockFragment {
             id.setText(getString(R.string.node_details_id) + node.getId());
 
             TextView sysContact = (TextView) getActivity().findViewById(R.id.node_contact);
-            sysContact.setText(getString(R.string.node_details_contact) + " " + node.getSysContact());
+            sysContact.setText(node.getSysContact());
 
             TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
             // Example: "2011-09-27T12:15:32.363-04:00"
@@ -49,7 +49,7 @@ public class NodeDetailsFragment extends SherlockFragment {
             if (timeString != null) {
                 try {
                     Date createTime = format.parse(timeString);
-                    timeView.setText(getString(R.string.node_details_creation_time) + " " + createTime.toString());
+                    timeView.setText(createTime.toString());
                 } catch (ParseException e) {
                     Log.e(TAG, "Creation time parsing error");
                 }
@@ -59,10 +59,10 @@ public class NodeDetailsFragment extends SherlockFragment {
             label.setText(node.getLabel());
 
             TextView labelSource = (TextView) getActivity().findViewById(R.id.node_label_source);
-            labelSource.setText(getString(R.string.node_details_label_source) + " " + node.getLabelSource());
+            labelSource.setText(node.getLabelSource());
 
             TextView type = (TextView) getActivity().findViewById(R.id.node_type);
-            type.setText(getString(R.string.node_details_type) + " " + node.getType());
+            type.setText(node.getType());
         }
     }
 
