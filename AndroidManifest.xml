@@ -49,19 +49,19 @@
 
         <provider
             android:name=".dao.nodes.NodesListProvider"
-            android:authorities=".dao.nodes.NodesListProvider"
+            android:authorities="org.opennms.android.dao.nodes.NodesListProvider"
             android:multiprocess="true" />
         <provider
             android:name=".dao.outages.OutagesListProvider"
-            android:authorities=".dao.outages.OutagesListProvider"
+            android:authorities="org.opennms.android.dao.outages.OutagesListProvider"
             android:multiprocess="true" />
         <provider
             android:name=".dao.events.EventsListProvider"
-            android:authorities=".dao.events.EventsListProvider"
+            android:authorities="org.opennms.android.dao.events.EventsListProvider"
             android:multiprocess="true" />
         <provider
             android:name=".dao.alarms.AlarmsListProvider"
-            android:authorities=".dao.alarms.AlarmsListProvider"
+            android:authorities="org.opennms.android.dao.alarms.AlarmsListProvider"
             android:multiprocess="true" />
 
     </application>
