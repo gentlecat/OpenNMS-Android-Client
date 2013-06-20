@@ -56,7 +56,8 @@
     <string name="settings_wifi_only">Wi-Fi only</string>
     <string name="settings_refresh_rate">Refresh rate</string>
     <string name="settings_refresh_rate_dialog_title">Alarms refresh rate (minutes)</string>
-    <string name="settings_refresh_rate_minutes">minutes</string>
+    <string name="settings_refresh_rate_minutes_singular">minute</string>
+    <string name="settings_refresh_rate_minutes_plural">minutes</string>
 
     <!-- "Welcome" dialog -->
     <string name="welcome_message">Do you want to use test server or change settings to use your server?</string>

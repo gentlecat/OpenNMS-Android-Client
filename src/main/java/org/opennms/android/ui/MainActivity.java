@@ -87,7 +87,9 @@ public class MainActivity extends SherlockFragmentActivity {
         }
 
         if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
-            setRecurringAlarm(this);
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            setRecurringAlarm(this, alarmManager, intent);
         }
 
         if (savedInstanceState == null) {
@@ -185,11 +187,9 @@ public class MainActivity extends SherlockFragmentActivity {
         dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
     }
 
-    private void setRecurringAlarm(Context context) {
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int interval = sharedPref.getInt("refresh_rate", Integer.valueOf(getString(R.string.default_refresh_rate)));
+    private void setRecurringAlarm(Context context, AlarmManager alarmManager, Intent alarmRecieverIntent) {
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmRecieverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int interval = Integer.parseInt(sharedPref.getString("refresh_rate", String.valueOf(getResources().getInteger(R.integer.default_refresh_rate))));
         alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 Calendar.getInstance().getTimeInMillis(),

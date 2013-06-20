@@ -53,7 +53,7 @@
             android:key="refresh_rate"
             android:title="@string/settings_refresh_rate"
             android:dialogTitle="@string/settings_refresh_rate_dialog_title"
-            android:defaultValue="@string/default_refresh_rate"
+            android:defaultValue="@integer/default_refresh_rate"
             android:inputType="numberSigned" />
     </PreferenceCategory>
 
