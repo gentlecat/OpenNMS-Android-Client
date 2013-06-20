@@ -3,6 +3,7 @@ package org.opennms.android.ui.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
@@ -27,7 +28,17 @@ public class AboutDialog extends DialogFragment {
         content.setText(Html.fromHtml(getResources().getString(R.string.about_info)));
         content.setMovementMethod(LinkMovementMethod.getInstance());
 
+        TextView versionTextView = (TextView) view.findViewById(R.id.about_version);
+        String version = getResources().getString(R.string.version) + " ";
+        try {
+            version += getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+            version += getResources().getString(R.string.unknown);
+        }
+        versionTextView.setText(version);
+
         Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.app_name_full)
                 .setView(view)
                 .setNeutralButton(
                         getString(R.string.close_dialog),

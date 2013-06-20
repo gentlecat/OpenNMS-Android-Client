@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">OpenNMS</string>
+    <string name="app_name_full">OpenNMS Android Client</string>
 
     <!-- Nodes -->
     <string name="nodes">Nodes</string>
@@ -90,6 +91,8 @@
         OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
         OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
     </string>
+    <string name="version">Version:</string>
+    <string name="unknown">Unknown</string>
 
     <string name="close_dialog">Close</string>
 
