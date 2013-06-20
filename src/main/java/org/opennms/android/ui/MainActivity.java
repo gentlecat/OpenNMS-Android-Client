@@ -1,8 +1,5 @@
 package org.opennms.android.ui;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -21,15 +18,12 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.service.AlarmReceiver;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.dialogs.AboutDialog;
 import org.opennms.android.ui.dialogs.WelcomeDialog;
 import org.opennms.android.ui.events.EventsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
-
-import java.util.Calendar;
 
 public class MainActivity extends SherlockFragmentActivity {
     private DrawerLayout navigationLayout;
@@ -38,7 +32,6 @@ public class MainActivity extends SherlockFragmentActivity {
     private CharSequence title;
     private String[] navigationItems;
     private ActionBar actionBar;
-    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,17 +72,10 @@ public class MainActivity extends SherlockFragmentActivity {
         };
         navigationLayout.setDrawerListener(navigationToggle);
 
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean("is_first_launch", true)) {
             sharedPref.edit().putBoolean("is_first_launch", false).commit();
             showWelcomeDialog();
-        }
-
-        if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
-            Intent intent = new Intent(this, AlarmReceiver.class);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            setRecurringAlarm(this, alarmManager, intent);
         }
 
         if (savedInstanceState == null) {
@@ -185,17 +171,6 @@ public class MainActivity extends SherlockFragmentActivity {
     public void showWelcomeDialog() {
         WelcomeDialog dialog = new WelcomeDialog();
         dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
-    }
-
-    private void setRecurringAlarm(Context context, AlarmManager alarmManager, Intent alarmRecieverIntent) {
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmRecieverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        int interval = Integer.parseInt(sharedPref.getString("refresh_rate", String.valueOf(getResources().getInteger(R.integer.default_refresh_rate))));
-        alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                Calendar.getInstance().getTimeInMillis(),
-                interval * 60 * 1000,
-                pendingIntent
-        );
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
