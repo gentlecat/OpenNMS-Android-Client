@@ -91,8 +91,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean isDrawerOpen = navigationLayout.isDrawerOpen(navigationList);
-        // TODO: Hide menu items
+        boolean drawerOpen = navigationLayout.isDrawerOpen(navigationList);
+        menu.findItem(R.id.menu_refresh).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
