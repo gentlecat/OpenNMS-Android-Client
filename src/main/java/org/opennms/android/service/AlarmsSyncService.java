@@ -65,7 +65,8 @@ public class AlarmsSyncService extends IntentService {
         Log.d(TAG, "Done!");
 
         if (latestShownAlarmId != maxId) sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
-        if (newAlarmsCount > 0) issueNewAlarmsNotification(newAlarmsCount);
+        boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        if (newAlarmsCount > 0 && notificationsOn) issueNewAlarmsNotification(newAlarmsCount);
     }
 
     private Uri insertAlarm(ContentResolver contentResolver, Alarm alarm) {

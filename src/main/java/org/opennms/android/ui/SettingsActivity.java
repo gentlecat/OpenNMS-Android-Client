@@ -86,7 +86,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         }
 
         // Notifications
-        Boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
         setNotificationPrefsEnabled(notificationsOn);
         if (notificationsOn) {
             findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_true));
