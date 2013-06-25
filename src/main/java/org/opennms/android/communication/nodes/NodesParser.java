@@ -23,6 +23,8 @@ public class NodesParser extends Parser {
     private static final String NODE_CREATE_TIME = "createTime";
     private static final String NODE_SYS_CONTACT = "sysContact";
     private static final String NODE_LABEL_SOURCE = "labelSource";
+    private static final String NODE_DESCRIPTION = "sysDescription";
+    private static final String NODE_LOCATION = "sysLocation";
 
     public static ArrayList<Node> parse(String is) {
         ArrayList<Node> values = new ArrayList<Node>();
@@ -42,8 +44,8 @@ public class NodesParser extends Parser {
                     String id = getXmlNodeForExpression(NODE_ID, currentNode).getNodeValue();
                     Node node = new Node(Integer.parseInt(id));
 
-                    org.w3c.dom.Node label = getXmlNodeForExpression(NODE_LABEL, currentNode);
-                    if (label != null) node.setLabel(label.getNodeValue());
+                    org.w3c.dom.Node name = getXmlNodeForExpression(NODE_LABEL, currentNode);
+                    if (name != null) node.setName(name.getNodeValue());
 
                     org.w3c.dom.Node type = getXmlNodeForExpression(NODE_TYPE, currentNode);
                     if (type != null) node.setType(type.getNodeValue());
@@ -56,6 +58,12 @@ public class NodesParser extends Parser {
 
                     org.w3c.dom.Node labelSource = getXmlNodeForExpression(NODE_LABEL_SOURCE, currentNode);
                     if (labelSource != null) node.setLabelSource(labelSource.getTextContent());
+
+                    org.w3c.dom.Node sysDescription = getXmlNodeForExpression(NODE_DESCRIPTION, currentNode);
+                    if (sysDescription != null) node.setDescription(sysDescription.getTextContent());
+
+                    org.w3c.dom.Node sysLocation = getXmlNodeForExpression(NODE_LOCATION, currentNode);
+                    if (sysLocation != null) node.setLocation(sysLocation.getTextContent());
 
                     values.add(node);
                 }

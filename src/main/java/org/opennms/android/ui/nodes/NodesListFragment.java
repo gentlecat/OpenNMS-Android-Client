@@ -66,7 +66,7 @@ public class NodesListFragment extends SherlockListFragment
                 getSherlockActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Columns.NodeColumns.COL_NODE_ID, Columns.NodeColumns.COL_LABEL},
+                new String[]{Columns.NodeColumns.COL_NODE_ID, Columns.NodeColumns.COL_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -111,10 +111,12 @@ public class NodesListFragment extends SherlockListFragment
         String projection[] = {
                 Columns.NodeColumns.COL_NODE_ID,
                 Columns.NodeColumns.COL_TYPE,
-                Columns.NodeColumns.COL_LABEL,
+                Columns.NodeColumns.COL_NAME,
                 Columns.NodeColumns.COL_CREATED_TIME,
                 Columns.NodeColumns.COL_SYS_CONTACT,
-                Columns.NodeColumns.COL_LABEL_SOURCE
+                Columns.NodeColumns.COL_LABEL_SOURCE,
+                Columns.NodeColumns.COL_DESCRIPTION,
+                Columns.NodeColumns.COL_LOCATION
         };
         Cursor nodesCursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(NodesListProvider.CONTENT_URI, String.valueOf(id)),
@@ -122,10 +124,12 @@ public class NodesListFragment extends SherlockListFragment
         if (nodesCursor.moveToFirst()) {
             Node node = new Node(nodesCursor.getInt(0));
             node.setType(nodesCursor.getString(1));
-            node.setLabel(nodesCursor.getString(2));
+            node.setName(nodesCursor.getString(2));
             node.setCreateTime(nodesCursor.getString(3));
             node.setSysContact(nodesCursor.getString(4));
             node.setLabelSource(nodesCursor.getString(5));
+            node.setDescription(nodesCursor.getString(6));
+            node.setLocation(nodesCursor.getString(7));
             nodesCursor.close();
             return node;
         }
@@ -187,7 +191,7 @@ public class NodesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Columns.NodeColumns.COL_LABEL),
+                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Columns.NodeColumns.COL_NAME),
                     Uri.encode(this.currentFilter)
             );
         } else {
@@ -196,7 +200,7 @@ public class NodesListFragment extends SherlockListFragment
         String[] projection = {
                 Columns.NodeColumns.TABLE_NODES_ID,
                 Columns.NodeColumns.COL_NODE_ID,
-                Columns.NodeColumns.COL_LABEL
+                Columns.NodeColumns.COL_NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
                 Columns.NodeColumns.COL_NODE_ID);

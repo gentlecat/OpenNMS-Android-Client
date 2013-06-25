@@ -6,10 +6,12 @@ public class Columns {
         public static final String TABLE_NODES_ID = "_id";
         public static final String COL_NODE_ID = "node_id";
         public static final String COL_TYPE = "type";
-        public static final String COL_LABEL = "label";
+        public static final String COL_NAME = "name";
         public static final String COL_CREATED_TIME = "created_time";
         public static final String COL_LABEL_SOURCE = "label_source";
         public static final String COL_SYS_CONTACT = "sys_contact";
+        public static final String COL_DESCRIPTION = "description";
+        public static final String COL_LOCATION = "location";
     }
 
     public interface AlarmColumns {

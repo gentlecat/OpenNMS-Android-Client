@@ -36,8 +36,11 @@ public class NodeDetailsFragment extends SherlockFragment {
 
     public void updateContent() {
         if (node != null) {
+            TextView name = (TextView) getActivity().findViewById(R.id.node_name);
+            name.setText(node.getName());
+
             TextView id = (TextView) getActivity().findViewById(R.id.node_id);
-            id.setText(getString(R.string.node_details_id) + node.getId());
+            id.setText(String.valueOf(node.getId()));
 
             TextView sysContact = (TextView) getActivity().findViewById(R.id.node_contact);
             sysContact.setText(node.getSysContact());
@@ -55,14 +58,17 @@ public class NodeDetailsFragment extends SherlockFragment {
                 }
             }
 
-            TextView label = (TextView) getActivity().findViewById(R.id.node_label);
-            label.setText(node.getLabel());
-
             TextView labelSource = (TextView) getActivity().findViewById(R.id.node_label_source);
             labelSource.setText(node.getLabelSource());
 
             TextView type = (TextView) getActivity().findViewById(R.id.node_type);
             type.setText(node.getType());
+
+            TextView description = (TextView) getActivity().findViewById(R.id.node_description);
+            description.setText(node.getDescription());
+
+            TextView location = (TextView) getActivity().findViewById(R.id.node_location);
+            location.setText(node.getLocation());
         }
     }
 

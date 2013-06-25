@@ -15,10 +15,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + NodeColumns.TABLE_NODES_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NodeColumns.COL_NODE_ID + " INTEGER UNIQUE, "
             + NodeColumns.COL_TYPE + " TEXT, "
-            + NodeColumns.COL_LABEL + " TEXT, "
+            + NodeColumns.COL_NAME + " TEXT, "
             + NodeColumns.COL_CREATED_TIME + " TEXT, "
             + NodeColumns.COL_LABEL_SOURCE + " TEXT, "
-            + NodeColumns.COL_SYS_CONTACT + " TEXT"
+            + NodeColumns.COL_SYS_CONTACT + " TEXT, "
+            + NodeColumns.COL_DESCRIPTION + " TEXT, "
+            + NodeColumns.COL_LOCATION + " TEXT"
             + ");";
     private static final String CREATE_OUTAGES_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
             + " ("

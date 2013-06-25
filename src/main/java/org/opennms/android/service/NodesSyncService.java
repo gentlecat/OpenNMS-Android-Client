@@ -53,10 +53,12 @@ public class NodesSyncService extends IntentService {
         ContentValues values = new ContentValues();
         values.put(Columns.NodeColumns.COL_NODE_ID, node.getId());
         values.put(Columns.NodeColumns.COL_TYPE, node.getType());
-        values.put(Columns.NodeColumns.COL_LABEL, node.getLabel());
+        values.put(Columns.NodeColumns.COL_NAME, node.getName());
         values.put(Columns.NodeColumns.COL_CREATED_TIME, node.getCreateTime());
         values.put(Columns.NodeColumns.COL_SYS_CONTACT, node.getSysContact());
         values.put(Columns.NodeColumns.COL_LABEL_SOURCE, node.getLabelSource());
+        values.put(Columns.NodeColumns.COL_DESCRIPTION, node.getDescription());
+        values.put(Columns.NodeColumns.COL_LOCATION, node.getLocation());
         return contentResolver.insert(NodesListProvider.CONTENT_URI, values);
     }
 

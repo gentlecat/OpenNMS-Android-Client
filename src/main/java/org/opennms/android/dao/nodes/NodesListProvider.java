@@ -134,7 +134,7 @@ public class NodesListProvider extends AppContentProvider {
                 queryBuilder.appendWhere(Columns.NodeColumns.TABLE_NODES_ID + "=" + uri.getLastPathSegment());
                 break;
             case NODE_LABEL:
-                queryBuilder.appendWhere(Columns.NodeColumns.COL_LABEL + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Columns.NodeColumns.COL_NAME + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case NODES:
                 break;
