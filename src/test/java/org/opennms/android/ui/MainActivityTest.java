@@ -40,8 +40,6 @@ public class MainActivityTest {
         TextView aboutText = (TextView) activity.findViewById(R.id.about_info);
         assertThat(aboutText).isVisible();
         assertThat(aboutText).containsText(R.string.about_info);
-        ImageView logo = (ImageView) activity.findViewById(R.id.opennms_logo);
-        assertThat(logo).isVisible();
     }
 
     @Test
