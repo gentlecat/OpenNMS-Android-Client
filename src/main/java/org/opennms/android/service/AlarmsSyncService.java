@@ -40,13 +40,23 @@ public class AlarmsSyncService extends IntentService {
         AlarmsServerCommunication alarmsServer = new AlarmsServerCommunicationImpl(getApplicationContext());
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
+        String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
+        String[] severityValues = getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
         Log.d(TAG, "Synchronizing alarms...");
         try {
             List<Alarm> alarms = alarmsServer.getAlarms("alarms");
             for (Alarm alarm : alarms) {
                 insertAlarm(contentResolver, alarm);
-                if (alarm.getId() > latestShownAlarmId) newAlarmsCount++;
+                if (alarm.getId() > latestShownAlarmId) {
+                    for (String curSeverityVal : severityValues) {
+                        if (curSeverityVal.equals(alarm.getSeverity())) {
+                            newAlarmsCount++;
+                            break;
+                        }
+                        if (curSeverityVal.equals(minimalSeverity)) break;
+                    }
+                }
                 if (alarm.getId() > maxId) maxId = alarm.getId();
             }
         } catch (UnknownHostException e) {

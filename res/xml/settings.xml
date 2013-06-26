@@ -49,6 +49,12 @@
             android:key="wifi_only"
             android:title="@string/settings_wifi_only"
             android:defaultValue="@bool/wifi_only" />
+        <ListPreference
+            android:key="minimal_severity"
+            android:title="@string/settings_minimal_severity"
+            android:entries="@array/severity"
+            android:entryValues="@array/severity_values"
+            android:defaultValue="@string/default_minimal_severity" />
         <EditTextPreference
             android:key="refresh_rate"
             android:title="@string/settings_refresh_rate"

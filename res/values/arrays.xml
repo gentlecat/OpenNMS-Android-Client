@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        It is important to preserve order of items in both arrays!
+        Changes may break notification system.
+     -->
+    <string-array name="severity">
+        <item>@string/alarm_severity_critical</item>
+        <item>@string/alarm_severity_major</item>
+        <item>@string/alarm_severity_minor</item>
+        <item>@string/alarm_severity_warning</item>
+        <item>@string/alarm_severity_indeterminate</item>
+        <item>@string/alarm_severity_normal</item>
+        <item>@string/alarm_severity_cleared</item>
+    </string-array>
+    <array name="severity_values">
+        <item>CRITICAL</item>
+        <item>MAJOR</item>
+        <item>MINOR</item>
+        <item>WARNING</item>
+        <item>INDETERMINATE</item>
+        <item>NORMAL</item>
+        <item>CLEARED</item>
+    </array>
+
+</resources>

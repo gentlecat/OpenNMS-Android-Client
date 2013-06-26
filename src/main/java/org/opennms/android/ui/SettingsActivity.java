@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -94,6 +95,11 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
             findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_false));
         }
 
+        String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
+        ListPreference minimalSeverityPreference = (ListPreference) findPreference("minimal_severity");
+        int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
+        minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
+
         String refreshRate = sharedPref.getString("refresh_rate", String.valueOf(getResources().getInteger(R.integer.default_refresh_rate)));
         int refreshRateVal = Integer.parseInt(refreshRate);
         String refreshRateSummary = refreshRate + " ";
@@ -107,6 +113,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
     void setNotificationPrefsEnabled(Boolean enabled) {
         findPreference("wifi_only").setEnabled(enabled);
+        findPreference("minimal_severity").setEnabled(enabled);
         findPreference("refresh_rate").setEnabled(enabled);
     }
 

@@ -12,6 +12,7 @@
     <!-- Notifications -->
     <bool name="default_notifications">false</bool>
     <bool name="wifi_only">false</bool>
+    <string name="default_minimal_severity">NORMAL</string>
     <integer name="default_refresh_rate">10</integer>
 
 </resources>
