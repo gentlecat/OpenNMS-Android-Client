@@ -46,6 +46,7 @@ public class AlarmsSyncService extends IntentService {
         Log.d(TAG, "Synchronizing alarms...");
         try {
             List<Alarm> alarms = alarmsServer.getAlarms("alarms");
+            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
             for (Alarm alarm : alarms) {
                 insertAlarm(contentResolver, alarm);
                 if (alarm.getId() > latestShownAlarmId) {
@@ -61,16 +62,12 @@ public class AlarmsSyncService extends IntentService {
             }
         } catch (UnknownHostException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
         } catch (InterruptedException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
         } catch (ExecutionException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
         } catch (IOException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
         }
         Log.d(TAG, "Done!");
 

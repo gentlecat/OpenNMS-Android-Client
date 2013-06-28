@@ -32,19 +32,16 @@ public class EventsSyncService extends IntentService {
         Log.d(TAG, "Synchronizing events...");
         try {
             List<Event> events = eventsServer.getEvents("events");
+            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
             for (Event event : events) insertEvent(contentResolver, event);
         } catch (UnknownHostException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
         } catch (InterruptedException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
         } catch (ExecutionException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
         } catch (IOException e) {
             Log.i(TAG, e.getMessage());
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
         }
         Log.d(TAG, "Done!");
     }

@@ -30,6 +30,7 @@ public class OutagesSyncService extends IntentService {
         Log.d(TAG, "Synchronizing outages...");
         try {
             List<Outage> outages = outagesServer.getOutages("outages");
+            contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null);
             for (Outage outage : outages) insertOutage(contentResolver, outage);
         } catch (InterruptedException e) {
             Log.i(TAG, e.getMessage());
