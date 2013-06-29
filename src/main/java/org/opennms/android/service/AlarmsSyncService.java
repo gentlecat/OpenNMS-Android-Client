@@ -92,6 +92,7 @@ public class AlarmsSyncService extends IntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(getString(R.string.alarms_notification_title))
+                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
 
         if (newAlarmsCount == 1) builder.setContentText(getString(R.string.alarms_notification_text_singular));
