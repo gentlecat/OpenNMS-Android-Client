@@ -37,7 +37,8 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.alarm, menu);
+        // TODO: Uncomment when feature is implemented
+        //inflater.inflate(R.menu.alarm, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
