@@ -43,6 +43,7 @@
 
     <!-- Settings -->
     <string name="settings">Settings</string>
+    <string name="settings_apply">Apply</string>
     <string name="settings_auth">Authentication</string>
     <string name="settings_user">User</string>
     <string name="settings_user_dialog_title">Set username</string>
