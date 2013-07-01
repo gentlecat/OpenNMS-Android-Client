@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -70,6 +71,9 @@ public class NodesListFragment extends SherlockListFragment
                 new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
+
+        TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_text);
+        emptyText.setText(getString(R.string.nodes_list_empty));
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }

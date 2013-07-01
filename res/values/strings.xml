@@ -6,6 +6,7 @@
 
     <!-- Nodes -->
     <string name="nodes">Nodes</string>
+    <string name="nodes_list_empty">No nodes</string>
     <string name="node_details">Details about node #</string>
     <string name="node_details_id">ID</string>
     <string name="node_details_contact">System contact</string>
@@ -17,6 +18,7 @@
 
     <!-- Outages -->
     <string name="outages">Outages</string>
+    <string name="outages_list_empty">No outages</string>
     <string name="outage_details">Details about outage #</string>
     <string name="outage_details_id">Outage #</string>
     <string name="outage_details_ip">IP address:</string>
@@ -26,6 +28,7 @@
 
     <!-- Alarms -->
     <string name="alarms">Alarms</string>
+    <string name="alarms_list_empty">No alarms</string>
     <string name="alarm_details">Details about alarm #</string>
     <string name="alarms_details_id">Alarm #</string>
     <string name="alarm_severity_critical">Critical</string>
@@ -38,6 +41,7 @@
 
     <!-- Events -->
     <string name="events">Events</string>
+    <string name="events_list_empty">No events</string>
     <string name="event_details">Details about event #</string>
     <string name="event_details_id">Event #</string>
 
@@ -90,6 +94,7 @@
     <string name="drawer_close">Close navigation</string>
 
     <string name="refresh">Refresh</string>
+    <string name="no_items">No items</string>
 
     <string name="acknowledge">Acknowledge</string>
 
