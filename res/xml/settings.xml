@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/settings_auth">
-        <EditTextPreference
-            android:key="user"
-            android:title="@string/settings_user"
-            android:dialogTitle="@string/settings_user_dialog_title"
-            android:defaultValue="@string/default_user" />
-        <EditTextPreference
-            android:key="password"
-            android:title="@string/settings_password"
-            android:dialogTitle="@string/settings_password_dialog_title"
-            android:defaultValue="@string/default_password"
-            android:inputType="textPassword" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/settings_server">
         <EditTextPreference
             android:key="host"
@@ -38,6 +24,20 @@
             android:dialogTitle="@string/settings_path_dialog_title"
             android:defaultValue="@string/default_path"
             android:inputType="textUri" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_auth">
+        <EditTextPreference
+            android:key="user"
+            android:title="@string/settings_user"
+            android:dialogTitle="@string/settings_user_dialog_title"
+            android:defaultValue="@string/default_user" />
+        <EditTextPreference
+            android:key="password"
+            android:title="@string/settings_password"
+            android:dialogTitle="@string/settings_password_dialog_title"
+            android:defaultValue="@string/default_password"
+            android:inputType="textPassword" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_alarm_notifications">
