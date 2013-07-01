@@ -14,10 +14,10 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="#fff"
         android:choiceMode="singleChoice"
         android:divider="#ccc"
         android:dividerHeight="1px"
-        android:footerDividersEnabled="true"
-        android:background="#fff" />
+        android:footerDividersEnabled="true" />
 
 </android.support.v4.widget.DrawerLayout>

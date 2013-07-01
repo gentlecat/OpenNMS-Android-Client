@@ -3,64 +3,64 @@
 
     <PreferenceCategory android:title="@string/settings_server">
         <EditTextPreference
-            android:key="host"
-            android:title="@string/settings_host"
-            android:dialogTitle="@string/settings_host_dialog_title"
             android:defaultValue="@string/default_host"
-            android:inputType="textUri" />
+            android:dialogTitle="@string/settings_host_dialog_title"
+            android:inputType="textUri"
+            android:key="host"
+            android:title="@string/settings_host" />
         <EditTextPreference
-            android:key="port"
-            android:title="@string/settings_port"
-            android:dialogTitle="@string/settings_port_dialog_title"
             android:defaultValue="@integer/default_port"
-            android:inputType="number" />
+            android:dialogTitle="@string/settings_port_dialog_title"
+            android:inputType="number"
+            android:key="port"
+            android:title="@string/settings_port" />
         <CheckBoxPreference
+            android:defaultValue="@bool/default_https"
             android:key="https"
-            android:title="@string/settings_https"
-            android:defaultValue="@bool/default_https" />
+            android:title="@string/settings_https" />
         <EditTextPreference
-            android:key="path"
-            android:title="@string/settings_path"
-            android:dialogTitle="@string/settings_path_dialog_title"
             android:defaultValue="@string/default_path"
-            android:inputType="textUri" />
+            android:dialogTitle="@string/settings_path_dialog_title"
+            android:inputType="textUri"
+            android:key="path"
+            android:title="@string/settings_path" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_auth">
         <EditTextPreference
-            android:key="user"
-            android:title="@string/settings_user"
+            android:defaultValue="@string/default_user"
             android:dialogTitle="@string/settings_user_dialog_title"
-            android:defaultValue="@string/default_user" />
+            android:key="user"
+            android:title="@string/settings_user" />
         <EditTextPreference
-            android:key="password"
-            android:title="@string/settings_password"
-            android:dialogTitle="@string/settings_password_dialog_title"
             android:defaultValue="@string/default_password"
-            android:inputType="textPassword" />
+            android:dialogTitle="@string/settings_password_dialog_title"
+            android:inputType="textPassword"
+            android:key="password"
+            android:title="@string/settings_password" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_alarm_notifications">
         <CheckBoxPreference
+            android:defaultValue="@bool/default_notifications"
             android:key="notifications_on"
-            android:title="@string/settings_notifications_enabled"
-            android:defaultValue="@bool/default_notifications" />
+            android:title="@string/settings_notifications_enabled" />
         <CheckBoxPreference
+            android:defaultValue="@bool/wifi_only"
             android:key="wifi_only"
-            android:title="@string/settings_wifi_only"
-            android:defaultValue="@bool/wifi_only" />
+            android:title="@string/settings_wifi_only" />
         <ListPreference
-            android:key="minimal_severity"
-            android:title="@string/settings_minimal_severity"
+            android:defaultValue="@string/default_minimal_severity"
             android:entries="@array/severity"
             android:entryValues="@array/severity_values"
-            android:defaultValue="@string/default_minimal_severity" />
+            android:key="minimal_severity"
+            android:title="@string/settings_minimal_severity" />
         <EditTextPreference
-            android:key="refresh_rate"
-            android:title="@string/settings_refresh_rate"
-            android:dialogTitle="@string/settings_refresh_rate_dialog_title"
             android:defaultValue="@integer/default_refresh_rate"
-            android:inputType="numberSigned" />
+            android:dialogTitle="@string/settings_refresh_rate_dialog_title"
+            android:inputType="numberSigned"
+            android:key="refresh_rate"
+            android:title="@string/settings_refresh_rate" />
     </PreferenceCategory>
 
 </PreferenceScreen>
