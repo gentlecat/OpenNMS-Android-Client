@@ -80,6 +80,9 @@ public class MainActivity extends SherlockFragmentActivity {
 
         if (savedInstanceState == null) {
             selectItem(0);
+
+            navigationLayout.openDrawer(navigationList);
+            actionBar.setTitle(drawerTitle);
         }
     }
 
