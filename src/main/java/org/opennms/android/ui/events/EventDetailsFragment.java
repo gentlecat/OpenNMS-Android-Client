@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
@@ -45,7 +45,7 @@ public class EventDetailsFragment extends SherlockFragment {
             // Severity
             TextView severity = (TextView) getActivity().findViewById(R.id.event_severity);
             severity.setText(String.valueOf(event.getSeverity()));
-            TableRow severityRow = (TableRow) getActivity().findViewById(R.id.event_severity_row);
+            LinearLayout severityRow = (LinearLayout) getActivity().findViewById(R.id.event_severity_row);
             if (event.getSeverity().equals("CLEARED")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
             } else if (event.getSeverity().equals("MINOR")) {
@@ -81,24 +81,24 @@ public class EventDetailsFragment extends SherlockFragment {
             logMessage.setText(event.getLogMessage());
 
             // Description
-            TextView description = (TextView) getActivity().findViewById(R.id.event_description);
+            TextView description = (TextView) getActivity().findViewById(R.id.event_desc);
             description.setText(Html.fromHtml(event.getDescription()));
 
             // Host
             TextView host = (TextView) getActivity().findViewById(R.id.event_host);
-            host.setText("Host: " + event.getHost());
+            host.setText(event.getHost());
 
             // IP address
             TextView ipAddress = (TextView) getActivity().findViewById(R.id.event_ip_address);
-            ipAddress.setText("IP address: " + event.getIpAddress());
+            ipAddress.setText(event.getIpAddress());
 
             // Node ID
             TextView nodeId = (TextView) getActivity().findViewById(R.id.event_node_id);
-            nodeId.setText("Node ID: " + event.getNodeId());
+            nodeId.setText(String.valueOf(event.getNodeId()));
 
             // Node label
             TextView nodeLabel = (TextView) getActivity().findViewById(R.id.event_node_label);
-            nodeLabel.setText("Node label: " + event.getNodeLabel());
+            nodeLabel.setText(event.getNodeLabel());
         }
     }
 

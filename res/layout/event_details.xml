@@ -1,108 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/details_layout_padding">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/details_layout_padding"
+    android:paddingTop="@dimen/details_layout_padding">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/event_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </TableRow>
-
-    <TableRow
+    <LinearLayout
         android:id="@+id/event_severity_row"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/event_severity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:paddingLeft="@dimen/details_layout_padding"
+            android:paddingRight="@dimen/details_layout_padding"
+            android:textAllCaps="true"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-    </TableRow>
+    <TextView
+        android:id="@+id/event_log_message_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_log_message"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_log_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-        <TextView
-            android:id="@+id/event_create_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </TableRow>
+    <TextView
+        android:id="@+id/event_create_time_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_create_time"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_create_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-        <TextView
-            android:id="@+id/event_log_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </TableRow>
+    <TextView
+        android:id="@+id/event_host_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_host"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/event_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_ip_address_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_ip_address"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/event_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/event_ip_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-    </TableRow>
+    <TextView
+        android:id="@+id/event_node_id_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_node_id"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_node_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-        <TextView
-            android:id="@+id/event_host"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/event_node_label_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_node_label"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-    </TableRow>
+    <TextView
+        android:id="@+id/event_node_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/event_desc_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/event_desc"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/event_ip_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/event_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/event_node_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/event_node_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </TableRow>
-
-</TableLayout>
+</LinearLayout>

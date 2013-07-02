@@ -46,6 +46,13 @@
     <string name="events_list_empty">No events</string>
     <string name="event_details">Details about event #</string>
     <string name="event_details_id">Event #</string>
+    <string name="event_node_label">Node label</string>
+    <string name="event_node_id">Node ID</string>
+    <string name="event_log_message">Log message</string>
+    <string name="event_desc">Description</string>
+    <string name="event_host">Host</string>
+    <string name="event_ip_address">IP address</string>
+    <string name="event_create_time">Create time</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
