@@ -20,8 +20,7 @@ public class NodeDetailsActivity extends SherlockFragmentActivity {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Node node = (Node) getIntent().getSerializableExtra("node");
-        NodeDetailsFragment fragment = new NodeDetailsFragment();
-        fragment.bindNode(node);
+        NodeDetailsFragment fragment = new NodeDetailsFragment(node);
         fragmentTransaction.add(R.id.details_activity_fragment_container, fragment);
         fragmentTransaction.commit();
     }

@@ -100,8 +100,7 @@ public class NodesListFragment extends SherlockListFragment
             FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
             FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
             detailsContainer.removeAllViews();
-            NodeDetailsFragment detailsFragment = new NodeDetailsFragment();
-            detailsFragment.bindNode(node);
+            NodeDetailsFragment detailsFragment = new NodeDetailsFragment(node);
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.commit();
         } else {
@@ -112,32 +111,23 @@ public class NodesListFragment extends SherlockListFragment
     }
 
     private Node getNode(long id) {
-        String projection[] = {
-                Columns.NodeColumns.COL_NODE_ID,
-                Columns.NodeColumns.COL_TYPE,
-                Columns.NodeColumns.COL_NAME,
-                Columns.NodeColumns.COL_CREATED_TIME,
-                Columns.NodeColumns.COL_SYS_CONTACT,
-                Columns.NodeColumns.COL_LABEL_SOURCE,
-                Columns.NodeColumns.COL_DESCRIPTION,
-                Columns.NodeColumns.COL_LOCATION
-        };
-        Cursor nodesCursor = getActivity().getContentResolver().query(
+        Cursor cursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(NodesListProvider.CONTENT_URI, String.valueOf(id)),
-                projection, null, null, null);
-        if (nodesCursor.moveToFirst()) {
-            Node node = new Node(nodesCursor.getInt(0));
-            node.setType(nodesCursor.getString(1));
-            node.setName(nodesCursor.getString(2));
-            node.setCreateTime(nodesCursor.getString(3));
-            node.setSysContact(nodesCursor.getString(4));
-            node.setLabelSource(nodesCursor.getString(5));
-            node.setDescription(nodesCursor.getString(6));
-            node.setLocation(nodesCursor.getString(7));
-            nodesCursor.close();
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_NODE_ID))));
+            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_TYPE)));
+            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_NAME)));
+            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_CREATED_TIME)));
+            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_SYS_CONTACT)));
+            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_LABEL_SOURCE)));
+            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_LOCATION)));
+            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_DESCRIPTION)));
+            cursor.close();
             return node;
         }
-        nodesCursor.close();
+        cursor.close();
         return null;
     }
 

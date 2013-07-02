@@ -16,7 +16,11 @@ import java.util.Date;
 
 public class NodeDetailsFragment extends SherlockFragment {
     private static final String TAG = "NodeDetailsFragment";
-    Node node = null;
+    private Node node;
+
+    public NodeDetailsFragment(Node node) {
+        this.node = node;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,11 +33,6 @@ public class NodeDetailsFragment extends SherlockFragment {
         updateContent();
     }
 
-    public void bindNode(Node node) {
-        this.node = node;
-        if (this.isVisible()) updateContent();
-    }
-
     public void updateContent() {
         if (node != null) {
             TextView name = (TextView) getActivity().findViewById(R.id.node_name);
@@ -42,8 +41,8 @@ public class NodeDetailsFragment extends SherlockFragment {
             TextView id = (TextView) getActivity().findViewById(R.id.node_id);
             id.setText(String.valueOf(node.getId()));
 
-            TextView sysContact = (TextView) getActivity().findViewById(R.id.node_contact);
-            sysContact.setText(node.getSysContact());
+            TextView contactText = (TextView) getActivity().findViewById(R.id.node_contact);
+            contactText.setText(node.getSysContact());
 
             TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
             // Example: "2011-09-27T12:15:32.363-04:00"
