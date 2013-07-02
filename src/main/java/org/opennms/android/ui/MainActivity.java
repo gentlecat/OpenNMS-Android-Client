@@ -40,11 +40,11 @@ public class MainActivity extends SherlockFragmentActivity {
 
         final CharSequence drawerTitle = title = getTitle();
         navigationLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationList = (ListView) findViewById(R.id.left_navigation);
+        navigationList = (ListView) findViewById(R.id.navigation_drawer);
         navigationItems = getResources().getStringArray(R.array.navigation_items);
 
         navigationLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        navigationList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_list_item, navigationItems));
+        navigationList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_list_item, navigationItems));
         navigationList.setOnItemClickListener(new DrawerItemClickListener());
 
         actionBar = getSupportActionBar();
