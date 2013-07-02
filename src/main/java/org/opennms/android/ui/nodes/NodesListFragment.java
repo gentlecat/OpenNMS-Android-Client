@@ -207,7 +207,7 @@ public class NodesListFragment extends SherlockListFragment
                 Columns.NodeColumns.COL_NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.NodeColumns.COL_NODE_ID);
+                Columns.NodeColumns.COL_NAME);
     }
 
     @Override
