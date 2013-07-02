@@ -35,8 +35,8 @@ public class AlarmsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 4;
-    AlarmAdapter adapter;
-    boolean isDualPane = false;
+    private AlarmAdapter adapter;
+    private boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
 
@@ -62,8 +62,7 @@ public class AlarmsListFragment extends SherlockListFragment
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
-        adapter = new AlarmAdapter(getSherlockActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-        );
+        adapter = new AlarmAdapter(getSherlockActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_text);

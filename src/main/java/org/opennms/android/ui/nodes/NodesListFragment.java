@@ -36,8 +36,8 @@ public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 1;
-    SimpleCursorAdapter adapter;
-    boolean isDualPane = false;
+    private SimpleCursorAdapter adapter;
+    private boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
 
