@@ -10,7 +10,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,7 @@ public class AlarmsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 4;
-    SimpleCursorAdapter adapter;
+    AlarmAdapter adapter;
     boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
@@ -63,13 +62,7 @@ public class AlarmsListFragment extends SherlockListFragment
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
-        adapter = new SimpleCursorAdapter(
-                getSherlockActivity(),
-                android.R.layout.simple_list_item_2,
-                null,
-                new String[]{Columns.AlarmColumns.COL_ALARM_ID, Columns.AlarmColumns.COL_SEVERITY},
-                new int[]{android.R.id.text1, android.R.id.text2},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        adapter = new AlarmAdapter(getSherlockActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         );
         getListView().setAdapter(adapter);
 
@@ -77,6 +70,39 @@ public class AlarmsListFragment extends SherlockListFragment
         emptyText.setText(getString(R.string.alarms_list_empty));
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri baseUri;
+        if (currentFilter != null) {
+            baseUri = Uri.withAppendedPath(
+                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.COL_SEVERITY),
+                    Uri.encode(currentFilter)
+            );
+        } else {
+            baseUri = AlarmsListProvider.CONTENT_URI;
+        }
+        String[] projection = {
+                Columns.AlarmColumns.TABLE_ALARMS_ID,
+                Columns.AlarmColumns.COL_ALARM_ID,
+                Columns.AlarmColumns.COL_DESCRIPTION,
+                Columns.AlarmColumns.COL_SEVERITY
+        };
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                Columns.AlarmColumns.COL_ALARM_ID + " DESC");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        stopRefreshAnimation();
+        adapter.swapCursor(cursor);
+        if (isDualPane && !adapter.isEmpty()) showDetails(0);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 
     @Override
@@ -181,38 +207,6 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public boolean onQueryTextSubmit(String query) {
         return true;
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        if (currentFilter != null) {
-            baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.COL_SEVERITY),
-                    Uri.encode(currentFilter)
-            );
-        } else {
-            baseUri = AlarmsListProvider.CONTENT_URI;
-        }
-        String[] projection = {
-                Columns.AlarmColumns.TABLE_ALARMS_ID,
-                Columns.AlarmColumns.COL_ALARM_ID,
-                Columns.AlarmColumns.COL_SEVERITY
-        };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.AlarmColumns.COL_ALARM_ID + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        stopRefreshAnimation();
-        adapter.swapCursor(cursor);
-        if (isDualPane && !adapter.isEmpty()) showDetails(0);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
     }
 
     private void startRefreshAnimation() {
