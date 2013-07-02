@@ -5,7 +5,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableRow;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
@@ -62,12 +62,12 @@ public class AlarmDetailsFragment extends SherlockFragment {
         if (alarm != null) {
             // Alarm ID
             TextView id = (TextView) getActivity().findViewById(R.id.alarm_id);
-            id.setText(getString(R.string.alarms_details_id) + alarm.getId());
+            id.setText(getString(R.string.alarm_details_id) + alarm.getId());
 
             // Severity
             TextView severity = (TextView) getActivity().findViewById(R.id.alarm_severity);
             severity.setText(String.valueOf(alarm.getSeverity()));
-            TableRow severityRow = (TableRow) getActivity().findViewById(R.id.alarm_severity_row);
+            LinearLayout severityRow = (LinearLayout) getActivity().findViewById(R.id.alarm_severity_row);
             if (alarm.getSeverity().equals("CLEARED")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
             } else if (alarm.getSeverity().equals("MINOR")) {

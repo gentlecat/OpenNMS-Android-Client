@@ -1,50 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/alarm_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/alarm_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </TableRow>
-
-    <TableRow
+    <LinearLayout
         android:id="@+id/alarm_severity_row"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/alarm_severity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </TableRow>
+            android:paddingLeft="@dimen/details_layout_padding"
+            android:paddingRight="@dimen/details_layout_padding"
+            android:textAllCaps="true"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/alarm_description_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/alarm_details_desc"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/alarm_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </TableRow>
+    <TextView
+        android:id="@+id/alarm_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/alarm_message_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/alarm_details_message"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/alarm_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </TableRow>
+    <TextView
+        android:id="@+id/alarm_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
 
-</TableLayout>
+</LinearLayout>

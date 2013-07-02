@@ -30,7 +30,9 @@
     <string name="alarms">Alarms</string>
     <string name="alarms_list_empty">No alarms</string>
     <string name="alarm_details">Details about alarm #</string>
-    <string name="alarms_details_id">Alarm #</string>
+    <string name="alarm_details_id">Alarm #</string>
+    <string name="alarm_details_desc">Description</string>
+    <string name="alarm_details_message">Message</string>
     <string name="alarm_severity_critical">Critical</string>
     <string name="alarm_severity_major">Major</string>
     <string name="alarm_severity_minor">Minor</string>
