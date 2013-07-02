@@ -52,7 +52,7 @@
     <string name="event_desc">Description</string>
     <string name="event_host">Host</string>
     <string name="event_ip_address">IP address</string>
-    <string name="event_create_time">Create time</string>
+    <string name="event_create_time">Time</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
