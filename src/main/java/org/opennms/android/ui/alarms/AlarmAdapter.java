@@ -16,18 +16,15 @@ import org.opennms.android.dao.Columns;
 public class AlarmAdapter extends CursorAdapter {
 
     private LayoutInflater layoutInflater;
-    private Context context;
 
     public AlarmAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
-        this.context = context;
         layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = layoutInflater.inflate(R.layout.alarm_list_item, parent, false);
-        return view;
+        return layoutInflater.inflate(R.layout.alarm_list_item, parent, false);
     }
 
     @Override
