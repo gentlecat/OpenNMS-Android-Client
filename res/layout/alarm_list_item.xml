@@ -7,8 +7,7 @@
     <SurfaceView
         android:id="@+id/alarm_list_item_severity"
         android:layout_width="8dp"
-        android:layout_height="match_parent"
-        android:background="@color/severity_cleared" />
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
