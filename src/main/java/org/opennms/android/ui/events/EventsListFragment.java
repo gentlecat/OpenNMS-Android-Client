@@ -76,20 +76,20 @@ public class EventsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Columns.EventColumns.COL_SEVERITY),
+                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Columns.EventColumns.SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
             baseUri = EventsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.EventColumns.TABLE_EVENT_ID,
-                Columns.EventColumns.COL_EVENT_ID,
-                Columns.EventColumns.COL_LOG_MESSAGE,
-                Columns.EventColumns.COL_SEVERITY
+                Columns.EventColumns.TABLE_ID,
+                Columns.EventColumns.EVENT_ID,
+                Columns.EventColumns.LOG_MESSAGE,
+                Columns.EventColumns.SEVERITY
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.EventColumns.COL_EVENT_ID + " DESC");
+                Columns.EventColumns.EVENT_ID + " DESC");
     }
 
     @Override
@@ -139,15 +139,15 @@ public class EventsListFragment extends SherlockListFragment
 
     private Event getEvent(long id) {
         String projection[] = {
-                Columns.EventColumns.COL_EVENT_ID,
-                Columns.EventColumns.COL_SEVERITY,
-                Columns.EventColumns.COL_LOG_MESSAGE,
-                Columns.EventColumns.COL_DESCRIPTION,
-                Columns.EventColumns.COL_HOST,
-                Columns.EventColumns.COL_IP_ADDRESS,
-                Columns.EventColumns.COL_CREATE_TIME,
-                Columns.EventColumns.COL_NODE_ID,
-                Columns.EventColumns.COL_NODE_LABEL,
+                Columns.EventColumns.EVENT_ID,
+                Columns.EventColumns.SEVERITY,
+                Columns.EventColumns.LOG_MESSAGE,
+                Columns.EventColumns.DESCRIPTION,
+                Columns.EventColumns.HOST,
+                Columns.EventColumns.IP_ADDRESS,
+                Columns.EventColumns.CREATE_TIME,
+                Columns.EventColumns.NODE_ID,
+                Columns.EventColumns.NODE_LABEL,
         };
         Cursor eventsCursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(EventsListProvider.CONTENT_URI, String.valueOf(id)),

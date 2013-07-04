@@ -48,15 +48,15 @@ public class EventsSyncService extends IntentService {
 
     private Uri insertEvent(ContentResolver contentResolver, Event event) {
         ContentValues values = new ContentValues();
-        values.put(Columns.EventColumns.COL_EVENT_ID, event.getId());
-        values.put(Columns.EventColumns.COL_SEVERITY, event.getSeverity());
-        values.put(Columns.EventColumns.COL_LOG_MESSAGE, event.getLogMessage());
-        values.put(Columns.EventColumns.COL_DESCRIPTION, event.getDescription());
-        values.put(Columns.EventColumns.COL_HOST, event.getHost());
-        values.put(Columns.EventColumns.COL_IP_ADDRESS, event.getIpAddress());
-        values.put(Columns.EventColumns.COL_CREATE_TIME, event.getCreateTime());
-        values.put(Columns.EventColumns.COL_NODE_ID, event.getNodeId());
-        values.put(Columns.EventColumns.COL_NODE_LABEL, event.getNodeLabel());
+        values.put(Columns.EventColumns.EVENT_ID, event.getId());
+        values.put(Columns.EventColumns.SEVERITY, event.getSeverity());
+        values.put(Columns.EventColumns.LOG_MESSAGE, event.getLogMessage());
+        values.put(Columns.EventColumns.DESCRIPTION, event.getDescription());
+        values.put(Columns.EventColumns.HOST, event.getHost());
+        values.put(Columns.EventColumns.IP_ADDRESS, event.getIpAddress());
+        values.put(Columns.EventColumns.CREATE_TIME, event.getCreateTime());
+        values.put(Columns.EventColumns.NODE_ID, event.getNodeId());
+        values.put(Columns.EventColumns.NODE_LABEL, event.getNodeLabel());
         return contentResolver.insert(EventsListProvider.CONTENT_URI, values);
     }
 

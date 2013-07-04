@@ -30,17 +30,17 @@ public class AlarmAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // ID
-        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.COL_ALARM_ID));
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.ALARM_ID));
         TextView idText = (TextView) view.findViewById(R.id.alarm_list_item_id);
         idText.setText(String.valueOf(id));
 
         // Description
-        String description = cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.COL_DESCRIPTION));
+        String description = cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.DESCRIPTION));
         TextView descText = (TextView) view.findViewById(R.id.alarm_list_item_desc);
         descText.setText(Html.fromHtml(description));
 
         // Severity
-        String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.COL_SEVERITY));
+        String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {

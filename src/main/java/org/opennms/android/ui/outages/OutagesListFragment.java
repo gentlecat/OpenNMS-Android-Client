@@ -67,7 +67,7 @@ public class OutagesListFragment extends SherlockListFragment
                 getSherlockActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Columns.OutageColumns.COL_OUTAGE_ID, Columns.OutageColumns.COL_SERVICE_TYPE_NAME},
+                new String[]{Columns.OutageColumns.OUTAGE_ID, Columns.OutageColumns.SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -113,11 +113,11 @@ public class OutagesListFragment extends SherlockListFragment
 
     private Outage getOutage(long id) {
         String projection[] = {
-                Columns.OutageColumns.COL_OUTAGE_ID,
-                Columns.OutageColumns.COL_IP_ADDRESS,
-                Columns.OutageColumns.COL_IF_REGAINED_SERVICE,
-                Columns.OutageColumns.COL_SERVICE_TYPE_NAME,
-                Columns.OutageColumns.COL_IF_LOST_SERVICE
+                Columns.OutageColumns.OUTAGE_ID,
+                Columns.OutageColumns.IP_ADDRESS,
+                Columns.OutageColumns.IF_REGAINED_SERVICE,
+                Columns.OutageColumns.SERVICE_TYPE_NAME,
+                Columns.OutageColumns.IF_LOST_SERVICE
         };
         Cursor outagesCursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(id)),
@@ -189,19 +189,19 @@ public class OutagesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, Columns.OutageColumns.COL_OUTAGE_ID),
+                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, Columns.OutageColumns.OUTAGE_ID),
                     Uri.encode(this.currentFilter)
             );
         } else {
             baseUri = OutagesListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.OutageColumns.TABLE_OUTAGES_ID,
-                Columns.OutageColumns.COL_OUTAGE_ID,
-                Columns.OutageColumns.COL_SERVICE_TYPE_NAME
+                Columns.OutageColumns.TABLE_ID,
+                Columns.OutageColumns.OUTAGE_ID,
+                Columns.OutageColumns.SERVICE_TYPE_NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.OutageColumns.COL_OUTAGE_ID + " DESC");
+                Columns.OutageColumns.OUTAGE_ID + " DESC");
     }
 
     @Override

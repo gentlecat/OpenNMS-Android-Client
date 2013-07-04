@@ -47,11 +47,11 @@ public class NodesListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.NODES,
-                            Columns.NodeColumns.TABLE_NODES_ID + "=" + id,
+                            Columns.NodeColumns.TABLE_ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.NODES,
-                            selection + " and " + Columns.NodeColumns.TABLE_NODES_ID + "=" + id,
+                            selection + " and " + Columns.NodeColumns.TABLE_ID + "=" + id,
                             selectionArgs);
                 }
                 break;
@@ -107,7 +107,7 @@ public class NodesListProvider extends AppContentProvider {
         switch (uriType) {
             case NODE_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.NodeColumns.TABLE_NODES_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(Columns.NodeColumns.TABLE_ID + "=" + id);
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
                 }
@@ -131,10 +131,10 @@ public class NodesListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case NODE_ID:
-                queryBuilder.appendWhere(Columns.NodeColumns.TABLE_NODES_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(Columns.NodeColumns.TABLE_ID + "=" + uri.getLastPathSegment());
                 break;
             case NODE_LABEL:
-                queryBuilder.appendWhere(Columns.NodeColumns.COL_NAME + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Columns.NodeColumns.NAME + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case NODES:
                 break;

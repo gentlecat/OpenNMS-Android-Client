@@ -42,11 +42,11 @@ public class OutagesSyncService extends IntentService {
 
     private Uri insertOutage(ContentResolver contentResolver, Outage outage) {
         ContentValues values = new ContentValues();
-        values.put(Columns.OutageColumns.COL_OUTAGE_ID, outage.getId());
-        values.put(Columns.OutageColumns.COL_IP_ADDRESS, outage.getIpAddress());
-        values.put(Columns.OutageColumns.COL_IF_REGAINED_SERVICE, outage.getIfRegainedService());
-        values.put(Columns.OutageColumns.COL_IF_LOST_SERVICE, outage.getIfRegainedService());
-        values.put(Columns.OutageColumns.COL_SERVICE_TYPE_NAME, outage.getServiceTypeName());
+        values.put(Columns.OutageColumns.OUTAGE_ID, outage.getId());
+        values.put(Columns.OutageColumns.IP_ADDRESS, outage.getIpAddress());
+        values.put(Columns.OutageColumns.IF_REGAINED_SERVICE, outage.getIfRegainedService());
+        values.put(Columns.OutageColumns.IF_LOST_SERVICE, outage.getIfRegainedService());
+        values.put(Columns.OutageColumns.SERVICE_TYPE_NAME, outage.getServiceTypeName());
         return contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
     }
 

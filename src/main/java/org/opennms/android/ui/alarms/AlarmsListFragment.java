@@ -76,20 +76,20 @@ public class AlarmsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.COL_SEVERITY),
+                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
             baseUri = AlarmsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.AlarmColumns.TABLE_ALARMS_ID,
-                Columns.AlarmColumns.COL_ALARM_ID,
-                Columns.AlarmColumns.COL_DESCRIPTION,
-                Columns.AlarmColumns.COL_SEVERITY
+                Columns.AlarmColumns.TABLE_ID,
+                Columns.AlarmColumns.ALARM_ID,
+                Columns.AlarmColumns.DESCRIPTION,
+                Columns.AlarmColumns.SEVERITY
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.AlarmColumns.COL_ALARM_ID + " DESC");
+                Columns.AlarmColumns.ALARM_ID + " DESC");
     }
 
     @Override
@@ -126,8 +126,7 @@ public class AlarmsListFragment extends SherlockListFragment
             FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
             FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
             detailsContainer.removeAllViews();
-            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment();
-            detailsFragment.bindAlarm(alarm);
+            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.commit();
         } else {
@@ -138,24 +137,19 @@ public class AlarmsListFragment extends SherlockListFragment
     }
 
     private Alarm getAlarm(long id) {
-        String projection[] = {
-                Columns.AlarmColumns.COL_ALARM_ID,
-                Columns.AlarmColumns.COL_SEVERITY,
-                Columns.AlarmColumns.COL_DESCRIPTION,
-                Columns.AlarmColumns.COL_LOG_MESSAGE
-        };
-        Cursor alarmsCursor = getActivity().getContentResolver().query(
+        Cursor cursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, String.valueOf(id)),
-                projection, null, null, null);
-        if (alarmsCursor.moveToFirst()) {
-            Alarm alarm = new Alarm(alarmsCursor.getInt(0));
-            alarm.setSeverity(alarmsCursor.getString(1));
-            alarm.setDescription(alarmsCursor.getString(2));
-            alarm.setLogMessage(alarmsCursor.getString(3));
-            alarmsCursor.close();
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.ALARM_ID)));
+            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SEVERITY)));
+            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.DESCRIPTION)));
+            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LOG_MESSAGE)));
+            cursor.close();
             return alarm;
         }
-        alarmsCursor.close();
+        cursor.close();
         return null;
     }
 

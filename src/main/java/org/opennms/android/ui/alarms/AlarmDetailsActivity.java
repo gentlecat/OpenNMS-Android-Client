@@ -20,8 +20,7 @@ public class AlarmDetailsActivity extends SherlockFragmentActivity {
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Alarm alarm = (Alarm) getIntent().getSerializableExtra("alarm");
-        AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment();
-        detailsFragment.bindAlarm(alarm);
+        AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
         actionBar.setTitle(getResources().getString(R.string.alarm_details) + alarm.getId());
         fragmentTransaction.add(R.id.details_activity_fragment_container, detailsFragment);
         fragmentTransaction.commit();

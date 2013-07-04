@@ -29,17 +29,17 @@ public class EventAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         // ID
-        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.COL_EVENT_ID));
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID));
         TextView idText = (TextView) view.findViewById(R.id.event_list_item_id);
         idText.setText(String.valueOf(id));
 
         // Log message
-        String log = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.COL_LOG_MESSAGE));
+        String log = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE));
         TextView logText = (TextView) view.findViewById(R.id.event_list_item_log);
         logText.setText(log);
 
         // Severity
-        String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.COL_SEVERITY));
+        String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {

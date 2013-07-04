@@ -16,7 +16,11 @@ import org.opennms.android.dao.alarms.Alarm;
 
 public class AlarmDetailsFragment extends SherlockFragment {
 
-    Alarm alarm;
+    private Alarm alarm;
+
+    public AlarmDetailsFragment(Alarm alarm) {
+        this.alarm = alarm;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,11 +55,6 @@ public class AlarmDetailsFragment extends SherlockFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void bindAlarm(Alarm alarm) {
-        this.alarm = alarm;
-        if (this.isVisible()) updateContent();
     }
 
     public void updateContent() {

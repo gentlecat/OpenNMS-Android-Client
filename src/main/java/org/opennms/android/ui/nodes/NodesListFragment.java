@@ -67,7 +67,7 @@ public class NodesListFragment extends SherlockListFragment
                 getSherlockActivity(),
                 R.layout.node_list_item,
                 null,
-                new String[]{Columns.NodeColumns.COL_NAME, Columns.NodeColumns.COL_NODE_ID},
+                new String[]{Columns.NodeColumns.NAME, Columns.NodeColumns.NODE_ID},
                 new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -116,14 +116,14 @@ public class NodesListFragment extends SherlockListFragment
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_NODE_ID))));
-            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_TYPE)));
-            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_NAME)));
-            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_CREATED_TIME)));
-            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_SYS_CONTACT)));
-            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_LABEL_SOURCE)));
-            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_LOCATION)));
-            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.COL_DESCRIPTION)));
+            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Columns.NodeColumns.NODE_ID))));
+            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.TYPE)));
+            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.NAME)));
+            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.CREATED_TIME)));
+            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.SYS_CONTACT)));
+            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.LABEL_SOURCE)));
+            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.LOCATION)));
+            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.DESCRIPTION)));
             cursor.close();
             return node;
         }
@@ -185,19 +185,19 @@ public class NodesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Columns.NodeColumns.COL_NAME),
+                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Columns.NodeColumns.NAME),
                     Uri.encode(this.currentFilter)
             );
         } else {
             baseUri = NodesListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.NodeColumns.TABLE_NODES_ID,
-                Columns.NodeColumns.COL_NODE_ID,
-                Columns.NodeColumns.COL_NAME
+                Columns.NodeColumns.TABLE_ID,
+                Columns.NodeColumns.NODE_ID,
+                Columns.NodeColumns.NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.NodeColumns.COL_NAME);
+                Columns.NodeColumns.NAME);
     }
 
     @Override

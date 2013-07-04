@@ -78,10 +78,10 @@ public class AlarmsSyncService extends IntentService {
 
     private Uri insertAlarm(ContentResolver contentResolver, Alarm alarm) {
         ContentValues values = new ContentValues();
-        values.put(AlarmColumns.COL_ALARM_ID, alarm.getId());
-        values.put(AlarmColumns.COL_SEVERITY, alarm.getSeverity());
-        values.put(AlarmColumns.COL_DESCRIPTION, alarm.getDescription());
-        values.put(AlarmColumns.COL_LOG_MESSAGE, alarm.getLogMessage());
+        values.put(AlarmColumns.ALARM_ID, alarm.getId());
+        values.put(AlarmColumns.SEVERITY, alarm.getSeverity());
+        values.put(AlarmColumns.DESCRIPTION, alarm.getDescription());
+        values.put(AlarmColumns.LOG_MESSAGE, alarm.getLogMessage());
         return contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
     }
 

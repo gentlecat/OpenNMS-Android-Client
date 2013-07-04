@@ -42,10 +42,10 @@ public class AlarmsListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case ALARM_ID:
-                queryBuilder.appendWhere(Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(Columns.AlarmColumns.TABLE_ID + "=" + uri.getLastPathSegment());
                 break;
             case ALARM_SEVERITY:
-                queryBuilder.appendWhere(Columns.AlarmColumns.COL_SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Columns.AlarmColumns.SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case ALARMS:
                 break;
@@ -91,7 +91,7 @@ public class AlarmsListProvider extends AppContentProvider {
         switch (uriType) {
             case ALARM_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(Columns.AlarmColumns.TABLE_ID + "=" + id);
 
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
@@ -122,11 +122,11 @@ public class AlarmsListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.ALARMS,
-                            Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + id,
+                            Columns.AlarmColumns.TABLE_ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.ALARMS,
-                            selection + " and " + Columns.AlarmColumns.TABLE_ALARMS_ID + "=" + id,
+                            selection + " and " + Columns.AlarmColumns.TABLE_ID + "=" + id,
                             selectionArgs);
                 }
                 break;

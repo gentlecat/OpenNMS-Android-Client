@@ -47,11 +47,11 @@ public class OutagesListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
-                            OutageColumns.TABLE_OUTAGES_ID + "=" + id,
+                            OutageColumns.TABLE_ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
-                            selection + " and " + OutageColumns.TABLE_OUTAGES_ID + "=" + id,
+                            selection + " and " + OutageColumns.TABLE_ID + "=" + id,
                             selectionArgs);
                 }
                 break;
@@ -105,7 +105,7 @@ public class OutagesListProvider extends AppContentProvider {
         switch (uriType) {
             case OUTAGE_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(OutageColumns.TABLE_OUTAGES_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(OutageColumns.TABLE_ID + "=" + id);
 
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
@@ -131,10 +131,10 @@ public class OutagesListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case OUTAGE_ID:
-                queryBuilder.appendWhere(OutageColumns.TABLE_OUTAGES_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(OutageColumns.TABLE_ID + "=" + uri.getLastPathSegment());
                 break;
             case OUTAGE_IP_ADDRESS:
-                queryBuilder.appendWhere(OutageColumns.COL_IP_ADDRESS + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(OutageColumns.IP_ADDRESS + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case OUTAGES:
                 break;

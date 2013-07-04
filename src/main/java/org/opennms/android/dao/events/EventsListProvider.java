@@ -47,11 +47,11 @@ public class EventsListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.EVENTS,
-                            Columns.EventColumns.TABLE_EVENT_ID + "=" + id,
+                            Columns.EventColumns.TABLE_ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.EVENTS,
-                            selection + " and " + Columns.EventColumns.TABLE_EVENT_ID + "=" + id,
+                            selection + " and " + Columns.EventColumns.TABLE_ID + "=" + id,
                             selectionArgs);
                 }
                 break;
@@ -107,7 +107,7 @@ public class EventsListProvider extends AppContentProvider {
         switch (uriType) {
             case EVENT_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.EventColumns.TABLE_EVENT_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(Columns.EventColumns.TABLE_ID + "=" + id);
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND ").append(selection);
                 }
@@ -131,10 +131,10 @@ public class EventsListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case EVENT_ID:
-                queryBuilder.appendWhere(Columns.EventColumns.TABLE_EVENT_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(Columns.EventColumns.TABLE_ID + "=" + uri.getLastPathSegment());
                 break;
             case EVENT_SEVERITY:
-                queryBuilder.appendWhere(Columns.EventColumns.COL_SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Columns.EventColumns.SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case EVENT:
                 break;
