@@ -204,7 +204,7 @@ public class NodesListFragment extends SherlockListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefreshAnimation();
         adapter.swapCursor(cursor);
-        if (isDualPane && !adapter.isEmpty()) showDetails(0);
+        if (isDualPane && !adapter.isEmpty() && isVisible()) showDetails(0);
     }
 
     @Override
