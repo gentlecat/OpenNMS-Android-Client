@@ -82,6 +82,14 @@ public class AlarmsSyncService extends IntentService {
         values.put(AlarmColumns.SEVERITY, alarm.getSeverity());
         values.put(AlarmColumns.DESCRIPTION, alarm.getDescription());
         values.put(AlarmColumns.LOG_MESSAGE, alarm.getLogMessage());
+        values.put(AlarmColumns.FIRST_EVENT_TIME, alarm.getFirstEventTime());
+        values.put(AlarmColumns.LAST_EVENT_TIME, alarm.getLastEventTime());
+        values.put(AlarmColumns.LAST_EVENT_ID, alarm.getLastEventId());
+        values.put(AlarmColumns.LAST_EVENT_SEVERITY, alarm.getLastEventSeverity());
+        values.put(AlarmColumns.NODE_ID, alarm.getNodeId());
+        values.put(AlarmColumns.NODE_LABEL, alarm.getNodeLabel());
+        values.put(AlarmColumns.SERVICE_TYPE_ID, alarm.getServiceTypeId());
+        values.put(AlarmColumns.SERVICE_TYPE_NAME, alarm.getServiceTypeName());
         return contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
     }
 

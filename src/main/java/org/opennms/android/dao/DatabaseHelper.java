@@ -50,6 +50,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + AlarmColumns.ALARM_ID + " INTEGER UNIQUE, "
             + AlarmColumns.SEVERITY + " TEXT, "
             + AlarmColumns.DESCRIPTION + " TEXT, "
+            + AlarmColumns.FIRST_EVENT_TIME + " TEXT, "
+            + AlarmColumns.LAST_EVENT_TIME + " TEXT, "
+            + AlarmColumns.LAST_EVENT_ID + " INTEGER, "
+            + AlarmColumns.LAST_EVENT_SEVERITY + " TEXT, "
+            + AlarmColumns.NODE_ID + " INTEGER, "
+            + AlarmColumns.NODE_LABEL + " TEXT, "
+            + AlarmColumns.SERVICE_TYPE_ID + " INTEGER, "
+            + AlarmColumns.SERVICE_TYPE_NAME + " TEXT, "
             + AlarmColumns.LOG_MESSAGE + " TEXT"
             + ");";
 

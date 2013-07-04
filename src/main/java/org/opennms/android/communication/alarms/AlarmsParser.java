@@ -30,14 +30,38 @@ public class AlarmsParser extends Parser {
                     String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
                     Alarm alarm = new Alarm(Integer.parseInt(id));
 
-                    Node description = getXmlNodeForExpression("description", currentNode);
-                    if (description != null) alarm.setDescription(description.getTextContent());
-
                     Node severity = getXmlNodeForExpression("@severity", currentNode);
                     if (severity != null) alarm.setSeverity(severity.getNodeValue());
 
                     Node logMessage = getXmlNodeForExpression("logMessage", currentNode);
                     if (logMessage != null) alarm.setLogMessage(logMessage.getTextContent());
+
+                    Node description = getXmlNodeForExpression("description", currentNode);
+                    if (description != null) alarm.setDescription(description.getTextContent());
+
+                    Node firstEventTime = getXmlNodeForExpression("firstEventTime", currentNode);
+                    if (firstEventTime != null) alarm.setFirstEventTime(firstEventTime.getTextContent());
+
+                    Node lastEventTime = getXmlNodeForExpression("lastEventTime", currentNode);
+                    if (lastEventTime != null) alarm.setLastEventTime(lastEventTime.getTextContent());
+
+                    Node lastEventId = getXmlNodeForExpression("lastEvent/@id", currentNode);
+                    if (lastEventId != null) alarm.setLastEventId(Integer.parseInt(lastEventId.getTextContent()));
+
+                    Node lastEventSeverity = getXmlNodeForExpression("lastEvent/@severity", currentNode);
+                    if (lastEventSeverity != null) alarm.setLastEventSeverity(lastEventSeverity.getTextContent());
+
+                    Node nodeId = getXmlNodeForExpression("nodeId", currentNode);
+                    if (nodeId != null) alarm.setNodeId(Integer.parseInt(nodeId.getTextContent()));
+
+                    Node nodeLabel = getXmlNodeForExpression("nodeLabel", currentNode);
+                    if (nodeLabel != null) alarm.setNodeLabel(nodeLabel.getTextContent());
+
+                    Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", currentNode);
+                    if (serviceTypeId != null) alarm.setServiceTypeId(Integer.parseInt(serviceTypeId.getTextContent()));
+
+                    Node serviceTypeName = getXmlNodeForExpression("serviceType/name", currentNode);
+                    if (serviceTypeName != null) alarm.setServiceTypeName(serviceTypeName.getTextContent());
 
                     values.add(alarm);
                 }

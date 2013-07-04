@@ -8,12 +8,23 @@ public class Alarm implements Serializable {
     private String severity;
     private String description;
     private String logMessage;
+    // Event
+    private String firstEventTime;
+    private String lastEventTime;
+    private int lastEventId;
+    private String lastEventSeverity;
+    // Node
+    private int nodeId;
+    private String nodeLabel;
+    // Service type
+    private int serviceTypeId;
+    private String serviceTypeName;
 
-    public Alarm(Integer id) {
+    public Alarm(int id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -43,6 +54,70 @@ public class Alarm implements Serializable {
 
     public void setLogMessage(String logMessage) {
         this.logMessage = logMessage;
+    }
+
+    public String getFirstEventTime() {
+        return firstEventTime;
+    }
+
+    public void setFirstEventTime(String firstEventTime) {
+        this.firstEventTime = firstEventTime;
+    }
+
+    public String getLastEventTime() {
+        return lastEventTime;
+    }
+
+    public void setLastEventTime(String lastEventTime) {
+        this.lastEventTime = lastEventTime;
+    }
+
+    public int getLastEventId() {
+        return lastEventId;
+    }
+
+    public void setLastEventId(int lastEventId) {
+        this.lastEventId = lastEventId;
+    }
+
+    public String getLastEventSeverity() {
+        return lastEventSeverity;
+    }
+
+    public void setLastEventSeverity(String lastEventSeverity) {
+        this.lastEventSeverity = lastEventSeverity;
+    }
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
+    }
+
+    public String getNodeLabel() {
+        return nodeLabel;
+    }
+
+    public void setNodeLabel(String nodeLabel) {
+        this.nodeLabel = nodeLabel;
+    }
+
+    public int getServiceTypeId() {
+        return serviceTypeId;
+    }
+
+    public void setServiceTypeId(int serviceTypeId) {
+        this.serviceTypeId = serviceTypeId;
+    }
+
+    public String getServiceTypeName() {
+        return serviceTypeName;
+    }
+
+    public void setServiceTypeName(String serviceTypeName) {
+        this.serviceTypeName = serviceTypeName;
     }
 
 }
