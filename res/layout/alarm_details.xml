@@ -33,7 +33,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/alarm_message_title"
+        android:id="@+id/alarm_log_message_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"
@@ -44,7 +44,61 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/alarm_message"
+        android:id="@+id/alarm_log_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
+
+    <TextView
+        android:id="@+id/alarm_node_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/alarm_details_node"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/alarm_node"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
+
+    <TextView
+        android:id="@+id/alarm_service_type_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/alarm_details_service_type"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/alarm_service_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding" />
+
+    <TextView
+        android:id="@+id/alarm_last_event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:text="@string/alarm_details_last_event"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/alarm_last_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"

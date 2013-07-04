@@ -146,6 +146,14 @@ public class AlarmsListFragment extends SherlockListFragment
             alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SEVERITY)));
             alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.DESCRIPTION)));
             alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LOG_MESSAGE)));
+            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.FIRST_EVENT_TIME)));
+            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_TIME)));
+            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_ID)));
+            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_SEVERITY)));
+            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.NODE_ID)));
+            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.NODE_LABEL)));
+            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SERVICE_TYPE_ID)));
+            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SERVICE_TYPE_NAME)));
             cursor.close();
             return alarm;
         }

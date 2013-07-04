@@ -2,6 +2,7 @@ package org.opennms.android.ui.alarms;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +15,12 @@ import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
 import org.opennms.android.dao.alarms.Alarm;
 
-public class AlarmDetailsFragment extends SherlockFragment {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+public class AlarmDetailsFragment extends SherlockFragment {
+    public static final String TAG = "AlarmDetailsFragment";
     private Alarm alarm;
 
     public AlarmDetailsFragment(Alarm alarm) {
@@ -88,8 +93,32 @@ public class AlarmDetailsFragment extends SherlockFragment {
             description.setText(Html.fromHtml(alarm.getDescription()));
 
             // Log message
-            TextView message = (TextView) getActivity().findViewById(R.id.alarm_message);
-            message.setText(String.valueOf(alarm.getLogMessage()));
+            TextView message = (TextView) getActivity().findViewById(R.id.alarm_log_message);
+            message.setText(alarm.getLogMessage());
+
+            // Node
+            TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
+            node.setText(alarm.getNodeLabel() + " (#" + alarm.getNodeId() + ")");
+
+            // Service type
+            TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
+            serviceType.setText(alarm.getServiceTypeName() + " (#" + alarm.getServiceTypeId() + ")");
+
+            // Last event
+            TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
+            String lastEventTimeString = alarm.getLastEventTime();
+            // Example: "2011-09-27T12:15:32.363-04:00"
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            Date lastEventTime = new Date();
+            if (lastEventTimeString != null) {
+                try {
+                    lastEventTime = format.parse(lastEventTimeString);
+                } catch (ParseException e) {
+                    Log.e(TAG, "Creation time parsing error");
+                }
+            }
+            TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
+            lastEvent.setText("#" + alarm.getLastEventId() + " " + alarm.getLastEventSeverity() + "\n" + lastEventTime.toString());
         }
     }
 
