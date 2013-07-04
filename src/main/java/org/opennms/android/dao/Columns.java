@@ -35,13 +35,14 @@ public class Columns {
         public static final String TABLE_ID = "_id";
         public static final String EVENT_ID = "event_id";
         public static final String SEVERITY = "severity";
-        public static final String LOG_MESSAGE = "logMessage";
+        public static final String LOG_MESSAGE = "log_message";
         public static final String DESCRIPTION = "description";
         public static final String HOST = "host";
-        public static final String IP_ADDRESS = "ipAddress";
-        public static final String NODE_ID = "nodeId";
-        public static final String NODE_LABEL = "nodeLabel";
-        public static final String CREATE_TIME = "createTime";
+        public static final String IP_ADDRESS = "ip_address";
+        public static final String CREATE_TIME = "create_time";
+        // Node info
+        public static final String NODE_ID = "node_id";
+        public static final String NODE_LABEL = "node_label";
     }
 
 }
