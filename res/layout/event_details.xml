@@ -39,7 +39,7 @@
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_log_message"
+        android:text="@string/event_details_log_message"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_create_time"
+        android:text="@string/event_details_create_time"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
@@ -75,7 +75,7 @@
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_host"
+        android:text="@string/event_details_host"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
@@ -93,7 +93,7 @@
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_ip_address"
+        android:text="@string/event_details_ip_address"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
@@ -105,36 +105,36 @@
         android:paddingRight="@dimen/details_layout_padding" />
 
     <TextView
-        android:id="@+id/event_node_id_title"
+        android:id="@+id/event_node_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_node_id"
+        android:text="@string/event_details_node"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/event_node_id"
+        android:id="@+id/event_node"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding" />
 
     <TextView
-        android:id="@+id/event_node_label_title"
+        android:id="@+id/event_service_type_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_node_label"
+        android:text="@string/event_details_service_type"
         android:textAllCaps="true"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/event_node_label"
+        android:id="@+id/event_service_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/details_layout_padding"
@@ -147,7 +147,7 @@
         android:paddingLeft="@dimen/details_layout_padding"
         android:paddingRight="@dimen/details_layout_padding"
         android:paddingTop="@dimen/details_section_padding_top"
-        android:text="@string/event_desc"
+        android:text="@string/event_details_desc"
         android:textAllCaps="true"
         android:textStyle="bold" />
 

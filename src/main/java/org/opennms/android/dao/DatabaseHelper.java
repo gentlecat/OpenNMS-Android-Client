@@ -42,6 +42,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + EventColumns.IP_ADDRESS + " TEXT, "
             + EventColumns.NODE_ID + " INTEGER, "
             + EventColumns.NODE_LABEL + " TEXT, "
+            + EventColumns.SERVICE_TYPE_ID + " INTEGER, "
+            + EventColumns.SERVICE_TYPE_NAME + " TEXT, "
             + EventColumns.CREATE_TIME + " TEXT"
             + ");";
     private static final String CREATE_ALARMS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS

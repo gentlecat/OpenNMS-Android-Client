@@ -11,69 +11,66 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 
 public class EventsParser extends Parser {
-    private static final String EVENTS_EXPRESSION = "/events/event";
-    private static final String EVENT_ID = "@id";
-    private static final String EVENT_SEVERITY = "@severity";
-    private static final String EVENT_LOG_MESSAGE = "logMessage";
-    private static final String EVENT_DESCRIPTION = "description";
-    private static final String EVENT_HOST = "host";
-    private static final String EVENT_IP_ADDRESS = "ipAddress";
-    private static final String EVENT_NODE_ID = "nodeId";
-    private static final String EVENT_NODE_LABEL = "nodeLabel";
-    private static final String EVENT_CREATE_TIME = "createTime";
+    private static final String TAG = "EventsParser";
 
     public static ArrayList<org.opennms.android.dao.events.Event> parse(String xml) {
         ArrayList<org.opennms.android.dao.events.Event> values = new ArrayList<org.opennms.android.dao.events.Event>();
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeListForExpression(EVENTS_EXPRESSION, xml);
+            nodes = getXmlNodeListForExpression("/events/event", xml);
         } catch (XPathExpressionException e) {
-            Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
-
         try {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node currentNode = nodes.item(i);
 
-                    String id = getXmlNodeForExpression(EVENT_ID, currentNode).getNodeValue();
+                    String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
                     Event event = new Event(Integer.parseInt(id));
 
-                    Node description = getXmlNodeForExpression(EVENT_DESCRIPTION, currentNode);
+                    Node description = getXmlNodeForExpression("description", currentNode);
                     if (description != null) event.setDescription(description.getTextContent());
 
-                    Node logMessage = getXmlNodeForExpression(EVENT_LOG_MESSAGE, currentNode);
+                    Node logMessage = getXmlNodeForExpression("logMessage", currentNode);
                     if (logMessage != null) event.setLogMessage(logMessage.getTextContent());
 
-                    Node severity = getXmlNodeForExpression(EVENT_SEVERITY, currentNode);
+                    Node severity = getXmlNodeForExpression("@severity", currentNode);
                     if (severity != null) event.setSeverity(severity.getNodeValue());
 
-                    Node host = getXmlNodeForExpression(EVENT_HOST, currentNode);
+                    Node host = getXmlNodeForExpression("host", currentNode);
                     if (host != null) event.setHost(host.getTextContent());
 
-                    Node ipAddress = getXmlNodeForExpression(EVENT_IP_ADDRESS, currentNode);
+                    Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
                     if (ipAddress != null) event.setIpAddress(ipAddress.getTextContent());
 
-                    Node nodeId = getXmlNodeForExpression(EVENT_NODE_ID, currentNode);
+                    Node nodeId = getXmlNodeForExpression("nodeId", currentNode);
                     if (nodeId != null) event.setNodeId(Integer.parseInt(nodeId.getTextContent()));
 
-                    Node nodeLabel = getXmlNodeForExpression(EVENT_NODE_LABEL, currentNode);
+                    Node nodeLabel = getXmlNodeForExpression("nodeLabel", currentNode);
                     if (nodeLabel != null) event.setNodeLabel(nodeLabel.getTextContent());
 
-                    Node createTime = getXmlNodeForExpression(EVENT_CREATE_TIME, currentNode);
+                    Node createTime = getXmlNodeForExpression("createTime", currentNode);
                     if (createTime != null) event.setCreateTime(createTime.getTextContent());
+
+                    Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", currentNode);
+                    if (serviceTypeId != null) event.setServiceTypeId(Integer.parseInt(serviceTypeId.getTextContent()));
+
+                    Node serviceTypeName = getXmlNodeForExpression("serviceType/name", currentNode);
+                    if (serviceTypeName != null) event.setServiceTypeName(serviceTypeName.getTextContent());
 
                     values.add(event);
                 }
             }
         } catch (XPathExpressionException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         } catch (NumberFormatException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         } catch (DOMException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         }
+
         return values;
     }
 

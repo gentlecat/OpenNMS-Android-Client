@@ -138,34 +138,26 @@ public class EventsListFragment extends SherlockListFragment
     }
 
     private Event getEvent(long id) {
-        String projection[] = {
-                Columns.EventColumns.EVENT_ID,
-                Columns.EventColumns.SEVERITY,
-                Columns.EventColumns.LOG_MESSAGE,
-                Columns.EventColumns.DESCRIPTION,
-                Columns.EventColumns.HOST,
-                Columns.EventColumns.IP_ADDRESS,
-                Columns.EventColumns.CREATE_TIME,
-                Columns.EventColumns.NODE_ID,
-                Columns.EventColumns.NODE_LABEL,
-        };
-        Cursor eventsCursor = getActivity().getContentResolver().query(
+        Cursor cursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(EventsListProvider.CONTENT_URI, String.valueOf(id)),
-                projection, null, null, null);
-        if (eventsCursor.moveToFirst()) {
-            Event event = new Event(eventsCursor.getInt(0));
-            event.setSeverity(eventsCursor.getString(1));
-            event.setLogMessage(eventsCursor.getString(2));
-            event.setDescription(eventsCursor.getString(3));
-            event.setHost(eventsCursor.getString(4));
-            event.setIpAddress(eventsCursor.getString(5));
-            event.setCreateTime(eventsCursor.getString(6));
-            event.setNodeId(eventsCursor.getInt(7));
-            event.setNodeLabel(eventsCursor.getString(8));
-            eventsCursor.close();
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Event event = new Event(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID)));
+            event.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY)));
+            event.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE)));
+            event.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.DESCRIPTION)));
+            event.setHost(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.HOST)));
+            event.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.IP_ADDRESS)));
+            event.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.CREATE_TIME)));
+            event.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.NODE_ID)));
+            event.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.NODE_LABEL)));
+            event.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.SERVICE_TYPE_ID)));
+            event.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SERVICE_TYPE_NAME)));
+            cursor.close();
             return event;
         }
-        eventsCursor.close();
+        cursor.close();
         return null;
     }
 

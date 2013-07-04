@@ -57,6 +57,8 @@ public class EventsSyncService extends IntentService {
         values.put(Columns.EventColumns.CREATE_TIME, event.getCreateTime());
         values.put(Columns.EventColumns.NODE_ID, event.getNodeId());
         values.put(Columns.EventColumns.NODE_LABEL, event.getNodeLabel());
+        values.put(Columns.EventColumns.SERVICE_TYPE_ID, event.getServiceTypeId());
+        values.put(Columns.EventColumns.SERVICE_TYPE_NAME, event.getServiceTypeName());
         return contentResolver.insert(EventsListProvider.CONTENT_URI, values);
     }
 

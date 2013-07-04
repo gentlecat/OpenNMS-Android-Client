@@ -58,6 +58,9 @@ public class Columns {
         // Node info
         public static final String NODE_ID = "node_id";
         public static final String NODE_LABEL = "node_label";
+        // Service type info
+        public static final String SERVICE_TYPE_ID = "service_type_id";
+        public static final String SERVICE_TYPE_NAME = "service_type_name";
     }
 
 }

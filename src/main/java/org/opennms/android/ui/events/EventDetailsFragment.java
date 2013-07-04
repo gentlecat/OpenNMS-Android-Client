@@ -92,13 +92,15 @@ public class EventDetailsFragment extends SherlockFragment {
             TextView ipAddress = (TextView) getActivity().findViewById(R.id.event_ip_address);
             ipAddress.setText(event.getIpAddress());
 
-            // Node ID
-            TextView nodeId = (TextView) getActivity().findViewById(R.id.event_node_id);
-            nodeId.setText(String.valueOf(event.getNodeId()));
+            // Node
+            TextView nodeId = (TextView) getActivity().findViewById(R.id.event_node);
+            nodeId.setText(event.getNodeLabel() + " (#" + event.getNodeId() + ")");
 
-            // Node label
-            TextView nodeLabel = (TextView) getActivity().findViewById(R.id.event_node_label);
-            nodeLabel.setText(event.getNodeLabel());
+            // Service type
+            TextView serviceType = (TextView) getActivity().findViewById(R.id.event_service_type);
+            serviceType.setText(event.getServiceTypeName() + " (#" + event.getServiceTypeId() + ")");
+
+
         }
     }
 

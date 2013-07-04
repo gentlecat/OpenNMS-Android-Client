@@ -12,18 +12,28 @@ public class Event implements Serializable {
     private String ipAddress;
     private int nodeId;
     private String nodeLabel;
+    private int serviceTypeId;
+    private String serviceTypeName;
     private String createTime;
 
-    public Event(Integer id) {
+    public Event(int id) {
         this.id = id;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public int getId() {
+        return id;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
     }
 
     public String getLogMessage() {
@@ -32,6 +42,14 @@ public class Event implements Serializable {
 
     public void setLogMessage(String logMessage) {
         this.logMessage = logMessage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getHost() {
@@ -66,28 +84,28 @@ public class Event implements Serializable {
         this.nodeLabel = nodeLabel;
     }
 
-    public int getId() {
-        return id;
+    public int getServiceTypeId() {
+        return serviceTypeId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setServiceTypeId(int serviceTypeId) {
+        this.serviceTypeId = serviceTypeId;
     }
 
-    public String getSeverity() {
-        return severity;
+    public String getServiceTypeName() {
+        return serviceTypeName;
     }
 
-    public void setSeverity(String severity) {
-        this.severity = severity;
+    public void setServiceTypeName(String serviceTypeName) {
+        this.serviceTypeName = serviceTypeName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
 }
