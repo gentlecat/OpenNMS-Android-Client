@@ -26,6 +26,7 @@ import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
+    private static final String STATE_TITLE = "active_item";
     private DrawerLayout navigationLayout;
     private ListView navigationList;
     private ActionBarDrawerToggle navigationToggle;
@@ -78,18 +79,20 @@ public class MainActivity extends SherlockFragmentActivity {
             showWelcomeDialog();
         }
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null) {
+            title = savedInstanceState.getCharSequence(STATE_TITLE);
+            if (!navigationLayout.isDrawerOpen(navigationList)) actionBar.setTitle(title);
+        } else {
             selectItem(0);
-
             navigationLayout.openDrawer(navigationList);
             actionBar.setTitle(drawerTitle);
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putCharSequence(STATE_TITLE, title);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
