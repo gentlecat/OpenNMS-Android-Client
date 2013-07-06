@@ -65,7 +65,7 @@ public class AlarmsListFragment extends SherlockListFragment
         adapter = new AlarmAdapter(getSherlockActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
-        TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_text);
+        TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.alarms_list_empty));
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
