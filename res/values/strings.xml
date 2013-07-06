@@ -4,6 +4,15 @@
     <string name="app_name">OpenNMS</string>
     <string name="app_name_full">OpenNMS Android Client</string>
 
+    <string-array name="navigation_items">
+        <item>Nodes</item>
+        <item>Alarms</item>
+        <item>Outages</item>
+        <item>Events</item>
+    </string-array>
+    <string name="drawer_open">Open navigation</string>
+    <string name="drawer_close">Close navigation</string>
+
     <!-- Nodes -->
     <string name="nodes">Nodes</string>
     <string name="nodes_list_empty">No nodes</string>
@@ -95,15 +104,6 @@
     <string name="alarms_notification_title">New alarms</string>
     <string name="alarms_notification_text_singular">There is a new alarm!</string>
     <string name="alarms_notification_text_plural">There are %d new alarms!</string>
-
-    <string-array name="navigation_items">
-        <item>Nodes</item>
-        <item>Outages</item>
-        <item>Events</item>
-        <item>Alarms</item>
-    </string-array>
-    <string name="drawer_open">Open navigation</string>
-    <string name="drawer_close">Close navigation</string>
 
     <string name="refresh">Refresh</string>
     <string name="no_items">No items</string>

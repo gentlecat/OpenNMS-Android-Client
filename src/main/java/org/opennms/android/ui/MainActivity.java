@@ -135,13 +135,13 @@ public class MainActivity extends SherlockFragmentActivity {
                 fragment = new NodesListFragment();
                 break;
             case 1:
-                fragment = new OutagesListFragment();
+                fragment = new AlarmsListFragment();
                 break;
             case 2:
-                fragment = new EventsListFragment();
+                fragment = new OutagesListFragment();
                 break;
             case 3:
-                fragment = new AlarmsListFragment();
+                fragment = new EventsListFragment();
                 break;
             default:
                 return;
