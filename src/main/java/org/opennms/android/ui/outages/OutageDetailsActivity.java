@@ -9,21 +9,27 @@ import org.opennms.android.R;
 import org.opennms.android.dao.outages.Outage;
 
 public class OutageDetailsActivity extends SherlockFragmentActivity {
+    private Outage outage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
+        outage = (Outage) getIntent().getSerializableExtra("outage");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        actionBar.setTitle(getResources().getString(R.string.outage_details) + outage.getId());
+    }
 
-        Outage outage = (Outage) getIntent().getSerializableExtra("outage");
+    @Override
+    public void onStart() {
+        super.onStart();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         OutageDetailsFragment fragment = new OutageDetailsFragment();
         fragment.bindOutage(outage);
-        actionBar.setTitle(getResources().getString(R.string.outage_details) + outage.getId());
-        fragmentTransaction.add(R.id.details_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.details_activity_fragment_container, fragment);
         fragmentTransaction.commit();
     }
 

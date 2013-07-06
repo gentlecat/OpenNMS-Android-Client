@@ -2,9 +2,11 @@ package org.opennms.android.ui.events;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,10 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -35,10 +34,13 @@ public class EventsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 3;
+    private static final String STATE_ACTIVE_EVENT_ID = "active_event_id";
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
+    private SharedPreferences sharedPref;
+    private FrameLayout detailsContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,8 +57,9 @@ public class EventsListFragment extends SherlockListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (isDualPane) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -96,12 +99,28 @@ public class EventsListFragment extends SherlockListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefreshAnimation();
         adapter.swapCursor(cursor);
-        if (isDualPane && !adapter.isEmpty() && isVisible()) showDetails(0);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (isDualPane) {
+            long activeEventId = sharedPref.getLong(STATE_ACTIVE_EVENT_ID, -1);
+            if (activeEventId != -1) {
+                Event event = getEvent(activeEventId);
+                showDetails(event);
+            } else {
+                detailsContainer.removeAllViews();
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                RelativeLayout emptyView = (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
+                detailsContainer.addView(emptyView);
+            }
+        }
     }
 
     @Override
@@ -117,18 +136,20 @@ public class EventsListFragment extends SherlockListFragment
 
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
-        Event event = getEvent(getListView().getItemIdAtPosition(position));
+        long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_EVENT_ID, id).commit();
+        Event event = getEvent(id);
         showDetails(event);
     }
 
     private void showDetails(Event event) {
         if (isDualPane) {
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
             detailsContainer.removeAllViews();
             EventDetailsFragment detailsFragment = new EventDetailsFragment();
             detailsFragment.bindEvent(event);
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), EventDetailsActivity.class);

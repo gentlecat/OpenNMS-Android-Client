@@ -2,9 +2,11 @@ package org.opennms.android.ui.outages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -17,10 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -36,10 +35,13 @@ public class OutagesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int LOADER_ID = 2;
+    private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private MenuItem refreshItem;
     private String currentFilter;
+    private SharedPreferences sharedPref;
+    private FrameLayout detailsContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,9 @@ public class OutagesListFragment extends SherlockListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (isDualPane) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -79,6 +82,23 @@ public class OutagesListFragment extends SherlockListFragment
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (isDualPane) {
+            long activeOutageId = sharedPref.getLong(STATE_ACTIVE_OUTAGE_ID, -1);
+            if (activeOutageId != -1) {
+                Outage outage = getOutage(activeOutageId);
+                showDetails(outage);
+            } else {
+                detailsContainer.removeAllViews();
+                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                RelativeLayout emptyView = (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
+                detailsContainer.addView(emptyView);
+            }
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         stopRefreshAnimation();
@@ -91,18 +111,20 @@ public class OutagesListFragment extends SherlockListFragment
 
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
-        Outage outage = getOutage(getListView().getItemIdAtPosition(position));
+        long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_OUTAGE_ID, id).commit();
+        Outage outage = getOutage(id);
         showDetails(outage);
     }
 
     private void showDetails(Outage outage) {
         if (isDualPane) {
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-            FrameLayout detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
             detailsContainer.removeAllViews();
             OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
             detailsFragment.bindOutage(outage);
+            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
@@ -208,7 +230,6 @@ public class OutagesListFragment extends SherlockListFragment
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         stopRefreshAnimation();
         adapter.swapCursor(cursor);
-        if (isDualPane && !adapter.isEmpty() && isVisible()) showDetails(0);
     }
 
     @Override

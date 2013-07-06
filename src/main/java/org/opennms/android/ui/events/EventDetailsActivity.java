@@ -9,21 +9,27 @@ import org.opennms.android.R;
 import org.opennms.android.dao.events.Event;
 
 public class EventDetailsActivity extends SherlockFragmentActivity {
+    private Event event;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
+        event = (Event) getIntent().getSerializableExtra("event");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(getResources().getString(R.string.event_details) + event.getId());
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Event event = (Event) getIntent().getSerializableExtra("event");
         EventDetailsFragment detailsFragment = new EventDetailsFragment();
         detailsFragment.bindEvent(event);
-        actionBar.setTitle(getResources().getString(R.string.event_details) + event.getId());
-        fragmentTransaction.add(R.id.details_activity_fragment_container, detailsFragment);
+        fragmentTransaction.replace(R.id.details_activity_fragment_container, detailsFragment);
         fragmentTransaction.commit();
     }
 

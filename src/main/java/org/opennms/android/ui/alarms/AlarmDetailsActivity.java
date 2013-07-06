@@ -9,20 +9,26 @@ import org.opennms.android.R;
 import org.opennms.android.dao.alarms.Alarm;
 
 public class AlarmDetailsActivity extends SherlockFragmentActivity {
+    private Alarm alarm;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
+        alarm = (Alarm) getIntent().getSerializableExtra("alarm");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Alarm alarm = (Alarm) getIntent().getSerializableExtra("alarm");
-        AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
         actionBar.setTitle(getResources().getString(R.string.alarm_details) + alarm.getId());
-        fragmentTransaction.add(R.id.details_activity_fragment_container, detailsFragment);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
+        fragmentTransaction.replace(R.id.details_activity_fragment_container, detailsFragment);
         fragmentTransaction.commit();
     }
 
