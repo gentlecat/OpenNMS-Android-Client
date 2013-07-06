@@ -9,19 +9,26 @@ import org.opennms.android.R;
 import org.opennms.android.dao.nodes.Node;
 
 public class NodeDetailsActivity extends SherlockFragmentActivity {
+    private Node node;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
+        node = (Node) getIntent().getSerializableExtra("node");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(getResources().getString(R.string.node_details) + node.getId());
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Node node = (Node) getIntent().getSerializableExtra("node");
         NodeDetailsFragment fragment = new NodeDetailsFragment(node);
-        fragmentTransaction.add(R.id.details_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.details_activity_fragment_container, fragment);
         fragmentTransaction.commit();
     }
 
