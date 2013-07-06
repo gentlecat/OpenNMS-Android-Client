@@ -64,12 +64,10 @@ public class MainActivity extends SherlockFragmentActivity {
         ) {
             public void onDrawerClosed(View view) {
                 actionBar.setTitle(title);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
                 actionBar.setTitle(drawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         navigationLayout.setDrawerListener(navigationToggle);
@@ -99,10 +97,9 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean drawerOpen = navigationLayout.isDrawerOpen(navigationList);
-        menu.findItem(R.id.menu_refresh).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
