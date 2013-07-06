@@ -15,7 +15,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#fff"
-        android:choiceMode="singleChoice"
         android:divider="#ccc"
         android:dividerHeight="1px"
         android:footerDividersEnabled="true" />

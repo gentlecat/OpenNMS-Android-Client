@@ -144,9 +144,6 @@ public class MainActivity extends SherlockFragmentActivity {
                 return;
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
-
-        // update selected item and title, then close the drawer
-        navigationList.setItemChecked(position, true);
         setTitle(navigationItems[position]);
         navigationLayout.closeDrawer(navigationList);
     }
