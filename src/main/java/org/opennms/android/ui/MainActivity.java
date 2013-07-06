@@ -27,6 +27,7 @@ import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
     private static final String STATE_TITLE = "active_item";
+    private static final String STATE_IS_NAV_OPEN = "is_nav_open";
     private DrawerLayout navigationLayout;
     private ListView navigationList;
     private ActionBarDrawerToggle navigationToggle;
@@ -81,7 +82,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
         if (savedInstanceState != null) {
             title = savedInstanceState.getCharSequence(STATE_TITLE);
-            if (!navigationLayout.isDrawerOpen(navigationList)) actionBar.setTitle(title);
+            if (savedInstanceState.getBoolean(STATE_IS_NAV_OPEN)) actionBar.setTitle(drawerTitle);
+            else actionBar.setTitle(title);
         } else {
             selectItem(0);
             navigationLayout.openDrawer(navigationList);
@@ -92,6 +94,7 @@ public class MainActivity extends SherlockFragmentActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putCharSequence(STATE_TITLE, title);
+        savedInstanceState.putBoolean(STATE_IS_NAV_OPEN, navigationLayout.isDrawerOpen(navigationList));
         super.onSaveInstanceState(savedInstanceState);
     }
 
