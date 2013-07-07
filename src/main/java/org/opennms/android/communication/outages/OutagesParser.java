@@ -11,54 +11,48 @@ import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 
 public class OutagesParser extends Parser {
-
-    private static final String OUTAGES_EXPRESSION = "/outages/outage";
-    private static final String OUTAGES_ID = "@id";
-    private static final String OUTAGES_IF_LOST_SERVICE = "ifLostService";
-    private static final String OUTAGES_IF_REGAINED_SERVICE = "ifRegainedService";
-    private static final String OUTAGES_IP_ADDRESS = "ipAddress";
-    private static final String SERVICE_TYPE_NAME = "monitoredService/serviceType/name";
+    private static final String TAG = "OutagesParser";
 
     public static ArrayList<Outage> parse(String xml) {
         ArrayList<Outage> values = new ArrayList<Outage>();
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeListForExpression(OUTAGES_EXPRESSION, xml);
+            nodes = getXmlNodeListForExpression("/outages/outage", xml);
         } catch (XPathExpressionException e) {
-            Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
+            Log.i(TAG, e.getMessage(), e);
         }
-
         try {
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node currentNode = nodes.item(i);
 
-                    String id = getXmlNodeForExpression(OUTAGES_ID, currentNode).getNodeValue();
+                    String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
                     Outage outage = new Outage(Integer.parseInt(id));
 
-                    Node ipAddress = getXmlNodeForExpression(OUTAGES_IP_ADDRESS, currentNode);
+                    Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
                     if (ipAddress != null) outage.setIpAddress(ipAddress.getTextContent());
 
-                    Node ifLostService = getXmlNodeForExpression(OUTAGES_IF_LOST_SERVICE, currentNode);
+                    Node ifLostService = getXmlNodeForExpression("ifLostService", currentNode);
                     if (ifLostService != null) outage.setIfLostService(ifLostService.getTextContent());
 
-                    Node ifRegainedService = getXmlNodeForExpression(OUTAGES_IF_REGAINED_SERVICE, currentNode);
+                    Node ifRegainedService = getXmlNodeForExpression("ifRegainedService", currentNode);
                     if (ifRegainedService != null) outage.setIfRegainedService(ifRegainedService.getTextContent());
 
-                    Node serviceTypeName = getXmlNodeForExpression(SERVICE_TYPE_NAME, currentNode);
+                    Node serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", currentNode);
                     if (serviceTypeName != null) outage.setServiceTypeName(serviceTypeName.getTextContent());
 
                     values.add(outage);
                 }
             }
         } catch (XPathExpressionException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         } catch (NumberFormatException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         } catch (DOMException e) {
-            Log.e("node attributes", e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
         }
+
         return values;
     }
 
