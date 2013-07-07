@@ -31,7 +31,7 @@ public class EventsSyncService extends IntentService {
         EventsServerCommunication eventsServer = new EventsServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing events...");
         try {
-            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc", 20);
+            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc&limit=25", 20);
             contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
             for (Event event : events) insertEvent(contentResolver, event);
             Log.i(TAG, "Done!");
