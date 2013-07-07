@@ -43,7 +43,7 @@ public class AlarmsSyncService extends IntentService {
         String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
         String[] severityValues = getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
-        Log.d(TAG, "Synchronizing alarms...");
+        Log.i(TAG, "Synchronizing alarms...");
         try {
             List<Alarm> alarms = alarmsServer.getAlarms("alarms?orderBy=id&order=desc&limit=0", 25);
             contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
@@ -60,7 +60,7 @@ public class AlarmsSyncService extends IntentService {
                 }
                 if (alarm.getId() > maxId) maxId = alarm.getId();
             }
-            Log.d(TAG, "Done!");
+            Log.i(TAG, "Done!");
         } catch (UnknownHostException e) {
             Log.e(TAG, "UnknownHostException", e);
         } catch (InterruptedException e) {
