@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class NodesSyncService extends IntentService {
 
@@ -30,7 +31,7 @@ public class NodesSyncService extends IntentService {
         NodesServerCommunication nodesServer = new NodesServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing nodes...");
         try {
-            List<Node> nodes = nodesServer.getNodes("nodes/?limit=0");
+            List<Node> nodes = nodesServer.getNodes("nodes/?limit=0", 20);
             contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
             for (Node node : nodes) insertNode(contentResolver, node);
             Log.i(TAG, "Done!");
@@ -42,6 +43,8 @@ public class NodesSyncService extends IntentService {
             Log.e(TAG, "ExecutionException", e);
         } catch (IOException e) {
             Log.e(TAG, "IOException", e);
+        } catch (TimeoutException e) {
+            Log.e(TAG, "TimeoutException", e);
         }
     }
 

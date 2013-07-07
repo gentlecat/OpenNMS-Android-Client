@@ -13,6 +13,7 @@ import org.opennms.android.dao.outages.OutagesListProvider;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class OutagesSyncService extends IntentService {
 
@@ -28,7 +29,7 @@ public class OutagesSyncService extends IntentService {
         OutagesServerCommunication outagesServer = new OutagesServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing outages...");
         try {
-            List<Outage> outages = outagesServer.getOutages("outages?orderBy=id&order=desc");
+            List<Outage> outages = outagesServer.getOutages("outages?orderBy=id&order=desc", 20);
             contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null);
             for (Outage outage : outages) insertOutage(contentResolver, outage);
             Log.i(TAG, "Done!");
@@ -36,6 +37,8 @@ public class OutagesSyncService extends IntentService {
             Log.e(TAG, "InterruptedException", e);
         } catch (ExecutionException e) {
             Log.e(TAG, "ExecutionException", e);
+        } catch (TimeoutException e) {
+            Log.e(TAG, "TimeoutException", e);
         }
     }
 

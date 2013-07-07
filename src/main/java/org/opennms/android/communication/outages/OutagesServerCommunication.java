@@ -6,10 +6,7 @@ import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.outages.Outage;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class OutagesServerCommunication {
 
@@ -19,11 +16,12 @@ public class OutagesServerCommunication {
         this.appContext = appContext;
     }
 
-    public ArrayList<Outage> getOutages(String url) throws InterruptedException, ExecutionException {
+    public ArrayList<Outage> getOutages(String url, long timeout)
+            throws InterruptedException, ExecutionException, TimeoutException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> outagesCommunication = executorService
                 .submit(new ServerCommunication(url, appContext));
-        ServiceResponse outages = outagesCommunication.get();
+        ServiceResponse outages = outagesCommunication.get(timeout, TimeUnit.SECONDS);
         ArrayList<Outage> outagesList = new ArrayList<Outage>();
         if (outages != null) {
             outagesList = OutagesParser.parse(outages.getContentData().getContentInString());
