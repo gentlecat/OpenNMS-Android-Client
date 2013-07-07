@@ -20,7 +20,7 @@ public class AlarmsParser extends Parser {
         try {
             nodes = getXmlNodeListForExpression("/alarms/alarm", xml);
         } catch (XPathExpressionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.i(TAG, e.getMessage(), e);
         }
         try {
             if (nodes != null) {

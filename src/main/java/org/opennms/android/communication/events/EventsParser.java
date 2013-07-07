@@ -20,7 +20,7 @@ public class EventsParser extends Parser {
         try {
             nodes = getXmlNodeListForExpression("/events/event", xml);
         } catch (XPathExpressionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.i(TAG, e.getMessage(), e);
         }
         try {
             if (nodes != null) {
