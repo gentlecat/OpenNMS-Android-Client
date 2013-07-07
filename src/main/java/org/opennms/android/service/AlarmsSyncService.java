@@ -14,7 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import org.opennms.android.R;
 import org.opennms.android.communication.alarms.AlarmsServerCommunication;
-import org.opennms.android.communication.alarms.AlarmsServerCommunicationImpl;
 import org.opennms.android.dao.Columns.AlarmColumns;
 import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
@@ -37,7 +36,7 @@ public class AlarmsSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
-        AlarmsServerCommunication alarmsServer = new AlarmsServerCommunicationImpl(getApplicationContext());
+        AlarmsServerCommunication alarmsServer = new AlarmsServerCommunication(getApplicationContext());
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
         String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
