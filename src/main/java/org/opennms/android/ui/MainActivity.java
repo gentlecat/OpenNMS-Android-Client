@@ -26,7 +26,7 @@ import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class MainActivity extends SherlockFragmentActivity {
-    private static final String STATE_TITLE = "active_item";
+    private static final String STATE_TITLE = "title";
     private static final String STATE_IS_NAV_OPEN = "is_nav_open";
     private DrawerLayout navigationLayout;
     private ListView navigationList;
@@ -51,7 +51,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
         actionBar = getSupportActionBar();
 
-        // Enable ActionBar app icon to behave as action to toggle navigation
+        // Enable ActionBar app icon to behave as action to toggle navigation drawer
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
@@ -113,8 +113,7 @@ public class MainActivity extends SherlockFragmentActivity {
                 }
                 return true;
             case R.id.menu_settings:
-                Intent settingsIntent = new Intent(getApplicationContext(),
-                        SettingsActivity.class);
+                Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
             case R.id.menu_about:
