@@ -28,21 +28,21 @@ public class EventsSyncService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
         EventsServerCommunication eventsServer = new EventsServerCommunication(getApplicationContext());
-        Log.d(TAG, "Synchronizing events...");
+        Log.i(TAG, "Synchronizing events...");
         try {
             List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc");
             contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
             for (Event event : events) insertEvent(contentResolver, event);
+            Log.i(TAG, "Done!");
         } catch (UnknownHostException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "UnknownHostException", e);
         } catch (InterruptedException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "InterruptedException", e);
         } catch (ExecutionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "ExecutionException", e);
         } catch (IOException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "IOException", e);
         }
-        Log.d(TAG, "Done!");
     }
 
     private Uri insertEvent(ContentResolver contentResolver, Event event) {
