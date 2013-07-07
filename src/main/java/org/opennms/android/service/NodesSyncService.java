@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import org.opennms.android.communication.nodes.NodesServerCommunication;
-import org.opennms.android.communication.nodes.NodesServerCommunicationImpl;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
@@ -28,10 +27,10 @@ public class NodesSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
-        NodesServerCommunication nodesServer = new NodesServerCommunicationImpl(getApplicationContext());
+        NodesServerCommunication nodesServer = new NodesServerCommunication(getApplicationContext());
         Log.d(TAG, "Synchronizing nodes...");
         try {
-            List<Node> nodes = nodesServer.getNodes("nodes");
+            List<Node> nodes = nodesServer.getNodes("nodes/?limit=0");
             contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
             for (Node node : nodes) insertNode(contentResolver, node);
         } catch (UnknownHostException e) {
