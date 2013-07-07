@@ -45,7 +45,7 @@ public class AlarmsSyncService extends IntentService {
         int newAlarmsCount = 0, maxId = 0;
         Log.d(TAG, "Synchronizing alarms...");
         try {
-            List<Alarm> alarms = alarmsServer.getAlarms("alarms");
+            List<Alarm> alarms = alarmsServer.getAlarms("alarms?orderBy=id&order=desc&limit=0", 25);
             contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
             for (Alarm alarm : alarms) {
                 insertAlarm(contentResolver, alarm);

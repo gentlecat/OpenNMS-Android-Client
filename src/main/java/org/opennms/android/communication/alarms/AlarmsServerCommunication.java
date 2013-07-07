@@ -16,11 +16,13 @@ public class AlarmsServerCommunication {
     public AlarmsServerCommunication(Context appContext) {
         this.appContext = appContext;
     }
-    public ArrayList<Alarm> getAlarms(String url) throws InterruptedException, ExecutionException, IOException, TimeoutException {
+
+    public ArrayList<Alarm> getAlarms(String url, long timeout)
+            throws InterruptedException, ExecutionException, IOException, TimeoutException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> alarmsCommunication = executorService
-                .submit(new ServerCommunication("alarms?orderBy=id&order=desc&limit=0", appContext));
-        ServiceResponse alarmsServiceResponse = alarmsCommunication.get(20, TimeUnit.SECONDS);
+                .submit(new ServerCommunication(url, appContext));
+        ServiceResponse alarmsServiceResponse = alarmsCommunication.get(timeout, TimeUnit.SECONDS);
         ArrayList<Alarm> alarmsList = new ArrayList<Alarm>();
         if (alarmsServiceResponse != null) {
             alarmsList = AlarmsParser.parse(alarmsServiceResponse.getContentData().getContentInString());
