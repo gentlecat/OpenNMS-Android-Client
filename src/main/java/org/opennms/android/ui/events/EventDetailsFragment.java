@@ -78,7 +78,7 @@ public class EventDetailsFragment extends SherlockFragment {
 
             // Log message
             TextView logMessage = (TextView) getActivity().findViewById(R.id.event_log_message);
-            logMessage.setText(event.getLogMessage());
+            logMessage.setText(Html.fromHtml(event.getLogMessage()));
 
             // Description
             TextView description = (TextView) getActivity().findViewById(R.id.event_desc);

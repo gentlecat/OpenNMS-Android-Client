@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
@@ -36,7 +37,7 @@ public class EventAdapter extends CursorAdapter {
         // Log message
         String log = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE));
         TextView logText = (TextView) view.findViewById(R.id.event_list_item_log);
-        logText.setText(log);
+        logText.setText(Html.fromHtml(log));
 
         // Severity
         String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY));
