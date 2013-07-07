@@ -13,12 +13,12 @@ import java.util.ArrayList;
 public class AlarmsParser extends Parser {
     private static final String TAG = "AlarmsParser";
 
-    public static ArrayList<Alarm> parse(String input) {
+    public static ArrayList<Alarm> parse(String xml) {
         ArrayList<Alarm> values = new ArrayList<Alarm>();
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeListForExpression("/alarms/alarm", input);
+            nodes = getXmlNodeListForExpression("/alarms/alarm", xml);
         } catch (XPathExpressionException e) {
             Log.i(TAG, e.getMessage());
         }

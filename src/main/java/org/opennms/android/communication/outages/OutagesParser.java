@@ -19,12 +19,12 @@ public class OutagesParser extends Parser {
     private static final String OUTAGES_IP_ADDRESS = "ipAddress";
     private static final String SERVICE_TYPE_NAME = "monitoredService/serviceType/name";
 
-    public static ArrayList<Outage> parse(String is) {
+    public static ArrayList<Outage> parse(String xml) {
         ArrayList<Outage> values = new ArrayList<Outage>();
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeListForExpression(OUTAGES_EXPRESSION, is);
+            nodes = getXmlNodeListForExpression(OUTAGES_EXPRESSION, xml);
         } catch (XPathExpressionException e) {
             Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
         }

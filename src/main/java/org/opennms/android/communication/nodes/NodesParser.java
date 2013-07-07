@@ -26,12 +26,12 @@ public class NodesParser extends Parser {
     private static final String NODE_DESCRIPTION = "sysDescription";
     private static final String NODE_LOCATION = "sysLocation";
 
-    public static ArrayList<Node> parse(String is) {
+    public static ArrayList<Node> parse(String xml) {
         ArrayList<Node> values = new ArrayList<Node>();
 
         NodeList nodes = null;
         try {
-            nodes = getXmlNodeListForExpression(NODE_EXPRESSION, is);
+            nodes = getXmlNodeListForExpression(NODE_EXPRESSION, xml);
         } catch (XPathExpressionException e) {
             Log.i("NodeParser.getXmlNodeListForExpression", e.getMessage());
         }
