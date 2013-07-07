@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import org.opennms.android.communication.events.EventsServerCommunication;
-import org.opennms.android.communication.events.EventsServerCommunicationImpl;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.events.Event;
 import org.opennms.android.dao.events.EventsListProvider;
@@ -28,10 +27,10 @@ public class EventsSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
-        EventsServerCommunication eventsServer = new EventsServerCommunicationImpl(getApplicationContext());
+        EventsServerCommunication eventsServer = new EventsServerCommunication(getApplicationContext());
         Log.d(TAG, "Synchronizing events...");
         try {
-            List<Event> events = eventsServer.getEvents("events");
+            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc");
             contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
             for (Event event : events) insertEvent(contentResolver, event);
         } catch (UnknownHostException e) {

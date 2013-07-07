@@ -23,7 +23,7 @@ public class EventsServerCommunication {
     public ArrayList<Event> getEvents(String url) throws InterruptedException, ExecutionException, IOException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         Future<ServiceResponse> eventsCommunication = executorService
-                .submit(new ServerCommunication("events?orderBy=id&order=desc", appContext));
+                .submit(new ServerCommunication(url, appContext));
         ServiceResponse events = eventsCommunication.get();
         ArrayList<Event> eventsList = new ArrayList<Event>();
         if (events != null) {
