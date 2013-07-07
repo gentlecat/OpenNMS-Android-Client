@@ -26,17 +26,17 @@ public class OutagesSyncService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
         OutagesServerCommunication outagesServer = new OutagesServerCommunication(getApplicationContext());
-        Log.d(TAG, "Synchronizing outages...");
+        Log.i(TAG, "Synchronizing outages...");
         try {
             List<Outage> outages = outagesServer.getOutages("outages?orderBy=id&order=desc");
             contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null);
             for (Outage outage : outages) insertOutage(contentResolver, outage);
+            Log.i(TAG, "Done!");
         } catch (InterruptedException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "InterruptedException", e);
         } catch (ExecutionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "ExecutionException", e);
         }
-        Log.d(TAG, "Done!");
     }
 
     private Uri insertOutage(ContentResolver contentResolver, Outage outage) {
