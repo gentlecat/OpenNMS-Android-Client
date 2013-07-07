@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class AlarmsSyncService extends IntentService {
 
@@ -59,16 +60,18 @@ public class AlarmsSyncService extends IntentService {
                 }
                 if (alarm.getId() > maxId) maxId = alarm.getId();
             }
+            Log.d(TAG, "Done!");
         } catch (UnknownHostException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "UnknownHostException", e);
         } catch (InterruptedException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "InterruptedException", e);
         } catch (ExecutionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "ExecutionException", e);
         } catch (IOException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "IOException", e);
+        } catch (TimeoutException e) {
+            Log.e(TAG, "TimeoutException", e);
         }
-        Log.d(TAG, "Done!");
 
         if (latestShownAlarmId != maxId) sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
         boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
