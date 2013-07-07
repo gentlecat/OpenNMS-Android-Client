@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class EventsSyncService extends IntentService {
 
@@ -30,7 +31,7 @@ public class EventsSyncService extends IntentService {
         EventsServerCommunication eventsServer = new EventsServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing events...");
         try {
-            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc");
+            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc", 20);
             contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
             for (Event event : events) insertEvent(contentResolver, event);
             Log.i(TAG, "Done!");
@@ -42,6 +43,8 @@ public class EventsSyncService extends IntentService {
             Log.e(TAG, "ExecutionException", e);
         } catch (IOException e) {
             Log.e(TAG, "IOException", e);
+        } catch (TimeoutException e) {
+            Log.e(TAG, "TimeoutException", e);
         }
     }
 
