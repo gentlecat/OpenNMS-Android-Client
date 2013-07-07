@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import org.opennms.android.communication.outages.OutagesServerCommunication;
-import org.opennms.android.communication.outages.OutagesServerCommunicationImpl;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.outages.Outage;
 import org.opennms.android.dao.outages.OutagesListProvider;
@@ -26,10 +25,10 @@ public class OutagesSyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
-        OutagesServerCommunication outagesServer = new OutagesServerCommunicationImpl(getApplicationContext());
+        OutagesServerCommunication outagesServer = new OutagesServerCommunication(getApplicationContext());
         Log.d(TAG, "Synchronizing outages...");
         try {
-            List<Outage> outages = outagesServer.getOutages("outages");
+            List<Outage> outages = outagesServer.getOutages("outages?orderBy=id&order=desc");
             contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null);
             for (Outage outage : outages) insertOutage(contentResolver, outage);
         } catch (InterruptedException e) {
