@@ -18,6 +18,10 @@ public class NodeDetailsFragment extends SherlockFragment {
     private static final String TAG = "NodeDetailsFragment";
     private Node node;
 
+    // Do not remove
+    public NodeDetailsFragment() {
+    }
+
     public NodeDetailsFragment(Node node) {
         this.node = node;
     }

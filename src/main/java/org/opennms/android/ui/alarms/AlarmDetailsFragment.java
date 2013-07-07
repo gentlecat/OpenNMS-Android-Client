@@ -23,6 +23,10 @@ public class AlarmDetailsFragment extends SherlockFragment {
     public static final String TAG = "AlarmDetailsFragment";
     private Alarm alarm;
 
+    // Do not remove
+    public AlarmDetailsFragment() {
+    }
+
     public AlarmDetailsFragment(Alarm alarm) {
         this.alarm = alarm;
     }
