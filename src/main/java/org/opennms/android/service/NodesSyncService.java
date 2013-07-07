@@ -28,21 +28,21 @@ public class NodesSyncService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         ContentResolver contentResolver = getContentResolver();
         NodesServerCommunication nodesServer = new NodesServerCommunication(getApplicationContext());
-        Log.d(TAG, "Synchronizing nodes...");
+        Log.i(TAG, "Synchronizing nodes...");
         try {
             List<Node> nodes = nodesServer.getNodes("nodes/?limit=0");
             contentResolver.delete(NodesListProvider.CONTENT_URI, null, null);
             for (Node node : nodes) insertNode(contentResolver, node);
+            Log.i(TAG, "Done!");
         } catch (UnknownHostException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "UnknownHostException", e);
         } catch (InterruptedException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "InterruptedException", e);
         } catch (ExecutionException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "ExecutionException", e);
         } catch (IOException e) {
-            Log.i(TAG, e.getMessage());
+            Log.e(TAG, "IOException", e);
         }
-        Log.d(TAG, "Done!");
     }
 
     private Uri insertNode(ContentResolver contentResolver, Node node) {
