@@ -16,7 +16,7 @@ public class OutageDetailsActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
-        outage = (Outage) getIntent().getSerializableExtra("outage");
+        outage = (Outage) getIntent().getSerializableExtra(OutagesListFragment.EXTRA_OUTAGE);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

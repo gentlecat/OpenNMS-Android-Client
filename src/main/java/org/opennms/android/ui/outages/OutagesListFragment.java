@@ -34,6 +34,7 @@ import org.opennms.android.service.OutagesSyncService;
 public class OutagesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String EXTRA_OUTAGE = "outage";
     private static final int LOADER_ID = 2;
     private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
@@ -128,7 +129,7 @@ public class OutagesListFragment extends SherlockListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra("outage", outage);
+            detailsIntent.putExtra(EXTRA_OUTAGE, outage);
             startActivity(detailsIntent);
         }
     }

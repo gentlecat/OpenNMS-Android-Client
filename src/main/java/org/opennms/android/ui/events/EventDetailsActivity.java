@@ -16,7 +16,7 @@ public class EventDetailsActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
-        event = (Event) getIntent().getSerializableExtra("event");
+        event = (Event) getIntent().getSerializableExtra(EventsListFragment.EXTRA_EVENT);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

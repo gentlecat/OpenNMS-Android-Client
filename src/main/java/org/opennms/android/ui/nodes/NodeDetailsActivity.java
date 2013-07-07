@@ -16,7 +16,7 @@ public class NodeDetailsActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
-        node = (Node) getIntent().getSerializableExtra("node");
+        node = (Node) getIntent().getSerializableExtra(NodesListFragment.EXTRA_NODE);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

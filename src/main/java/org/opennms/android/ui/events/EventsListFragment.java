@@ -33,6 +33,7 @@ import org.opennms.android.service.EventsSyncService;
 public class EventsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String EXTRA_EVENT= "event";
     private static final int LOADER_ID = 3;
     private static final String STATE_ACTIVE_EVENT_ID = "active_event_id";
     private EventAdapter adapter;
@@ -153,7 +154,7 @@ public class EventsListFragment extends SherlockListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), EventDetailsActivity.class);
-            detailsIntent.putExtra("event", event);
+            detailsIntent.putExtra(EXTRA_EVENT, event);
             startActivity(detailsIntent);
         }
     }

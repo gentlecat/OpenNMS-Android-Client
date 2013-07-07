@@ -16,7 +16,7 @@ public class AlarmDetailsActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details);
 
-        alarm = (Alarm) getIntent().getSerializableExtra("alarm");
+        alarm = (Alarm) getIntent().getSerializableExtra(AlarmsListFragment.EXTRA_ALARM);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

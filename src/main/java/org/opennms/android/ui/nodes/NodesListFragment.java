@@ -34,6 +34,7 @@ import org.opennms.android.service.NodesSyncService;
 public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String EXTRA_NODE = "node";
     private static final int LOADER_ID = 1;
     private static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private SimpleCursorAdapter adapter;
@@ -126,7 +127,7 @@ public class NodesListFragment extends SherlockListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), NodeDetailsActivity.class);
-            detailsIntent.putExtra("node", node);
+            detailsIntent.putExtra(EXTRA_NODE, node);
             startActivity(detailsIntent);
         }
     }

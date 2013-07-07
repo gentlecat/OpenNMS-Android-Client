@@ -33,6 +33,7 @@ import org.opennms.android.service.AlarmsSyncService;
 public class AlarmsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String EXTRA_ALARM = "alarm";
     private static final int LOADER_ID = 4;
     private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private AlarmAdapter adapter;
@@ -151,7 +152,7 @@ public class AlarmsListFragment extends SherlockListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getSherlockActivity(), AlarmDetailsActivity.class);
-            detailsIntent.putExtra("alarm", alarm);
+            detailsIntent.putExtra(EXTRA_ALARM, alarm);
             startActivity(detailsIntent);
         }
     }
