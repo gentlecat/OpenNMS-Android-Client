@@ -34,17 +34,23 @@ public class OutageDetailsFragment extends SherlockFragment {
             TextView id = (TextView) getActivity().findViewById(R.id.outage_id);
             id.setText(getString(R.string.outage_details_id) + outage.getId());
 
-            TextView ip = (TextView) getActivity().findViewById(R.id.outage_ip);
-            ip.setText(getString(R.string.outage_details_ip) + " " + outage.getIpAddress());
+            TextView ipAddress = (TextView) getActivity().findViewById(R.id.outage_ip_address);
+            ipAddress.setText(outage.getIpAddress());
 
-            TextView ifLostService = (TextView) getActivity().findViewById(R.id.outage_if_lost_service);
-            ifLostService.setText(getString(R.string.outage_details_lost) + " " + outage.getIfLostService());
+            TextView ipInterfaceId = (TextView) getActivity().findViewById(R.id.outage_ip_interface_id);
+            ipInterfaceId.setText(String.valueOf(outage.getIpInterfaceId()));
 
-            TextView ifRegainedService = (TextView) getActivity().findViewById(R.id.outage_if_regained_service);
-            ifRegainedService.setText(getString(R.string.outage_details_regained) + " " + outage.getIfRegainedService());
+            TextView lostServiceEvent = (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
+            lostServiceEvent.setText(outage.getLostServiceTime() + "\n#" + outage.getServiceLostEventId());
 
-            TextView type = (TextView) getActivity().findViewById(R.id.outage_service_type);
-            type.setText(getString(R.string.outage_details_type) + " " + outage.getServiceTypeName());
+            TextView regainedServiceEvent = (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
+            regainedServiceEvent.setText(outage.getRegainedServiceTime() + "\n#" + outage.getServiceRegainedEventId());
+
+            TextView serviceId = (TextView) getActivity().findViewById(R.id.outage_service_id);
+            serviceId.setText(String.valueOf(outage.getServiceId()));
+
+            TextView serviceType = (TextView) getActivity().findViewById(R.id.outage_service_type);
+            serviceType.setText(outage.getServiceTypeName() + " (#" + outage.getServiceTypeId() + ")");
         }
     }
 

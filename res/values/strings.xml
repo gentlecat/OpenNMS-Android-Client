@@ -30,10 +30,12 @@
     <string name="outages_list_empty">No outages</string>
     <string name="outage_details">Details about outage #</string>
     <string name="outage_details_id">Outage #</string>
-    <string name="outage_details_ip">IP address:</string>
-    <string name="outage_details_type">Service:</string>
-    <string name="outage_details_lost">If lost service:</string>
-    <string name="outage_details_regained">If regained service:</string>
+    <string name="outage_details_service_id">Service ID</string>
+    <string name="outage_details_service_type">Service type</string>
+    <string name="outage_details_ip_address">IP address</string>
+    <string name="outage_details_ip_interface_id">IP interface ID</string>
+    <string name="outage_details_lost_event">Lost service event</string>
+    <string name="outage_details_regained_event">Regained service event</string>
 
     <!-- Alarms -->
     <string name="alarms">Alarms</string>
@@ -52,6 +54,7 @@
     <string name="alarm_severity_indeterminate">Indeterminate</string>
     <string name="alarm_severity_normal">Normal</string>
     <string name="alarm_severity_cleared">Cleared</string>
+    <string name="acknowledge">Acknowledge</string>
 
     <!-- Events -->
     <string name="events">Events</string>
@@ -107,8 +110,6 @@
 
     <string name="refresh">Refresh</string>
     <string name="no_items">No items</string>
-
-    <string name="acknowledge">Acknowledge</string>
     <string name="no_details">Select item from the list\n to view details.</string>
 
     <string name="search">Search</string>

@@ -4,22 +4,67 @@ import java.io.Serializable;
 
 public class Outage implements Serializable {
 
-    private Integer id;
+    private int id;
+    private int serviceId;
+    private int ipInterfaceId;
     private String ipAddress;
-    private String ifLostService;
-    private String ifRegainedService;
+    private String lostServiceTime;
+    private int serviceLostEventId;
+    private String regainedServiceTime;
+    private int serviceRegainedEventId;
+    private int serviceTypeId;
     private String serviceTypeName;
 
-    public Outage(Integer id) {
+    public Outage(int id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public int getServiceTypeId() {
+        return serviceTypeId;
+    }
+
+    public void setServiceTypeId(int serviceTypeId) {
+        this.serviceTypeId = serviceTypeId;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public int getIpInterfaceId() {
+        return ipInterfaceId;
+    }
+
+    public void setIpInterfaceId(int ipInterfaceId) {
+        this.ipInterfaceId = ipInterfaceId;
+    }
+
+    public int getServiceLostEventId() {
+        return serviceLostEventId;
+    }
+
+    public void setServiceLostEventId(int serviceLostEventId) {
+        this.serviceLostEventId = serviceLostEventId;
+    }
+
+    public int getServiceRegainedEventId() {
+        return serviceRegainedEventId;
+    }
+
+    public void setServiceRegainedEventId(int serviceRegainedEventId) {
+        this.serviceRegainedEventId = serviceRegainedEventId;
     }
 
     public String getIpAddress() {
@@ -30,20 +75,20 @@ public class Outage implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public String getIfLostService() {
-        return ifLostService;
+    public String getLostServiceTime() {
+        return lostServiceTime;
     }
 
-    public void setIfLostService(String ifLostService) {
-        this.ifLostService = ifLostService;
+    public void setLostServiceTime(String lostServiceTime) {
+        this.lostServiceTime = lostServiceTime;
     }
 
-    public String getIfRegainedService() {
-        return ifRegainedService;
+    public String getRegainedServiceTime() {
+        return regainedServiceTime;
     }
 
-    public void setIfRegainedService(String ifRegainedService) {
-        this.ifRegainedService = ifRegainedService;
+    public void setRegainedServiceTime(String regainedServiceTime) {
+        this.regainedServiceTime = regainedServiceTime;
     }
 
     public String getServiceTypeName() {

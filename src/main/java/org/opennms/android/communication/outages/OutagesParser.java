@@ -33,14 +33,29 @@ public class OutagesParser extends Parser {
                     Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
                     if (ipAddress != null) outage.setIpAddress(ipAddress.getTextContent());
 
-                    Node ifLostService = getXmlNodeForExpression("ifLostService", currentNode);
-                    if (ifLostService != null) outage.setIfLostService(ifLostService.getTextContent());
+                    Node serviceId = getXmlNodeForExpression("monitoredService/@id", currentNode);
+                    if (serviceId != null) outage.setServiceId(Integer.parseInt(serviceId.getTextContent()));
 
-                    Node ifRegainedService = getXmlNodeForExpression("ifRegainedService", currentNode);
-                    if (ifRegainedService != null) outage.setIfRegainedService(ifRegainedService.getTextContent());
+                    Node ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", currentNode);
+                    if (ipInterfaceId != null) outage.setIpInterfaceId(Integer.parseInt(ipInterfaceId.getTextContent()));
+
+                    Node serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", currentNode);
+                    if (serviceTypeId != null) outage.setServiceTypeId(Integer.parseInt(serviceTypeId.getTextContent()));
 
                     Node serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", currentNode);
                     if (serviceTypeName != null) outage.setServiceTypeName(serviceTypeName.getTextContent());
+
+                    Node lostServiceTime = getXmlNodeForExpression("ifLostService", currentNode);
+                    if (lostServiceTime != null) outage.setLostServiceTime(lostServiceTime.getTextContent());
+
+                    Node serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", currentNode);
+                    if (serviceLostEventId != null) outage.setServiceLostEventId(Integer.parseInt(serviceLostEventId.getTextContent()));
+
+                    Node regainedServiceTime = getXmlNodeForExpression("ifRegainedService", currentNode);
+                    if (regainedServiceTime != null) outage.setRegainedServiceTime(regainedServiceTime.getTextContent());
+
+                    Node serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", currentNode);
+                    if (serviceRegainedEventId != null) outage.setServiceRegainedEventId(Integer.parseInt(serviceRegainedEventId.getTextContent()));
 
                     values.add(outage);
                 }

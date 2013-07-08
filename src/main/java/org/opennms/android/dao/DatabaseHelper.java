@@ -27,9 +27,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + OutageColumns.TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OutageColumns.OUTAGE_ID + " INTEGER UNIQUE, "
             + OutageColumns.IP_ADDRESS + " TEXT, "
-            + OutageColumns.IF_REGAINED_SERVICE + " TEXT, "
+            + OutageColumns.IP_INTERFACE_ID + " INTEGER, "
+            + OutageColumns.SERVICE_ID + " INTEGER, "
             + OutageColumns.SERVICE_TYPE_NAME + " TEXT, "
-            + OutageColumns.IF_LOST_SERVICE + " TEXT"
+            + OutageColumns.SERVICE_TYPE_ID + " INTEGER, "
+            + OutageColumns.SERVICE_LOST_TIME + " TEXT, "
+            + OutageColumns.SERVICE_LOST_EVENT_ID + " INTEGER, "
+            + OutageColumns.SERVICE_REGAINED_TIME + " TEXT, "
+            + OutageColumns.SERVICE_REGAINED_EVENT_ID + " INTEGER"
             + ");";
     private static final String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
             + " ("

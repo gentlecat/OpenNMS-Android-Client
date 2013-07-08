@@ -40,9 +40,17 @@ public class Columns {
         // Outage details
         public static final String OUTAGE_ID = "outage_id";
         public static final String IP_ADDRESS = "ip_address";
-        public static final String IF_REGAINED_SERVICE = "if_regained_service";
-        public static final String IF_LOST_SERVICE = "if_lost_service";
+        // Service
+        public static final String SERVICE_ID = "service_id";
+        public static final String IP_INTERFACE_ID = "ip_interface_id";
+        public static final String SERVICE_TYPE_ID = "service_type_id";
         public static final String SERVICE_TYPE_NAME = "service_type_name";
+        // Service lost event
+        public static final String SERVICE_LOST_TIME = "service_lost_time";
+        public static final String SERVICE_LOST_EVENT_ID = "service_lost_event_id";
+        // Service regained event
+        public static final String SERVICE_REGAINED_TIME = "service_regained_time";
+        public static final String SERVICE_REGAINED_EVENT_ID = "service_regained_event_id";
     }
 
     public interface EventColumns {

@@ -135,26 +135,25 @@ public class OutagesListFragment extends SherlockListFragment
     }
 
     private Outage getOutage(long id) {
-        String projection[] = {
-                Columns.OutageColumns.OUTAGE_ID,
-                Columns.OutageColumns.IP_ADDRESS,
-                Columns.OutageColumns.IF_REGAINED_SERVICE,
-                Columns.OutageColumns.SERVICE_TYPE_NAME,
-                Columns.OutageColumns.IF_LOST_SERVICE
-        };
-        Cursor outagesCursor = getActivity().getContentResolver().query(
+        Cursor cursor = getActivity().getContentResolver().query(
                 Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(id)),
-                projection, null, null, null);
-        if (outagesCursor.moveToFirst()) {
-            Outage outage = new Outage(outagesCursor.getInt(0));
-            outage.setIpAddress(outagesCursor.getString(1));
-            outage.setIfRegainedService(outagesCursor.getString(2));
-            outage.setServiceTypeName(outagesCursor.getString(3));
-            outage.setIfLostService(outagesCursor.getString(4));
-            outagesCursor.close();
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Outage outage = new Outage(cursor.getColumnIndexOrThrow(Columns.OutageColumns.OUTAGE_ID));
+            outage.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Columns.OutageColumns.IP_ADDRESS)));
+            outage.setIpInterfaceId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.IP_INTERFACE_ID)));
+            outage.setServiceId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_ID)));
+            outage.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_TYPE_ID)));
+            outage.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_TYPE_NAME)));
+            outage.setLostServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_LOST_TIME)));
+            outage.setServiceLostEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_LOST_EVENT_ID)));
+            outage.setRegainedServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_REGAINED_TIME)));
+            outage.setServiceRegainedEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_REGAINED_EVENT_ID)));
+            cursor.close();
             return outage;
         }
-        outagesCursor.close();
+        cursor.close();
         return null;
     }
 

@@ -46,9 +46,14 @@ public class OutagesSyncService extends IntentService {
         ContentValues values = new ContentValues();
         values.put(Columns.OutageColumns.OUTAGE_ID, outage.getId());
         values.put(Columns.OutageColumns.IP_ADDRESS, outage.getIpAddress());
-        values.put(Columns.OutageColumns.IF_REGAINED_SERVICE, outage.getIfRegainedService());
-        values.put(Columns.OutageColumns.IF_LOST_SERVICE, outage.getIfRegainedService());
+        values.put(Columns.OutageColumns.IP_INTERFACE_ID, outage.getIpInterfaceId());
+        values.put(Columns.OutageColumns.SERVICE_ID, outage.getServiceId());
+        values.put(Columns.OutageColumns.SERVICE_TYPE_ID, outage.getServiceTypeId());
         values.put(Columns.OutageColumns.SERVICE_TYPE_NAME, outage.getServiceTypeName());
+        values.put(Columns.OutageColumns.SERVICE_LOST_TIME, outage.getRegainedServiceTime());
+        values.put(Columns.OutageColumns.SERVICE_LOST_EVENT_ID, outage.getServiceLostEventId());
+        values.put(Columns.OutageColumns.SERVICE_REGAINED_TIME, outage.getRegainedServiceTime());
+        values.put(Columns.OutageColumns.SERVICE_REGAINED_EVENT_ID, outage.getServiceRegainedEventId());
         return contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
     }
 
