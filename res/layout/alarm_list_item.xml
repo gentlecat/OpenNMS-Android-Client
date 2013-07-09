@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <SurfaceView
+    <ImageView
         android:id="@+id/alarm_list_item_severity"
         android:layout_width="8dp"
         android:layout_height="match_parent" />

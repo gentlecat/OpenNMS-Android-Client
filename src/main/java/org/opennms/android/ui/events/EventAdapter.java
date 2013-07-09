@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
@@ -16,10 +16,12 @@ import org.opennms.android.dao.Columns;
 public class EventAdapter extends CursorAdapter {
 
     private LayoutInflater layoutInflater;
+    private Context context;
 
     public EventAdapter(Context context, Cursor cursor, int flags) {
         super(context, cursor, flags);
-        layoutInflater = LayoutInflater.from(context);
+        this.context = context;
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -29,18 +31,34 @@ public class EventAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // ID
-        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID));
-        TextView idText = (TextView) view.findViewById(R.id.event_list_item_id);
-        idText.setText(String.valueOf(id));
+    }
 
-        // Log message
-        String log = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE));
-        TextView logText = (TextView) view.findViewById(R.id.event_list_item_log);
-        logText.setText(Html.fromHtml(log));
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (!mCursor.moveToPosition(position)) {
+            throw new IllegalStateException("Can't move cursor to position " + position);
+        }
 
-        // Severity
-        String severity = cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY));
+        final ViewHolder viewHolder;
+
+        if (convertView == null) {
+            convertView = newView(mContext, mCursor, parent);
+            viewHolder = new ViewHolder();
+            viewHolder.id = (TextView) convertView.findViewById(R.id.event_list_item_id);
+            viewHolder.logMessage = (TextView) convertView.findViewById(R.id.event_list_item_log);
+            viewHolder.severityIndicator = (ImageView) convertView.findViewById(R.id.event_list_item_severity);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID));
+        viewHolder.id.setText(String.valueOf(id));
+
+        String log = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE));
+        viewHolder.logMessage.setText(Html.fromHtml(log));
+
+        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {
@@ -58,7 +76,15 @@ public class EventAdapter extends CursorAdapter {
         } else {
             severityColor = res.getColor(R.color.severity_critical);
         }
-        SurfaceView severityIndicator = (SurfaceView) view.findViewById(R.id.event_list_item_severity);
-        severityIndicator.setBackgroundColor(severityColor);
+        viewHolder.severityIndicator.setBackgroundColor(severityColor);
+
+        return convertView;
     }
+
+    static class ViewHolder {
+        TextView id;
+        TextView logMessage;
+        ImageView severityIndicator;
+    }
+
 }
