@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -87,7 +88,7 @@ public class AlarmsListFragment extends SherlockListFragment
             baseUri = AlarmsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.AlarmColumns.TABLE_ID,
+                BaseColumns._ID,
                 Columns.AlarmColumns.ALARM_ID,
                 Columns.AlarmColumns.DESCRIPTION,
                 Columns.AlarmColumns.SEVERITY

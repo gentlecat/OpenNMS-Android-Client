@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -33,7 +34,7 @@ import org.opennms.android.service.EventsSyncService;
 public class EventsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_EVENT= "event";
+    public static final String EXTRA_EVENT = "event";
     private static final int LOADER_ID = 3;
     private static final String STATE_ACTIVE_EVENT_ID = "active_event_id";
     private EventAdapter adapter;
@@ -87,7 +88,7 @@ public class EventsListFragment extends SherlockListFragment
             baseUri = EventsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.EventColumns.TABLE_ID,
+                BaseColumns._ID,
                 Columns.EventColumns.EVENT_ID,
                 Columns.EventColumns.LOG_MESSAGE,
                 Columns.EventColumns.SEVERITY

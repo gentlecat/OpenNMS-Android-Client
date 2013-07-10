@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.BaseColumns;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -218,7 +219,7 @@ public class OutagesListFragment extends SherlockListFragment
             baseUri = OutagesListProvider.CONTENT_URI;
         }
         String[] projection = {
-                Columns.OutageColumns.TABLE_ID,
+                BaseColumns._ID,
                 Columns.OutageColumns.OUTAGE_ID,
                 Columns.OutageColumns.SERVICE_TYPE_NAME
         };

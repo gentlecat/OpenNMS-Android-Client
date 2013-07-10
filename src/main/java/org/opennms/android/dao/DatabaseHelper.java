@@ -3,6 +3,7 @@ package org.opennms.android.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 import org.opennms.android.dao.Columns.AlarmColumns;
 import org.opennms.android.dao.Columns.EventColumns;
 import org.opennms.android.dao.Columns.NodeColumns;
@@ -12,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_NODES_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.NODES
             + " ("
-            + NodeColumns.TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + NodeColumns.NODE_ID + " INTEGER UNIQUE, "
             + NodeColumns.TYPE + " TEXT, "
             + NodeColumns.NAME + " TEXT, "
@@ -24,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ");";
     private static final String CREATE_OUTAGES_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
             + " ("
-            + OutageColumns.TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + OutageColumns.OUTAGE_ID + " INTEGER UNIQUE, "
             + OutageColumns.IP_ADDRESS + " TEXT, "
             + OutageColumns.IP_INTERFACE_ID + " INTEGER, "
@@ -38,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ");";
     private static final String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
             + " ("
-            + EventColumns.TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + EventColumns.EVENT_ID + " INTEGER UNIQUE, "
             + EventColumns.SEVERITY + " TEXT, "
             + EventColumns.LOG_MESSAGE + " TEXT, "
@@ -53,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ");";
     private static final String CREATE_ALARMS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
             + " ("
-            + AlarmColumns.TABLE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + AlarmColumns.ALARM_ID + " INTEGER UNIQUE, "
             + AlarmColumns.SEVERITY + " TEXT, "
             + AlarmColumns.DESCRIPTION + " TEXT, "

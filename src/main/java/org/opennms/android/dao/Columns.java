@@ -1,9 +1,8 @@
 package org.opennms.android.dao;
 
-public class Columns {
+public final class Columns {
 
     public interface NodeColumns {
-        public static final String TABLE_ID = "_id";
         // Node details
         public static final String NODE_ID = "node_id";
         public static final String TYPE = "type";
@@ -16,7 +15,6 @@ public class Columns {
     }
 
     public interface AlarmColumns {
-        public static final String TABLE_ID = "_id";
         // Alarm details
         public static final String ALARM_ID = "alarm_id";
         public static final String SEVERITY = "severity";
@@ -36,7 +34,6 @@ public class Columns {
     }
 
     public interface OutageColumns {
-        public static final String TABLE_ID = "_id";
         // Outage details
         public static final String OUTAGE_ID = "outage_id";
         public static final String IP_ADDRESS = "ip_address";
@@ -54,7 +51,6 @@ public class Columns {
     }
 
     public interface EventColumns {
-        public static final String TABLE_ID = "_id";
         // Event details
         public static final String EVENT_ID = "event_id";
         public static final String SEVERITY = "severity";

@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import org.opennms.android.dao.AppContentProvider;
@@ -42,7 +43,7 @@ public class AlarmsListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case ALARM_ID:
-                queryBuilder.appendWhere(Columns.AlarmColumns.TABLE_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 break;
             case ALARM_SEVERITY:
                 queryBuilder.appendWhere(Columns.AlarmColumns.SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
@@ -91,7 +92,7 @@ public class AlarmsListProvider extends AppContentProvider {
         switch (uriType) {
             case ALARM_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.AlarmColumns.TABLE_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(BaseColumns._ID + "=" + id);
 
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
@@ -122,11 +123,11 @@ public class AlarmsListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.ALARMS,
-                            Columns.AlarmColumns.TABLE_ID + "=" + id,
+                            BaseColumns._ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.ALARMS,
-                            selection + " and " + Columns.AlarmColumns.TABLE_ID + "=" + id,
+                            selection + " and " + BaseColumns._ID + "=" + id,
                             selectionArgs);
                 }
                 break;

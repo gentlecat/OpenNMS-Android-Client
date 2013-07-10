@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import org.opennms.android.dao.AppContentProvider;
@@ -19,11 +20,11 @@ public class OutagesListProvider extends AppContentProvider {
 
     public static final int OUTAGES = 200;
     public static final int OUTAGE_ID = 210;
-    private static final int OUTAGE_IP_ADDRESS = 220;
     public static final Uri CONTENT_URI = Uri.parse("content://" + OutagesListProvider.AUTHORITY
             + "/" + OutagesListProvider.OUTAGES_BASE_PATH);
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/opennms-outage";
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/opennms-outage";
+    private static final int OUTAGE_IP_ADDRESS = 220;
     private static final String AUTHORITY = "org.opennms.android.dao.outages.OutagesListProvider";
     private static final String OUTAGES_BASE_PATH = "outages";
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -47,11 +48,11 @@ public class OutagesListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
-                            OutageColumns.TABLE_ID + "=" + id,
+                            BaseColumns._ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
-                            selection + " and " + OutageColumns.TABLE_ID + "=" + id,
+                            selection + " and " + BaseColumns._ID + "=" + id,
                             selectionArgs);
                 }
                 break;
@@ -105,7 +106,7 @@ public class OutagesListProvider extends AppContentProvider {
         switch (uriType) {
             case OUTAGE_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(OutageColumns.TABLE_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(BaseColumns._ID + "=" + id);
 
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
@@ -131,7 +132,7 @@ public class OutagesListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case OUTAGE_ID:
-                queryBuilder.appendWhere(OutageColumns.TABLE_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 break;
             case OUTAGE_IP_ADDRESS:
                 queryBuilder.appendWhere(OutageColumns.IP_ADDRESS + " like '%" + uri.getLastPathSegment() + "%'");

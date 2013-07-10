@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import org.opennms.android.dao.AppContentProvider;
@@ -47,11 +48,11 @@ public class NodesListProvider extends AppContentProvider {
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.NODES,
-                            Columns.NodeColumns.TABLE_ID + "=" + id,
+                            BaseColumns._ID + "=" + id,
                             null);
                 } else {
                     rowsAffected = sqlDB.delete(DatabaseHelper.Tables.NODES,
-                            selection + " and " + Columns.NodeColumns.TABLE_ID + "=" + id,
+                            selection + " and " + BaseColumns._ID + "=" + id,
                             selectionArgs);
                 }
                 break;
@@ -107,7 +108,7 @@ public class NodesListProvider extends AppContentProvider {
         switch (uriType) {
             case NODE_ID:
                 String id = uri.getLastPathSegment();
-                StringBuilder modSelection = new StringBuilder(Columns.NodeColumns.TABLE_ID + "=" + id);
+                StringBuilder modSelection = new StringBuilder(BaseColumns._ID + "=" + id);
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND " + selection);
                 }
@@ -131,7 +132,7 @@ public class NodesListProvider extends AppContentProvider {
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
             case NODE_ID:
-                queryBuilder.appendWhere(Columns.NodeColumns.TABLE_ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 break;
             case NODE_LABEL:
                 queryBuilder.appendWhere(Columns.NodeColumns.NAME + " like '%" + uri.getLastPathSegment() + "%'");
