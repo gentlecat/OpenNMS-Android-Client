@@ -19,17 +19,24 @@
         android:logo="@drawable/opennms_logo"
         android:theme="@style/Theme.OpenNMS">
 
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.alarms.AlarmsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.nodes.NodeDetailsActivity" />
-        <activity android:name=".ui.outages.OutageDetailsActivity" />
-        <activity android:name=".ui.events.EventDetailsActivity" />
         <activity android:name=".ui.alarms.AlarmDetailsActivity" />
+
+        <activity android:name=".ui.events.EventsActivity" />
+        <activity android:name=".ui.events.EventDetailsActivity" />
+
+        <activity android:name=".ui.nodes.NodesActivity" />
+        <activity android:name=".ui.nodes.NodeDetailsActivity" />
+
+        <activity android:name=".ui.outages.OutagesActivity" />
+        <activity android:name=".ui.outages.OutageDetailsActivity" />
+
+        <activity android:name=".ui.SettingsActivity" />
 
         <service
             android:exported="false"

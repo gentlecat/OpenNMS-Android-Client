@@ -17,7 +17,7 @@ import org.opennms.android.communication.alarms.AlarmsServerCommunication;
 import org.opennms.android.dao.Columns.AlarmColumns;
 import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
-import org.opennms.android.ui.MainActivity;
+import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -109,7 +109,7 @@ public class AlarmsSyncService extends IntentService {
         else builder.setContentText(String.format(getString(R.string.alarms_notification_text_plural), newAlarmsCount));
 
         // Clicking the notification itself displays MainActivity.
-        Intent resultIntent = new Intent(this, MainActivity.class);
+        Intent resultIntent = new Intent(this, AlarmsActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         /*

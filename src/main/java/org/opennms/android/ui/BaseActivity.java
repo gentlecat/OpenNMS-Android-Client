@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -18,14 +17,14 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.ui.alarms.AlarmsListFragment;
+import org.opennms.android.ui.alarms.AlarmsActivity;
 import org.opennms.android.ui.dialogs.AboutDialog;
 import org.opennms.android.ui.dialogs.WelcomeDialog;
-import org.opennms.android.ui.events.EventsListFragment;
-import org.opennms.android.ui.nodes.NodesListFragment;
-import org.opennms.android.ui.outages.OutagesListFragment;
+import org.opennms.android.ui.events.EventsActivity;
+import org.opennms.android.ui.nodes.NodesActivity;
+import org.opennms.android.ui.outages.OutagesActivity;
 
-public class MainActivity extends SherlockFragmentActivity {
+public abstract class BaseActivity extends SherlockFragmentActivity {
     private static final String STATE_TITLE = "title";
     private static final String STATE_IS_NAV_OPEN = "is_nav_open";
     private DrawerLayout navigationLayout;
@@ -51,7 +50,7 @@ public class MainActivity extends SherlockFragmentActivity {
 
         actionBar = getSupportActionBar();
 
-        // Enable ActionBar app icon to behave as action to toggle navigation drawer
+        // Enable ActionBar home button to behave as action to toggle navigation drawer
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
@@ -82,10 +81,6 @@ public class MainActivity extends SherlockFragmentActivity {
             title = savedInstanceState.getCharSequence(STATE_TITLE);
             if (savedInstanceState.getBoolean(STATE_IS_NAV_OPEN)) actionBar.setTitle(drawerTitle);
             else actionBar.setTitle(title);
-        } else {
-            selectItem(0);
-            navigationLayout.openDrawer(navigationList);
-            actionBar.setTitle(drawerTitle);
         }
     }
 
@@ -125,25 +120,24 @@ public class MainActivity extends SherlockFragmentActivity {
     }
 
     private void selectItem(int position) {
-        Fragment fragment;
+        Intent intent;
         switch (position) {
             case 0:
-                fragment = new NodesListFragment();
+                intent = new Intent(getApplicationContext(), NodesActivity.class);
                 break;
             case 1:
-                fragment = new AlarmsListFragment();
+                intent = new Intent(getApplicationContext(), AlarmsActivity.class);
                 break;
             case 2:
-                fragment = new OutagesListFragment();
+                intent = new Intent(getApplicationContext(), OutagesActivity.class);
                 break;
             case 3:
-                fragment = new EventsListFragment();
+                intent = new Intent(getApplicationContext(), EventsActivity.class);
                 break;
             default:
                 return;
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
-        setTitle(navigationItems[position]);
+        startActivity(intent);
         navigationLayout.closeDrawer(navigationList);
     }
 
@@ -181,5 +175,4 @@ public class MainActivity extends SherlockFragmentActivity {
             selectItem(position);
         }
     }
-
 }
