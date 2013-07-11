@@ -9,14 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ListView
+    <FrameLayout
         android:id="@+id/navigation_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#fff"
-        android:divider="#ccc"
-        android:dividerHeight="1px"
-        android:footerDividersEnabled="true" />
+        android:layout_gravity="start" />
 
 </android.support.v4.widget.DrawerLayout>

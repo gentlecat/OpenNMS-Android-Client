@@ -6,32 +6,27 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.FrameLayout;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.ui.alarms.AlarmsActivity;
 import org.opennms.android.ui.dialogs.AboutDialog;
 import org.opennms.android.ui.dialogs.WelcomeDialog;
-import org.opennms.android.ui.events.EventsActivity;
-import org.opennms.android.ui.nodes.NodesActivity;
-import org.opennms.android.ui.outages.OutagesActivity;
 
 public abstract class BaseActivity extends SherlockFragmentActivity {
     private static final String STATE_TITLE = "title";
     private static final String STATE_IS_NAV_OPEN = "is_nav_open";
     private DrawerLayout navigationLayout;
-    private ListView navigationList;
+    private FrameLayout navDrawer;
     private ActionBarDrawerToggle navigationToggle;
     private CharSequence title;
-    private String[] navigationItems;
     private ActionBar actionBar;
 
     @Override
@@ -41,12 +36,14 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
 
         final CharSequence drawerTitle = title = getTitle();
         navigationLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationList = (ListView) findViewById(R.id.navigation_drawer);
-        navigationItems = getResources().getStringArray(R.array.navigation_items);
+        navDrawer = (FrameLayout) findViewById(R.id.navigation_drawer);
 
         navigationLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        navigationList.setAdapter(new ArrayAdapter<String>(this, R.layout.nav_drawer_list_item, navigationItems));
-        navigationList.setOnItemClickListener(new DrawerItemClickListener());
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment navFragment = new MenuFragment();
+        ft.replace(R.id.navigation_drawer, navFragment);
+        ft.commit();
 
         actionBar = getSupportActionBar();
 
@@ -87,7 +84,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putCharSequence(STATE_TITLE, title);
-        savedInstanceState.putBoolean(STATE_IS_NAV_OPEN, navigationLayout.isDrawerOpen(navigationList));
+        savedInstanceState.putBoolean(STATE_IS_NAV_OPEN, navigationLayout.isDrawerOpen(navDrawer));
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -101,11 +98,8 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (navigationLayout.isDrawerOpen(navigationList)) {
-                    navigationLayout.closeDrawer(navigationList);
-                } else {
-                    navigationLayout.openDrawer(navigationList);
-                }
+                if (navigationLayout.isDrawerOpen(navDrawer)) closeDrawer();
+                else openDrawer();
                 return true;
             case R.id.menu_settings:
                 Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);
@@ -119,26 +113,12 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
         }
     }
 
-    private void selectItem(int position) {
-        Intent intent;
-        switch (position) {
-            case 0:
-                intent = new Intent(getApplicationContext(), NodesActivity.class);
-                break;
-            case 1:
-                intent = new Intent(getApplicationContext(), AlarmsActivity.class);
-                break;
-            case 2:
-                intent = new Intent(getApplicationContext(), OutagesActivity.class);
-                break;
-            case 3:
-                intent = new Intent(getApplicationContext(), EventsActivity.class);
-                break;
-            default:
-                return;
-        }
-        startActivity(intent);
-        navigationLayout.closeDrawer(navigationList);
+    public void closeDrawer() {
+        navigationLayout.closeDrawer(navDrawer);
+    }
+
+    public void openDrawer() {
+        navigationLayout.openDrawer(navDrawer);
     }
 
     @Override
@@ -169,10 +149,4 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
         dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
 }
