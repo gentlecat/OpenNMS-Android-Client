@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opennms.android.R;
+import org.opennms.android.ui.nodes.NodesActivity;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowActivity;
@@ -20,12 +21,12 @@ import static org.junit.Assert.assertTrue;
 import static org.robolectric.Robolectric.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
-public class MainActivityTest {
-    private MainActivity activity;
+public class NodesActivityTest {
+    private NodesActivity activity;
 
     @Before
     public void setUp() throws Exception {
-        activity = Robolectric.buildActivity(MainActivity.class).create().get();
+        activity = Robolectric.buildActivity(NodesActivity.class).create().get();
     }
 
     @Test
