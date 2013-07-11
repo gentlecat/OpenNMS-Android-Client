@@ -63,6 +63,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
+                title = actionBar.getTitle();
                 actionBar.setTitle(drawerTitle);
             }
         };
