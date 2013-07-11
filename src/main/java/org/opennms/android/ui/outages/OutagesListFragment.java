@@ -26,6 +26,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.outages.Outage;
@@ -36,7 +37,6 @@ public class OutagesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_OUTAGE = "outage";
-    private static final int LOADER_ID = 2;
     private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
@@ -60,7 +60,7 @@ public class OutagesListFragment extends SherlockListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer = (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -69,7 +69,7 @@ public class OutagesListFragment extends SherlockListFragment
         }
 
         adapter = new SimpleCursorAdapter(
-                getSherlockActivity(),
+                getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
                 new String[]{Columns.OutageColumns.OUTAGE_ID, Columns.OutageColumns.SERVICE_TYPE_NAME},
@@ -80,7 +80,7 @@ public class OutagesListFragment extends SherlockListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.outages_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        getActivity().getSupportLoaderManager().initLoader(Loaders.OUTAGES, null, this);
     }
 
     @Override
@@ -124,12 +124,12 @@ public class OutagesListFragment extends SherlockListFragment
             detailsContainer.removeAllViews();
             OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
             detailsFragment.bindOutage(outage);
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), OutageDetailsActivity.class);
+            Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);
             detailsIntent.putExtra(EXTRA_OUTAGE, outage);
             startActivity(detailsIntent);
         }
@@ -239,9 +239,9 @@ public class OutagesListFragment extends SherlockListFragment
     }
 
     private void startRefreshAnimation() {
-        LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-        Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
+        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
         rotation.setRepeatCount(Animation.INFINITE);
         iv.startAnimation(rotation);
         refreshItem.setActionView(iv);

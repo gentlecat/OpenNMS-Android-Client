@@ -16,9 +16,9 @@
         android:layout_gravity="center"
         android:layout="@layout/empty_list" />
 
-        <FrameLayout
-            android:id="@+id/details_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <FrameLayout
+        android:id="@+id/details_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

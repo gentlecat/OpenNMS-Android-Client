@@ -10,7 +10,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
 
-public class Parser {
+public abstract class Parser {
 
     static XPath xPath = XPathFactory.newInstance().newXPath();
 

@@ -26,6 +26,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.nodes.Node;
@@ -36,7 +37,6 @@ public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_NODE = "node";
-    private static final int LOADER_ID = 1;
     private static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
@@ -60,7 +60,7 @@ public class NodesListFragment extends SherlockListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        detailsContainer = (FrameLayout) getSherlockActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer = (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -69,7 +69,7 @@ public class NodesListFragment extends SherlockListFragment
         }
 
         adapter = new SimpleCursorAdapter(
-                getSherlockActivity(),
+                getActivity(),
                 R.layout.node_list_item,
                 null,
                 new String[]{Columns.NodeColumns.NAME, Columns.NodeColumns.NODE_ID},
@@ -80,7 +80,7 @@ public class NodesListFragment extends SherlockListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.nodes_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        getActivity().getSupportLoaderManager().initLoader(Loaders.NODES, null, this);
     }
 
     @Override
@@ -122,12 +122,12 @@ public class NodesListFragment extends SherlockListFragment
         if (isDualPane) {
             detailsContainer.removeAllViews();
             NodeDetailsFragment detailsFragment = new NodeDetailsFragment(node);
-            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
-            Intent detailsIntent = new Intent(getSherlockActivity(), NodeDetailsActivity.class);
+            Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
             detailsIntent.putExtra(EXTRA_NODE, node);
             startActivity(detailsIntent);
         }
@@ -235,9 +235,9 @@ public class NodesListFragment extends SherlockListFragment
     }
 
     private void startRefreshAnimation() {
-        LayoutInflater inflater = (LayoutInflater) getSherlockActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-        Animation rotation = AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.refresh);
+        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
         rotation.setRepeatCount(Animation.INFINITE);
         iv.startAnimation(rotation);
         refreshItem.setActionView(iv);
