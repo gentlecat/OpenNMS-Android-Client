@@ -9,6 +9,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.Menu;
@@ -86,7 +87,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
         // Server
         findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
+        findPreference("port").setSummary(sharedPref.getString("port",
+                Integer.toString(getResources().getInteger(R.integer.default_port))));
         findPreference("path").setSummary(sharedPref.getString("path", getResources().getString(R.string.default_path)));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
             findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
@@ -95,7 +97,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         }
 
         // Notifications
-        boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        boolean notificationsOn = sharedPref.getBoolean("notifications_on",
+                getResources().getBoolean(R.bool.default_notifications));
         setNotificationPrefsEnabled(notificationsOn);
         if (notificationsOn) {
             findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_true));
@@ -108,7 +111,8 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String refreshRate = sharedPref.getString("refresh_rate", String.valueOf(getResources().getInteger(R.integer.default_refresh_rate)));
+        String refreshRate = sharedPref.getString("refresh_rate",
+                String.valueOf(getResources().getInteger(R.integer.default_refresh_rate)));
         int refreshRateVal = Integer.parseInt(refreshRate);
         String refreshRateSummary = refreshRate + " ";
         if (refreshRateVal == 1) {
@@ -127,11 +131,12 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
     private void setRecurringAlarm(Context context, AlarmManager alarmManager, Intent alarmRecieverIntent) {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmRecieverIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        int interval = Integer.parseInt(sharedPref.getString("refresh_rate", String.valueOf(getResources().getInteger(R.integer.default_refresh_rate))));
+        int interval = Integer.parseInt(sharedPref.getString("refresh_rate",
+                String.valueOf(getResources().getInteger(R.integer.default_refresh_rate))));
         alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 Calendar.getInstance().getTimeInMillis(),
-                interval * 60 * 1000,
+                interval * DateUtils.MINUTE_IN_MILLIS,
                 pendingIntent
         );
     }
