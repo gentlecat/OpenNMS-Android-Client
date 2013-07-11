@@ -8,9 +8,12 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="16" />
 
+    <!-- Synchronization -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Notifications -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="false"
@@ -51,7 +54,12 @@
             android:exported="false"
             android:name=".service.OutagesSyncService" />
 
-        <receiver android:name=".service.AlarmReceiver" />
+        <receiver android:name=".service.SyncAlarmReceiver" />
+        <receiver android:name=".BootAlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:authorities="org.opennms.android.dao.nodes.NodesListProvider"

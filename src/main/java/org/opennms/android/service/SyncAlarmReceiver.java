@@ -10,15 +10,16 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import org.opennms.android.R;
 
-public class AlarmReceiver extends BroadcastReceiver {
-    private static final String TAG = "AlarmReceiver";
+public class SyncAlarmReceiver extends BroadcastReceiver {
+
+    private static final String TAG = "SyncAlarmReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Alarm received!");
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         if (sharedPref.getBoolean("wifi_only", context.getResources().getBoolean(R.bool.wifi_only))) {
-            ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (wifi.isConnected()) {
                 startService(context);
