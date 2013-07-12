@@ -141,7 +141,7 @@ public class OutagesListFragment extends SherlockListFragment
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Outage outage = new Outage(cursor.getColumnIndexOrThrow(Columns.OutageColumns.OUTAGE_ID));
+            Outage outage = new Outage(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.OUTAGE_ID)));
             outage.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Columns.OutageColumns.IP_ADDRESS)));
             outage.setIpInterfaceId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.IP_INTERFACE_ID)));
             outage.setServiceId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.OutageColumns.SERVICE_ID)));
