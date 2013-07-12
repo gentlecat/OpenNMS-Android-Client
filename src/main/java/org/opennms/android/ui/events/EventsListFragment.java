@@ -115,7 +115,7 @@ public class EventsListFragment extends SherlockListFragment
             long activeEventId = sharedPref.getLong(STATE_ACTIVE_EVENT_ID, -1);
             if (activeEventId != -1) {
                 Event event = getEvent(activeEventId);
-                showDetails(event);
+                if (event != null) showDetails(event);
             } else {
                 detailsContainer.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

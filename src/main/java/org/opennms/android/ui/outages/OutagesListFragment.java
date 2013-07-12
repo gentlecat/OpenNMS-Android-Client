@@ -90,7 +90,7 @@ public class OutagesListFragment extends SherlockListFragment
             long activeOutageId = sharedPref.getLong(STATE_ACTIVE_OUTAGE_ID, -1);
             if (activeOutageId != -1) {
                 Outage outage = getOutage(activeOutageId);
-                showDetails(outage);
+                if (outage != null) showDetails(outage);
             } else {
                 detailsContainer.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

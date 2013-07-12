@@ -119,17 +119,19 @@ public class NodesListFragment extends SherlockListFragment
 
     private void showDetails(long id) {
         Node node = getNode(id);
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            NodeDetailsFragment detailsFragment = new NodeDetailsFragment(node);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_NODE, node);
-            startActivity(detailsIntent);
+        if (node != null) {
+            if (isDualPane) {
+                detailsContainer.removeAllViews();
+                NodeDetailsFragment detailsFragment = new NodeDetailsFragment(node);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                fragmentTransaction.commit();
+            } else {
+                Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
+                detailsIntent.putExtra(EXTRA_NODE, node);
+                startActivity(detailsIntent);
+            }
         }
     }
 

@@ -144,17 +144,19 @@ public class AlarmsListFragment extends SherlockListFragment
 
     private void showDetails(long id) {
         Alarm alarm = getAlarm(id);
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_ALARM, alarm);
-            startActivity(detailsIntent);
+        if (alarm != null) {
+            if (isDualPane) {
+                detailsContainer.removeAllViews();
+                AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                fragmentTransaction.commit();
+            } else {
+                Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
+                detailsIntent.putExtra(EXTRA_ALARM, alarm);
+                startActivity(detailsIntent);
+            }
         }
     }
 
