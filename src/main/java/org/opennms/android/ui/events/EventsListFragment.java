@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.BaseColumns;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -88,7 +87,7 @@ public class EventsListFragment extends SherlockListFragment
             baseUri = EventsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                BaseColumns._ID,
+                Contract.Events._ID,
                 Contract.Events.COLUMN_EVENT_ID,
                 Contract.Events.COLUMN_LOG_MESSAGE,
                 Contract.Events.COLUMN_SEVERITY

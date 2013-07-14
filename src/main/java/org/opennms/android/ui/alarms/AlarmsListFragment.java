@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.BaseColumns;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -28,9 +26,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.Contract;
-import org.opennms.android.dao.DatabaseHelper;
+import org.opennms.android.dao.alarms.Alarm;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
 import org.opennms.android.service.AlarmsSyncService;
 
@@ -90,7 +87,7 @@ public class AlarmsListFragment extends SherlockListFragment
             baseUri = AlarmsListProvider.CONTENT_URI;
         }
         String[] projection = {
-                BaseColumns._ID,
+                Contract.Alarms._ID,
                 Contract.Alarms.COLUMN_ALARM_ID,
                 Contract.Alarms.COLUMN_DESCRIPTION,
                 Contract.Alarms.COLUMN_SEVERITY
