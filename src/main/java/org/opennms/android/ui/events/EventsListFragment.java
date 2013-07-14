@@ -27,7 +27,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Columns;
+import org.opennms.android.dao.Contract;
 import org.opennms.android.dao.events.Event;
 import org.opennms.android.dao.events.EventsListProvider;
 import org.opennms.android.service.EventsSyncService;
@@ -81,7 +81,7 @@ public class EventsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Columns.EventColumns.SEVERITY),
+                    Uri.withAppendedPath(EventsListProvider.CONTENT_URI, Contract.Events.COLUMN_SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
@@ -89,12 +89,12 @@ public class EventsListFragment extends SherlockListFragment
         }
         String[] projection = {
                 BaseColumns._ID,
-                Columns.EventColumns.EVENT_ID,
-                Columns.EventColumns.LOG_MESSAGE,
-                Columns.EventColumns.SEVERITY
+                Contract.Events.COLUMN_EVENT_ID,
+                Contract.Events.COLUMN_LOG_MESSAGE,
+                Contract.Events.COLUMN_SEVERITY
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.EventColumns.EVENT_ID + " DESC");
+                Contract.Events.COLUMN_EVENT_ID + " DESC");
     }
 
     @Override
@@ -166,17 +166,17 @@ public class EventsListFragment extends SherlockListFragment
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Event event = new Event(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID)));
-            event.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY)));
-            event.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE)));
-            event.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.DESCRIPTION)));
-            event.setHost(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.HOST)));
-            event.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.IP_ADDRESS)));
-            event.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.CREATE_TIME)));
-            event.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.NODE_ID)));
-            event.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.NODE_LABEL)));
-            event.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.EventColumns.SERVICE_TYPE_ID)));
-            event.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.EventColumns.SERVICE_TYPE_NAME)));
+            Event event = new Event(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_EVENT_ID)));
+            event.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_SEVERITY)));
+            event.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_LOG_MESSAGE)));
+            event.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_DESCRIPTION)));
+            event.setHost(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_HOST)));
+            event.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_IP_ADDRESS)));
+            event.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_CREATE_TIME)));
+            event.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_NODE_ID)));
+            event.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_NODE_LABEL)));
+            event.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_SERVICE_TYPE_ID)));
+            event.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.COLUMN_SERVICE_TYPE_NAME)));
             cursor.close();
             return event;
         }

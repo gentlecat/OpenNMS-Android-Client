@@ -20,9 +20,9 @@ public class ServerCommunication implements Callable<ServiceResponse> {
     private String url;
     private Context appContext;
 
-    public ServerCommunication(String url, Context appContext) {
-        this.url = url;
+    public ServerCommunication(Context appContext, String url) {
         this.appContext = appContext;
+        this.url = url;
     }
 
     @Override

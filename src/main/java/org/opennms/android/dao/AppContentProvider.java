@@ -1,17 +1,17 @@
 package org.opennms.android.dao;
 
 import android.content.ContentProvider;
+import android.content.Context;
 
 public abstract class AppContentProvider extends ContentProvider {
 
-    private static final String DB_NAME = "opennms";
-    private static final int DB_VERSION = 1;
-    protected DatabaseHelper db;
+    protected DatabaseHelper dbHelper;
 
     @Override
     public boolean onCreate() {
-        db = new DatabaseHelper(getContext(), DB_NAME, DB_VERSION);
-        return db != null;
+        final Context context = getContext();
+        dbHelper = new DatabaseHelper(context);
+        return true;
     }
 
 }

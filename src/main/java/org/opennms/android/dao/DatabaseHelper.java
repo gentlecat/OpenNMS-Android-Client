@@ -3,106 +3,108 @@ package org.opennms.android.dao;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
-import org.opennms.android.dao.Columns.AlarmColumns;
-import org.opennms.android.dao.Columns.EventColumns;
-import org.opennms.android.dao.Columns.NodeColumns;
-import org.opennms.android.dao.Columns.OutageColumns;
+import org.opennms.android.dao.Contract.Alarms;
+import org.opennms.android.dao.Contract.Events;
+import org.opennms.android.dao.Contract.Nodes;
+import org.opennms.android.dao.Contract.Outages;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String CREATE_NODES_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.NODES
+    // If you change the database schema, you must increment the database version.
+    public static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "OpenNMS.db";
+    /*
+     * SQL
+     */
+    private static final String SQL_CREATE_TABLE_NODES = "CREATE TABLE IF NOT EXISTS " + Nodes.TABLE_NAME
             + " ("
-            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + NodeColumns.NODE_ID + " INTEGER UNIQUE, "
-            + NodeColumns.TYPE + " TEXT, "
-            + NodeColumns.NAME + " TEXT, "
-            + NodeColumns.CREATED_TIME + " TEXT, "
-            + NodeColumns.LABEL_SOURCE + " TEXT, "
-            + NodeColumns.SYS_CONTACT + " TEXT, "
-            + NodeColumns.DESCRIPTION + " TEXT, "
-            + NodeColumns.LOCATION + " TEXT"
+            + Nodes._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + Nodes.COLUMN_NODE_ID + " INTEGER UNIQUE, "
+            + Nodes.COLUMN_TYPE + " TEXT, "
+            + Nodes.COLUMN_NAME + " TEXT, "
+            + Nodes.COLUMN_CREATED_TIME + " TEXT, "
+            + Nodes.COLUMN_LABEL_SOURCE + " TEXT, "
+            + Nodes.COLUMN_SYS_CONTACT + " TEXT, "
+            + Nodes.COLUMN_DESCRIPTION + " TEXT, "
+            + Nodes.COLUMN_LOCATION + " TEXT"
             + ");";
-    private static final String CREATE_OUTAGES_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
+    private static final String SQL_DROP_TABLE_NODES = "DROP TABLE IF EXISTS " + Nodes.TABLE_NAME;
+    private static final String SQL_CREATE_TABLE_OUTAGES = "CREATE TABLE IF NOT EXISTS " + Outages.TABLE_NAME
             + " ("
-            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OutageColumns.OUTAGE_ID + " INTEGER UNIQUE, "
-            + OutageColumns.IP_ADDRESS + " TEXT, "
-            + OutageColumns.IP_INTERFACE_ID + " INTEGER, "
-            + OutageColumns.SERVICE_ID + " INTEGER, "
-            + OutageColumns.SERVICE_TYPE_NAME + " TEXT, "
-            + OutageColumns.SERVICE_TYPE_ID + " INTEGER, "
-            + OutageColumns.SERVICE_LOST_TIME + " TEXT, "
-            + OutageColumns.SERVICE_LOST_EVENT_ID + " INTEGER, "
-            + OutageColumns.SERVICE_REGAINED_TIME + " TEXT, "
-            + OutageColumns.SERVICE_REGAINED_EVENT_ID + " INTEGER"
+            + Outages._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + Outages.COLUMN_OUTAGE_ID + " INTEGER UNIQUE, "
+            + Outages.COLUMN_IP_ADDRESS + " TEXT, "
+            + Outages.COLUMN_IP_INTERFACE_ID + " INTEGER, "
+            + Outages.COLUMN_SERVICE_ID + " INTEGER, "
+            + Outages.COLUMN_SERVICE_TYPE_NAME + " TEXT, "
+            + Outages.COLUMN_SERVICE_TYPE_ID + " INTEGER, "
+            + Outages.COLUMN_SERVICE_LOST_TIME + " TEXT, "
+            + Outages.COLUMN_SERVICE_LOST_EVENT_ID + " INTEGER, "
+            + Outages.COLUMN_SERVICE_REGAINED_TIME + " TEXT, "
+            + Outages.COLUMN_SERVICE_REGAINED_EVENT_ID + " INTEGER"
             + ");";
-    private static final String CREATE_EVENTS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
+    private static final String SQL_DROP_TABLE_OUTAGES = "DROP TABLE IF EXISTS " + Outages.TABLE_NAME;
+    private static final String SQL_CREATE_TABLE_EVENTS = "CREATE TABLE IF NOT EXISTS " + Events.TABLE_NAME
             + " ("
-            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + EventColumns.EVENT_ID + " INTEGER UNIQUE, "
-            + EventColumns.SEVERITY + " TEXT, "
-            + EventColumns.LOG_MESSAGE + " TEXT, "
-            + EventColumns.DESCRIPTION + " TEXT, "
-            + EventColumns.HOST + " TEXT, "
-            + EventColumns.IP_ADDRESS + " TEXT, "
-            + EventColumns.NODE_ID + " INTEGER, "
-            + EventColumns.NODE_LABEL + " TEXT, "
-            + EventColumns.SERVICE_TYPE_ID + " INTEGER, "
-            + EventColumns.SERVICE_TYPE_NAME + " TEXT, "
-            + EventColumns.CREATE_TIME + " TEXT"
+            + Events._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + Events.COLUMN_EVENT_ID + " INTEGER UNIQUE, "
+            + Events.COLUMN_SEVERITY + " TEXT, "
+            + Events.COLUMN_LOG_MESSAGE + " TEXT, "
+            + Events.COLUMN_DESCRIPTION + " TEXT, "
+            + Events.COLUMN_HOST + " TEXT, "
+            + Events.COLUMN_IP_ADDRESS + " TEXT, "
+            + Events.COLUMN_NODE_ID + " INTEGER, "
+            + Events.COLUMN_NODE_LABEL + " TEXT, "
+            + Events.COLUMN_SERVICE_TYPE_ID + " INTEGER, "
+            + Events.COLUMN_SERVICE_TYPE_NAME + " TEXT, "
+            + Events.COLUMN_CREATE_TIME + " TEXT"
             + ");";
-    private static final String CREATE_ALARMS_TABLE = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
+    private static final String SQL_DROP_TABLE_EVENTS = "DROP TABLE IF EXISTS " + Events.TABLE_NAME;
+    private static final String SQL_CREATE_TABLE_ALARMS = "CREATE TABLE IF NOT EXISTS " + Alarms.TABLE_NAME
             + " ("
-            + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + AlarmColumns.ALARM_ID + " INTEGER UNIQUE, "
-            + AlarmColumns.SEVERITY + " TEXT, "
-            + AlarmColumns.DESCRIPTION + " TEXT, "
-            + AlarmColumns.FIRST_EVENT_TIME + " TEXT, "
-            + AlarmColumns.LAST_EVENT_TIME + " TEXT, "
-            + AlarmColumns.LAST_EVENT_ID + " INTEGER, "
-            + AlarmColumns.LAST_EVENT_SEVERITY + " TEXT, "
-            + AlarmColumns.NODE_ID + " INTEGER, "
-            + AlarmColumns.NODE_LABEL + " TEXT, "
-            + AlarmColumns.SERVICE_TYPE_ID + " INTEGER, "
-            + AlarmColumns.SERVICE_TYPE_NAME + " TEXT, "
-            + AlarmColumns.LOG_MESSAGE + " TEXT"
+            + Alarms._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + Alarms.COLUMN_ALARM_ID + " INTEGER UNIQUE, "
+            + Alarms.COLUMN_SEVERITY + " TEXT, "
+            + Alarms.COLUMN_DESCRIPTION + " TEXT, "
+            + Alarms.COLUMN_FIRST_EVENT_TIME + " TEXT, "
+            + Alarms.COLUMN_LAST_EVENT_TIME + " TEXT, "
+            + Alarms.COLUMN_LAST_EVENT_ID + " INTEGER, "
+            + Alarms.COLUMN_LAST_EVENT_SEVERITY + " TEXT, "
+            + Alarms.COLUMN_NODE_ID + " INTEGER, "
+            + Alarms.COLUMN_NODE_LABEL + " TEXT, "
+            + Alarms.COLUMN_SERVICE_TYPE_ID + " INTEGER, "
+            + Alarms.COLUMN_SERVICE_TYPE_NAME + " TEXT, "
+            + Alarms.COLUMN_LOG_MESSAGE + " TEXT"
             + ");";
+    private static final String SQL_DROP_TABLE_ALARMS = "DROP TABLE IF EXISTS " + Alarms.TABLE_NAME;
 
-    public DatabaseHelper(Context context, String name, int version) {
-        super(context, name, null, version);
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_NODES_TABLE);
-        db.execSQL(CREATE_OUTAGES_TABLE);
-        db.execSQL(CREATE_EVENTS_TABLE);
-        db.execSQL(CREATE_ALARMS_TABLE);
+        db.execSQL(SQL_CREATE_TABLE_NODES);
+        db.execSQL(SQL_CREATE_TABLE_OUTAGES);
+        db.execSQL(SQL_CREATE_TABLE_EVENTS);
+        db.execSQL(SQL_CREATE_TABLE_ALARMS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.NODES);
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.OUTAGES);
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.EVENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + Tables.ALARMS);
+        db.execSQL(SQL_DROP_TABLE_NODES);
+        db.execSQL(SQL_DROP_TABLE_OUTAGES);
+        db.execSQL(SQL_DROP_TABLE_EVENTS);
+        db.execSQL(SQL_DROP_TABLE_ALARMS);
         onCreate(db);
     }
 
     @Override
     public void onOpen(SQLiteDatabase db) {
-        db.execSQL(CREATE_NODES_TABLE);
-        db.execSQL(CREATE_OUTAGES_TABLE);
-        db.execSQL(CREATE_EVENTS_TABLE);
-        db.execSQL(CREATE_ALARMS_TABLE);
-    }
-
-    public interface Tables {
-        public static final String NODES = "nodes";
-        public static final String OUTAGES = "outages";
-        public static final String EVENTS = "event";
-        public static final String ALARMS = "alarms";
+        db.execSQL(SQL_CREATE_TABLE_NODES);
+        db.execSQL(SQL_CREATE_TABLE_OUTAGES);
+        db.execSQL(SQL_CREATE_TABLE_EVENTS);
+        db.execSQL(SQL_CREATE_TABLE_ALARMS);
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,8 +28,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Columns;
 import org.opennms.android.dao.alarms.Alarm;
+import org.opennms.android.dao.Contract;
+import org.opennms.android.dao.DatabaseHelper;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
 import org.opennms.android.service.AlarmsSyncService;
 
@@ -81,7 +83,7 @@ public class AlarmsListFragment extends SherlockListFragment
         Uri baseUri;
         if (currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Columns.AlarmColumns.SEVERITY),
+                    Uri.withAppendedPath(AlarmsListProvider.CONTENT_URI, Contract.Alarms.COLUMN_SEVERITY),
                     Uri.encode(currentFilter)
             );
         } else {
@@ -89,12 +91,12 @@ public class AlarmsListFragment extends SherlockListFragment
         }
         String[] projection = {
                 BaseColumns._ID,
-                Columns.AlarmColumns.ALARM_ID,
-                Columns.AlarmColumns.DESCRIPTION,
-                Columns.AlarmColumns.SEVERITY
+                Contract.Alarms.COLUMN_ALARM_ID,
+                Contract.Alarms.COLUMN_DESCRIPTION,
+                Contract.Alarms.COLUMN_SEVERITY
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.AlarmColumns.ALARM_ID + " DESC");
+                Contract.Alarms.COLUMN_ALARM_ID + " DESC");
     }
 
     @Override
@@ -166,18 +168,18 @@ public class AlarmsListFragment extends SherlockListFragment
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.ALARM_ID)));
-            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SEVERITY)));
-            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.DESCRIPTION)));
-            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LOG_MESSAGE)));
-            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.FIRST_EVENT_TIME)));
-            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_TIME)));
-            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_ID)));
-            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.LAST_EVENT_SEVERITY)));
-            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.NODE_ID)));
-            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.NODE_LABEL)));
-            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SERVICE_TYPE_ID)));
-            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.AlarmColumns.SERVICE_TYPE_NAME)));
+            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_ALARM_ID)));
+            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_SEVERITY)));
+            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_DESCRIPTION)));
+            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_LOG_MESSAGE)));
+            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_FIRST_EVENT_TIME)));
+            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_LAST_EVENT_TIME)));
+            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_LAST_EVENT_ID)));
+            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_LAST_EVENT_SEVERITY)));
+            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_NODE_ID)));
+            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_NODE_LABEL)));
+            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_SERVICE_TYPE_ID)));
+            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_SERVICE_TYPE_NAME)));
             cursor.close();
             return alarm;
         }

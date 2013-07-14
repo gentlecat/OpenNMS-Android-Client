@@ -13,8 +13,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import org.opennms.android.dao.AppContentProvider;
-import org.opennms.android.dao.Columns;
-import org.opennms.android.dao.DatabaseHelper;
+import org.opennms.android.dao.Contract;
 
 public class EventsListProvider extends AppContentProvider {
 
@@ -38,20 +37,20 @@ public class EventsListProvider extends AppContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
         int rowsAffected = 0;
         switch (uriType) {
             case EVENT:
-                rowsAffected = sqlDB.delete(DatabaseHelper.Tables.EVENTS, selection, selectionArgs);
+                rowsAffected = sqlDB.delete(Contract.Events.TABLE_NAME, selection, selectionArgs);
                 break;
             case EVENT_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsAffected = sqlDB.delete(DatabaseHelper.Tables.EVENTS,
+                    rowsAffected = sqlDB.delete(Contract.Events.TABLE_NAME,
                             BaseColumns._ID + "=" + id,
                             null);
                 } else {
-                    rowsAffected = sqlDB.delete(DatabaseHelper.Tables.EVENTS,
+                    rowsAffected = sqlDB.delete(Contract.Events.TABLE_NAME,
                             selection + " and " + BaseColumns._ID + "=" + id,
                             selectionArgs);
                 }
@@ -82,11 +81,11 @@ public class EventsListProvider extends AppContentProvider {
         if (uriType != EVENT) {
             throw new IllegalArgumentException("Invalid URI for insert");
         }
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
         Uri newUri = null;
         try {
             long newID = sqlDB
-                    .insertWithOnConflict(DatabaseHelper.Tables.EVENTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                    .insertWithOnConflict(Contract.Events.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             if (newID > 0) {
                 newUri = ContentUris.withAppendedId(uri, newID);
                 getContext().getContentResolver().notifyChange(uri, null);
@@ -101,7 +100,7 @@ public class EventsListProvider extends AppContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
 
         int rowsAffected = 0;
 
@@ -112,10 +111,10 @@ public class EventsListProvider extends AppContentProvider {
                 if (!TextUtils.isEmpty(selection)) {
                     modSelection.append(" AND ").append(selection);
                 }
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.EVENTS, values, modSelection.toString(), null);
+                rowsAffected = sqlDB.update(Contract.Events.TABLE_NAME, values, modSelection.toString(), null);
                 break;
             case EVENT:
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.EVENTS, values, selection, selectionArgs);
+                rowsAffected = sqlDB.update(Contract.Events.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 break;
@@ -127,7 +126,7 @@ public class EventsListProvider extends AppContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(DatabaseHelper.Tables.EVENTS);
+        queryBuilder.setTables(Contract.Events.TABLE_NAME);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
@@ -135,7 +134,7 @@ public class EventsListProvider extends AppContentProvider {
                 queryBuilder.appendWhere(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 break;
             case EVENT_SEVERITY:
-                queryBuilder.appendWhere(Columns.EventColumns.SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Contract.Events.COLUMN_SEVERITY + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case EVENT:
                 break;
@@ -143,7 +142,7 @@ public class EventsListProvider extends AppContentProvider {
                 break;
         }
 
-        Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
+        Cursor cursor = queryBuilder.query(this.dbHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;

@@ -13,8 +13,7 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import org.opennms.android.dao.AppContentProvider;
-import org.opennms.android.dao.Columns.OutageColumns;
-import org.opennms.android.dao.DatabaseHelper;
+import org.opennms.android.dao.Contract;
 
 public class OutagesListProvider extends AppContentProvider {
 
@@ -38,20 +37,20 @@ public class OutagesListProvider extends AppContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
         int rowsAffected = 0;
         switch (uriType) {
             case OUTAGES:
-                rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES, selection, selectionArgs);
+                rowsAffected = sqlDB.delete(Contract.Outages.TABLE_NAME, selection, selectionArgs);
                 break;
             case OUTAGE_ID:
                 String id = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
+                    rowsAffected = sqlDB.delete(Contract.Outages.TABLE_NAME,
                             BaseColumns._ID + "=" + id,
                             null);
                 } else {
-                    rowsAffected = sqlDB.delete(DatabaseHelper.Tables.OUTAGES,
+                    rowsAffected = sqlDB.delete(Contract.Outages.TABLE_NAME,
                             selection + " and " + BaseColumns._ID + "=" + id,
                             selectionArgs);
                 }
@@ -82,11 +81,11 @@ public class OutagesListProvider extends AppContentProvider {
         if (uriType != OUTAGES) {
             throw new IllegalArgumentException("Invalid URI for insert");
         }
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
         Uri newUri = null;
         try {
             long newID = sqlDB
-                    .insertWithOnConflict(DatabaseHelper.Tables.OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                    .insertWithOnConflict(Contract.Outages.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             if (newID > 0) {
                 newUri = ContentUris.withAppendedId(uri, newID);
                 getContext().getContentResolver().notifyChange(uri, null);
@@ -101,7 +100,7 @@ public class OutagesListProvider extends AppContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        SQLiteDatabase sqlDB = this.db.getWritableDatabase();
+        SQLiteDatabase sqlDB = this.dbHelper.getWritableDatabase();
         int rowsAffected = 0;
         switch (uriType) {
             case OUTAGE_ID:
@@ -112,10 +111,10 @@ public class OutagesListProvider extends AppContentProvider {
                     modSelection.append(" AND " + selection);
                 }
 
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.OUTAGES, values, modSelection.toString(), null);
+                rowsAffected = sqlDB.update(Contract.Outages.TABLE_NAME, values, modSelection.toString(), null);
                 break;
             case OUTAGES:
-                rowsAffected = sqlDB.update(DatabaseHelper.Tables.OUTAGES, values, selection, selectionArgs);
+                rowsAffected = sqlDB.update(Contract.Outages.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 break;
@@ -127,7 +126,7 @@ public class OutagesListProvider extends AppContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(DatabaseHelper.Tables.OUTAGES);
+        queryBuilder.setTables(Contract.Outages.TABLE_NAME);
 
         int uriType = sURIMatcher.match(uri);
         switch (uriType) {
@@ -135,7 +134,7 @@ public class OutagesListProvider extends AppContentProvider {
                 queryBuilder.appendWhere(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 break;
             case OUTAGE_IP_ADDRESS:
-                queryBuilder.appendWhere(OutageColumns.IP_ADDRESS + " like '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Contract.Outages.COLUMN_IP_ADDRESS + " like '%" + uri.getLastPathSegment() + "%'");
                 break;
             case OUTAGES:
                 break;
@@ -143,7 +142,7 @@ public class OutagesListProvider extends AppContentProvider {
                 break;
         }
 
-        Cursor cursor = queryBuilder.query(this.db.getReadableDatabase(),
+        Cursor cursor = queryBuilder.query(this.dbHelper.getReadableDatabase(),
                 projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;

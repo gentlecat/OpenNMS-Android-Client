@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.opennms.android.R;
-import org.opennms.android.dao.Columns;
+import org.opennms.android.dao.Contract;
 
 public class EventAdapter extends CursorAdapter {
 
@@ -52,13 +52,13 @@ public class EventAdapter extends CursorAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Columns.EventColumns.EVENT_ID));
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Events.COLUMN_EVENT_ID));
         viewHolder.id.setText(String.valueOf(id));
 
-        String log = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.EventColumns.LOG_MESSAGE));
+        String log = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Events.COLUMN_LOG_MESSAGE));
         viewHolder.logMessage.setText(Html.fromHtml(log));
 
-        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.EventColumns.SEVERITY));
+        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Events.COLUMN_SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {

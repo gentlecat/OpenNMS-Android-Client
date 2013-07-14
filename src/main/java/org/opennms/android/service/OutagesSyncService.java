@@ -4,20 +4,22 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
-import org.opennms.android.communication.outages.OutagesServerCommunication;
-import org.opennms.android.dao.Columns;
-import org.opennms.android.dao.outages.Outage;
+import com.google.resting.component.impl.ServiceResponse;
+import org.opennms.android.communication.OutagesParser;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.outages.OutagesListProvider;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class OutagesSyncService extends IntentService {
 
     private static final String TAG = "OutagesSyncService";
+    private static final int TIMEOUT_SEC = 20;
 
     public OutagesSyncService() {
         super(TAG);
@@ -25,36 +27,21 @@ public class OutagesSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ContentResolver contentResolver = getContentResolver();
-        OutagesServerCommunication outagesServer = new OutagesServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing outages...");
-        try {
-            List<Outage> outages = outagesServer.getOutages("outages?orderBy=id&order=desc&limit=25", 20);
-            contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null);
-            for (Outage outage : outages) insertOutage(contentResolver, outage);
-            Log.i(TAG, "Done!");
-        } catch (InterruptedException e) {
-            Log.e(TAG, "InterruptedException", e);
-        } catch (ExecutionException e) {
-            Log.e(TAG, "ExecutionException", e);
-        } catch (TimeoutException e) {
-            Log.e(TAG, "TimeoutException", e);
-        }
-    }
 
-    private Uri insertOutage(ContentResolver contentResolver, Outage outage) {
-        ContentValues values = new ContentValues();
-        values.put(Columns.OutageColumns.OUTAGE_ID, outage.getId());
-        values.put(Columns.OutageColumns.IP_ADDRESS, outage.getIpAddress());
-        values.put(Columns.OutageColumns.IP_INTERFACE_ID, outage.getIpInterfaceId());
-        values.put(Columns.OutageColumns.SERVICE_ID, outage.getServiceId());
-        values.put(Columns.OutageColumns.SERVICE_TYPE_ID, outage.getServiceTypeId());
-        values.put(Columns.OutageColumns.SERVICE_TYPE_NAME, outage.getServiceTypeName());
-        values.put(Columns.OutageColumns.SERVICE_LOST_TIME, outage.getRegainedServiceTime());
-        values.put(Columns.OutageColumns.SERVICE_LOST_EVENT_ID, outage.getServiceLostEventId());
-        values.put(Columns.OutageColumns.SERVICE_REGAINED_TIME, outage.getRegainedServiceTime());
-        values.put(Columns.OutageColumns.SERVICE_REGAINED_EVENT_ID, outage.getServiceRegainedEventId());
-        return contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<ServiceResponse> future = executorService.submit(
+                new ServerCommunication(getApplicationContext(), "outages?orderBy=id&order=desc&limit=25"));
+        try {
+            ContentResolver contentResolver = getContentResolver();
+            ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+            ArrayList<ContentValues> valuesArray = OutagesParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null); // Deleting old data
+            for (ContentValues values : valuesArray) contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
+            Log.i(TAG, "Done!");
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred during synchronization process", e);
+        }
     }
 
 }

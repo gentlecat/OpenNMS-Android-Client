@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.opennms.android.R;
-import org.opennms.android.dao.Columns;
+import org.opennms.android.dao.Contract;
 
 public class AlarmAdapter extends CursorAdapter {
 
@@ -52,13 +52,13 @@ public class AlarmAdapter extends CursorAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Columns.AlarmColumns.ALARM_ID));
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_ALARM_ID));
         viewHolder.id.setText(String.valueOf(id));
 
-        String description = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.AlarmColumns.DESCRIPTION));
+        String description = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_DESCRIPTION));
         viewHolder.description.setText(Html.fromHtml(description));
 
-        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Columns.AlarmColumns.SEVERITY));
+        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Alarms.COLUMN_SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {

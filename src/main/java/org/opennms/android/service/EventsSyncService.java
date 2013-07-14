@@ -4,22 +4,22 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
-import org.opennms.android.communication.events.EventsServerCommunication;
-import org.opennms.android.dao.Columns;
-import org.opennms.android.dao.events.Event;
+import com.google.resting.component.impl.ServiceResponse;
+import org.opennms.android.communication.EventsParser;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.dao.events.EventsListProvider;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class EventsSyncService extends IntentService {
 
     private static final String TAG = "EventsSyncService";
+    private static final int TIMEOUT_SEC = 20;
 
     public EventsSyncService() {
         super(TAG);
@@ -27,41 +27,21 @@ public class EventsSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ContentResolver contentResolver = getContentResolver();
-        EventsServerCommunication eventsServer = new EventsServerCommunication(getApplicationContext());
         Log.i(TAG, "Synchronizing events...");
-        try {
-            List<Event> events = eventsServer.getEvents("events?orderBy=id&order=desc&limit=25", 20);
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null);
-            for (Event event : events) insertEvent(contentResolver, event);
-            Log.i(TAG, "Done!");
-        } catch (UnknownHostException e) {
-            Log.e(TAG, "UnknownHostException", e);
-        } catch (InterruptedException e) {
-            Log.e(TAG, "InterruptedException", e);
-        } catch (ExecutionException e) {
-            Log.e(TAG, "ExecutionException", e);
-        } catch (IOException e) {
-            Log.e(TAG, "IOException", e);
-        } catch (TimeoutException e) {
-            Log.e(TAG, "TimeoutException", e);
-        }
-    }
 
-    private Uri insertEvent(ContentResolver contentResolver, Event event) {
-        ContentValues values = new ContentValues();
-        values.put(Columns.EventColumns.EVENT_ID, event.getId());
-        values.put(Columns.EventColumns.SEVERITY, event.getSeverity());
-        values.put(Columns.EventColumns.LOG_MESSAGE, event.getLogMessage());
-        values.put(Columns.EventColumns.DESCRIPTION, event.getDescription());
-        values.put(Columns.EventColumns.HOST, event.getHost());
-        values.put(Columns.EventColumns.IP_ADDRESS, event.getIpAddress());
-        values.put(Columns.EventColumns.CREATE_TIME, event.getCreateTime());
-        values.put(Columns.EventColumns.NODE_ID, event.getNodeId());
-        values.put(Columns.EventColumns.NODE_LABEL, event.getNodeLabel());
-        values.put(Columns.EventColumns.SERVICE_TYPE_ID, event.getServiceTypeId());
-        values.put(Columns.EventColumns.SERVICE_TYPE_NAME, event.getServiceTypeName());
-        return contentResolver.insert(EventsListProvider.CONTENT_URI, values);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<ServiceResponse> future = executorService.submit(
+                new ServerCommunication(getApplicationContext(), "events?orderBy=id&order=desc&limit=25"));
+        try {
+            ContentResolver contentResolver = getContentResolver();
+            ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+            ArrayList<ContentValues> valuesArray = EventsParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null); // Deleting old data
+            for (ContentValues values : valuesArray) contentResolver.insert(EventsListProvider.CONTENT_URI, values);
+            Log.i(TAG, "Done!");
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred during synchronization process", e);
+        }
     }
 
 }

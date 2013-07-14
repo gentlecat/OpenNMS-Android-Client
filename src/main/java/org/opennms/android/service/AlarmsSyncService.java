@@ -8,27 +8,28 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.R;
-import org.opennms.android.communication.alarms.AlarmsServerCommunication;
-import org.opennms.android.dao.Columns.AlarmColumns;
-import org.opennms.android.dao.alarms.Alarm;
+import org.opennms.android.communication.AlarmsParser;
+import org.opennms.android.communication.ServerCommunication;
+import org.opennms.android.dao.Contract;
 import org.opennms.android.dao.alarms.AlarmsListProvider;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class AlarmsSyncService extends IntentService {
 
     private static final String TAG = "AlarmsSyncService";
     private static final int ALARM_NOTIFICATION_ID = 1;
+    private static final int TIMEOUT_SEC = 25;
 
     public AlarmsSyncService() {
         super(TAG);
@@ -36,63 +37,45 @@ public class AlarmsSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        ContentResolver contentResolver = getContentResolver();
-        AlarmsServerCommunication alarmsServer = new AlarmsServerCommunication(getApplicationContext());
+        Log.i(TAG, "Synchronizing alarms...");
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
         String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
         String[] severityValues = getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
-        Log.i(TAG, "Synchronizing alarms...");
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Future<ServiceResponse> future = executorService.submit(
+                new ServerCommunication(getApplicationContext(), "alarms?orderBy=id&order=desc&limit=0"));
         try {
-            List<Alarm> alarms = alarmsServer.getAlarms("alarms?orderBy=id&order=desc&limit=0", 25);
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null);
-            for (Alarm alarm : alarms) {
-                insertAlarm(contentResolver, alarm);
-                if (alarm.getId() > latestShownAlarmId) {
+            ContentResolver contentResolver = getContentResolver();
+            ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
+            ArrayList<ContentValues> valuesArray = AlarmsParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null); // Deleting old data
+            for (ContentValues values : valuesArray) {
+                contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
+                int id = values.getAsInteger(Contract.Alarms.COLUMN_ALARM_ID);
+                if (id > latestShownAlarmId) {
+                    String severity = values.getAsString(Contract.Alarms.COLUMN_SEVERITY);
                     for (String curSeverityVal : severityValues) {
-                        if (curSeverityVal.equals(alarm.getSeverity())) {
+                        if (curSeverityVal.equals(severity)) {
                             newAlarmsCount++;
                             break;
                         }
                         if (curSeverityVal.equals(minimalSeverity)) break;
                     }
                 }
-                if (alarm.getId() > maxId) maxId = alarm.getId();
+                if (id > maxId) maxId = id;
             }
             Log.i(TAG, "Done!");
-        } catch (UnknownHostException e) {
-            Log.e(TAG, "UnknownHostException", e);
-        } catch (InterruptedException e) {
-            Log.e(TAG, "InterruptedException", e);
-        } catch (ExecutionException e) {
-            Log.e(TAG, "ExecutionException", e);
-        } catch (IOException e) {
-            Log.e(TAG, "IOException", e);
-        } catch (TimeoutException e) {
-            Log.e(TAG, "TimeoutException", e);
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred during synchronization process", e);
         }
 
         if (latestShownAlarmId != maxId) sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
         boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
         if (newAlarmsCount > 0 && notificationsOn) issueNewAlarmsNotification(newAlarmsCount);
-    }
-
-    private Uri insertAlarm(ContentResolver contentResolver, Alarm alarm) {
-        ContentValues values = new ContentValues();
-        values.put(AlarmColumns.ALARM_ID, alarm.getId());
-        values.put(AlarmColumns.SEVERITY, alarm.getSeverity());
-        values.put(AlarmColumns.DESCRIPTION, alarm.getDescription());
-        values.put(AlarmColumns.LOG_MESSAGE, alarm.getLogMessage());
-        values.put(AlarmColumns.FIRST_EVENT_TIME, alarm.getFirstEventTime());
-        values.put(AlarmColumns.LAST_EVENT_TIME, alarm.getLastEventTime());
-        values.put(AlarmColumns.LAST_EVENT_ID, alarm.getLastEventId());
-        values.put(AlarmColumns.LAST_EVENT_SEVERITY, alarm.getLastEventSeverity());
-        values.put(AlarmColumns.NODE_ID, alarm.getNodeId());
-        values.put(AlarmColumns.NODE_LABEL, alarm.getNodeLabel());
-        values.put(AlarmColumns.SERVICE_TYPE_ID, alarm.getServiceTypeId());
-        values.put(AlarmColumns.SERVICE_TYPE_NAME, alarm.getServiceTypeName());
-        return contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
     }
 
     private void issueNewAlarmsNotification(int newAlarmsCount) {

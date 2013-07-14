@@ -28,7 +28,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Columns;
+import org.opennms.android.dao.Contract;
 import org.opennms.android.dao.nodes.Node;
 import org.opennms.android.dao.nodes.NodesListProvider;
 import org.opennms.android.service.NodesSyncService;
@@ -72,7 +72,7 @@ public class NodesListFragment extends SherlockListFragment
                 getActivity(),
                 R.layout.node_list_item,
                 null,
-                new String[]{Columns.NodeColumns.NAME, Columns.NodeColumns.NODE_ID},
+                new String[]{Contract.Nodes.COLUMN_NAME, Contract.Nodes.COLUMN_NODE_ID},
                 new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -141,14 +141,14 @@ public class NodesListFragment extends SherlockListFragment
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Columns.NodeColumns.NODE_ID))));
-            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.TYPE)));
-            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.NAME)));
-            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.CREATED_TIME)));
-            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.SYS_CONTACT)));
-            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.LABEL_SOURCE)));
-            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.LOCATION)));
-            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Columns.NodeColumns.DESCRIPTION)));
+            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_NODE_ID))));
+            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_TYPE)));
+            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_NAME)));
+            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_CREATED_TIME)));
+            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_SYS_CONTACT)));
+            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_LABEL_SOURCE)));
+            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_LOCATION)));
+            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_DESCRIPTION)));
             cursor.close();
             return node;
         }
@@ -210,7 +210,7 @@ public class NodesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Columns.NodeColumns.NAME),
+                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Contract.Nodes.COLUMN_NAME),
                     Uri.encode(this.currentFilter)
             );
         } else {
@@ -218,11 +218,11 @@ public class NodesListFragment extends SherlockListFragment
         }
         String[] projection = {
                 BaseColumns._ID,
-                Columns.NodeColumns.NODE_ID,
-                Columns.NodeColumns.NAME
+                Contract.Nodes.COLUMN_NODE_ID,
+                Contract.Nodes.COLUMN_NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Columns.NodeColumns.NAME);
+                Contract.Nodes.COLUMN_NAME);
     }
 
     @Override

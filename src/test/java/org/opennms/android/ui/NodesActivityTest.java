@@ -3,6 +3,7 @@ package org.opennms.android.ui;
 import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.actionbarsherlock.ActionBarSherlock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.opennms.android.R;
 import org.opennms.android.ui.nodes.NodesActivity;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.tester.android.view.TestMenuItem;
@@ -21,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.robolectric.Robolectric.shadowOf;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(reportSdk=8)
 public class NodesActivityTest {
     private NodesActivity activity;
 
