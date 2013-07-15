@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
-import org.opennms.android.dao.outages.Outage;
+import org.opennms.android.dao.Outage;
 
 public class OutageDetailsFragment extends SherlockFragment {
 

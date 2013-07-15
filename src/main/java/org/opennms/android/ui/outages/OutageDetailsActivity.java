@@ -3,7 +3,7 @@ package org.opennms.android.ui.outages;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import org.opennms.android.R;
-import org.opennms.android.dao.outages.Outage;
+import org.opennms.android.dao.Outage;
 import org.opennms.android.ui.DetailsActivity;
 
 public class OutageDetailsActivity extends DetailsActivity {

@@ -27,9 +27,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Contract;
-import org.opennms.android.dao.outages.Outage;
-import org.opennms.android.dao.outages.OutagesListProvider;
+import org.opennms.android.dao.Outage;
+import org.opennms.android.provider.Contract;
 import org.opennms.android.service.OutagesSyncService;
 
 public class OutagesListFragment extends SherlockListFragment
@@ -71,7 +70,7 @@ public class OutagesListFragment extends SherlockListFragment
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Contract.Outages.COLUMN_OUTAGE_ID, Contract.Outages.COLUMN_SERVICE_TYPE_NAME},
+                new String[]{Contract.Outages.OUTAGE_ID, Contract.Outages.SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -136,20 +135,20 @@ public class OutagesListFragment extends SherlockListFragment
 
     private Outage getOutage(long id) {
         Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, String.valueOf(id)),
+                Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(id)),
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Outage outage = new Outage(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_OUTAGE_ID)));
-            outage.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_IP_ADDRESS)));
-            outage.setIpInterfaceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_IP_INTERFACE_ID)));
-            outage.setServiceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_ID)));
-            outage.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_TYPE_ID)));
-            outage.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_TYPE_NAME)));
-            outage.setLostServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_LOST_TIME)));
-            outage.setServiceLostEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_LOST_EVENT_ID)));
-            outage.setRegainedServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_REGAINED_TIME)));
-            outage.setServiceRegainedEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.COLUMN_SERVICE_REGAINED_EVENT_ID)));
+            Outage outage = new Outage(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.OUTAGE_ID)));
+            outage.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.IP_ADDRESS)));
+            outage.setIpInterfaceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.IP_INTERFACE_ID)));
+            outage.setServiceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_ID)));
+            outage.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_TYPE_ID)));
+            outage.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_TYPE_NAME)));
+            outage.setLostServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_TIME)));
+            outage.setServiceLostEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID)));
+            outage.setRegainedServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME)));
+            outage.setServiceRegainedEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_EVENT_ID)));
             cursor.close();
             return outage;
         }
@@ -211,19 +210,19 @@ public class OutagesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(OutagesListProvider.CONTENT_URI, Contract.Outages.COLUMN_OUTAGE_ID),
+                    Uri.withAppendedPath(Contract.Outages.CONTENT_URI, Contract.Outages.OUTAGE_ID),
                     Uri.encode(this.currentFilter)
             );
         } else {
-            baseUri = OutagesListProvider.CONTENT_URI;
+            baseUri = Contract.Outages.CONTENT_URI;
         }
         String[] projection = {
                 Contract.Outages._ID,
-                Contract.Outages.COLUMN_OUTAGE_ID,
-                Contract.Outages.COLUMN_SERVICE_TYPE_NAME
+                Contract.Outages.OUTAGE_ID,
+                Contract.Outages.SERVICE_TYPE_NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Outages.COLUMN_OUTAGE_ID + " DESC");
+                Contract.Outages.OUTAGE_ID + " DESC");
     }
 
     @Override

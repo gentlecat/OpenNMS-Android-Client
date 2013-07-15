@@ -8,7 +8,7 @@ import android.util.Log;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.communication.OutagesParser;
 import org.opennms.android.communication.ServerCommunication;
-import org.opennms.android.dao.outages.OutagesListProvider;
+import org.opennms.android.provider.Contract;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -35,9 +35,9 @@ public class OutagesSyncService extends IntentService {
         try {
             ContentResolver contentResolver = getContentResolver();
             ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
-            ArrayList<ContentValues> valuesArray = OutagesParser.parse(response.getContentData().getContentInString());
-            contentResolver.delete(OutagesListProvider.CONTENT_URI, null, null); // Deleting old data
-            for (ContentValues values : valuesArray) contentResolver.insert(OutagesListProvider.CONTENT_URI, values);
+            ArrayList<ContentValues> values = OutagesParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(Contract.Outages.CONTENT_URI, null, null); // Deleting old data
+            contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
             Log.i(TAG, "Done!");
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during synchronization process", e);

@@ -8,7 +8,7 @@ import android.util.Log;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.communication.NodesParser;
 import org.opennms.android.communication.ServerCommunication;
-import org.opennms.android.dao.nodes.NodesListProvider;
+import org.opennms.android.provider.Contract;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -35,9 +35,9 @@ public class NodesSyncService extends IntentService {
         try {
             ContentResolver contentResolver = getContentResolver();
             ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
-            ArrayList<ContentValues> valuesArray = NodesParser.parse(response.getContentData().getContentInString());
-            contentResolver.delete(NodesListProvider.CONTENT_URI, null, null); // Deleting old data
-            for (ContentValues values : valuesArray) contentResolver.insert(NodesListProvider.CONTENT_URI, values);
+            ArrayList<ContentValues> values = NodesParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(Contract.Nodes.CONTENT_URI, null, null); // Deleting old data
+            contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
             Log.i(TAG, "Done!");
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during synchronization process", e);

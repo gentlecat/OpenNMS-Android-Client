@@ -2,7 +2,7 @@ package org.opennms.android.communication;
 
 import android.content.ContentValues;
 import android.util.Log;
-import org.opennms.android.dao.Contract;
+import org.opennms.android.provider.Contract;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -22,39 +22,39 @@ public class OutagesParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Outages.COLUMN_OUTAGE_ID, id);
+                    values.put(Contract.Outages.OUTAGE_ID, id);
 
                     String ipAddress = getXmlNodeForExpression("ipAddress", currentNode).getTextContent();
-                    if (ipAddress != null) values.put(Contract.Outages.COLUMN_IP_ADDRESS, ipAddress);
+                    if (ipAddress != null) values.put(Contract.Outages.IP_ADDRESS, ipAddress);
 
                     String serviceId = getXmlNodeForExpression("monitoredService/@id", currentNode).getTextContent();
-                    if (serviceId != null) values.put(Contract.Outages.COLUMN_SERVICE_ID, Integer.parseInt(serviceId));
+                    if (serviceId != null) values.put(Contract.Outages.SERVICE_ID, Integer.parseInt(serviceId));
 
                     String ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", currentNode).getTextContent();
                     if (ipInterfaceId != null)
-                        values.put(Contract.Outages.COLUMN_IP_INTERFACE_ID, Integer.parseInt(ipInterfaceId));
+                        values.put(Contract.Outages.IP_INTERFACE_ID, Integer.parseInt(ipInterfaceId));
 
                     String serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", currentNode).getTextContent();
                     if (serviceTypeId != null)
-                        values.put(Contract.Outages.COLUMN_SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId));
+                        values.put(Contract.Outages.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId));
 
                     String serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", currentNode).getTextContent();
-                    if (serviceTypeName != null) values.put(Contract.Outages.COLUMN_SERVICE_TYPE_NAME, serviceTypeName);
+                    if (serviceTypeName != null) values.put(Contract.Outages.SERVICE_TYPE_NAME, serviceTypeName);
 
                     String lostServiceTime = getXmlNodeForExpression("ifLostService", currentNode).getTextContent();
-                    if (lostServiceTime != null) values.put(Contract.Outages.COLUMN_SERVICE_LOST_TIME, lostServiceTime);
+                    if (lostServiceTime != null) values.put(Contract.Outages.SERVICE_LOST_TIME, lostServiceTime);
 
                     String serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", currentNode).getTextContent();
                     if (serviceLostEventId != null)
-                        values.put(Contract.Outages.COLUMN_SERVICE_LOST_EVENT_ID, Integer.parseInt(serviceLostEventId));
+                        values.put(Contract.Outages.SERVICE_LOST_EVENT_ID, Integer.parseInt(serviceLostEventId));
 
                     String regainedServiceTime = getXmlNodeForExpression("ifRegainedService", currentNode).getTextContent();
                     if (regainedServiceTime != null)
-                        values.put(Contract.Outages.COLUMN_SERVICE_REGAINED_TIME, regainedServiceTime);
+                        values.put(Contract.Outages.SERVICE_REGAINED_TIME, regainedServiceTime);
 
                     String serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", currentNode).getTextContent();
                     if (serviceRegainedEventId != null)
-                        values.put(Contract.Outages.COLUMN_SERVICE_REGAINED_EVENT_ID, Integer.parseInt(serviceRegainedEventId));
+                        values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID, Integer.parseInt(serviceRegainedEventId));
 
                     valuesArray.add(values);
                 }

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
-import org.opennms.android.dao.nodes.Node;
+import org.opennms.android.dao.Node;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

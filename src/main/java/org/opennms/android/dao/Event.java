@@ -1,4 +1,4 @@
-package org.opennms.android.dao.events;
+package org.opennms.android.dao;
 
 import java.io.Serializable;
 

@@ -13,7 +13,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.dao.alarms.Alarm;
+import org.opennms.android.dao.Alarm;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,7 +109,6 @@ public class AlarmDetailsFragment extends SherlockFragment {
             serviceType.setText(alarm.getServiceTypeName() + " (#" + alarm.getServiceTypeId() + ")");
 
             // Last event
-            TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
             String lastEventTimeString = alarm.getLastEventTime();
             // Example: "2011-09-27T12:15:32.363-04:00"
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");

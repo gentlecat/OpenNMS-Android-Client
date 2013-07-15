@@ -27,9 +27,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Contract;
-import org.opennms.android.dao.nodes.Node;
-import org.opennms.android.dao.nodes.NodesListProvider;
+import org.opennms.android.dao.Node;
+import org.opennms.android.provider.Contract;
 import org.opennms.android.service.NodesSyncService;
 
 public class NodesListFragment extends SherlockListFragment
@@ -71,7 +70,7 @@ public class NodesListFragment extends SherlockListFragment
                 getActivity(),
                 R.layout.node_list_item,
                 null,
-                new String[]{Contract.Nodes.COLUMN_NAME, Contract.Nodes.COLUMN_NODE_ID},
+                new String[]{Contract.Nodes.NAME, Contract.Nodes.NODE_ID},
                 new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -136,18 +135,18 @@ public class NodesListFragment extends SherlockListFragment
 
     private Node getNode(long id) {
         Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(NodesListProvider.CONTENT_URI, String.valueOf(id)),
+                Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(id)),
                 null, null, null, null
         );
         if (cursor.moveToFirst()) {
-            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_NODE_ID))));
-            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_TYPE)));
-            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_NAME)));
-            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_CREATED_TIME)));
-            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_SYS_CONTACT)));
-            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_LABEL_SOURCE)));
-            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_LOCATION)));
-            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.COLUMN_DESCRIPTION)));
+            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Nodes.NODE_ID))));
+            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.TYPE)));
+            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.NAME)));
+            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.CREATED_TIME)));
+            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.SYS_CONTACT)));
+            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL_SOURCE)));
+            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.LOCATION)));
+            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.DESCRIPTION)));
             cursor.close();
             return node;
         }
@@ -209,19 +208,19 @@ public class NodesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(NodesListProvider.CONTENT_URI, Contract.Nodes.COLUMN_NAME),
+                    Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, Contract.Nodes.NAME),
                     Uri.encode(this.currentFilter)
             );
         } else {
-            baseUri = NodesListProvider.CONTENT_URI;
+            baseUri = Contract.Nodes.CONTENT_URI;
         }
         String[] projection = {
                 Contract.Nodes._ID,
-                Contract.Nodes.COLUMN_NODE_ID,
-                Contract.Nodes.COLUMN_NAME
+                Contract.Nodes.NODE_ID,
+                Contract.Nodes.NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Nodes.COLUMN_NAME);
+                Contract.Nodes.NAME);
     }
 
     @Override

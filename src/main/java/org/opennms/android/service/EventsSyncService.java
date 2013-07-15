@@ -8,7 +8,7 @@ import android.util.Log;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.communication.EventsParser;
 import org.opennms.android.communication.ServerCommunication;
-import org.opennms.android.dao.events.EventsListProvider;
+import org.opennms.android.provider.Contract;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -35,9 +35,9 @@ public class EventsSyncService extends IntentService {
         try {
             ContentResolver contentResolver = getContentResolver();
             ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
-            ArrayList<ContentValues> valuesArray = EventsParser.parse(response.getContentData().getContentInString());
-            contentResolver.delete(EventsListProvider.CONTENT_URI, null, null); // Deleting old data
-            for (ContentValues values : valuesArray) contentResolver.insert(EventsListProvider.CONTENT_URI, values);
+            ArrayList<ContentValues> values = EventsParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(Contract.Events.CONTENT_URI, null, null); // Deleting old data
+            contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
             Log.i(TAG, "Done!");
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during synchronization process", e);

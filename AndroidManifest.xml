@@ -8,7 +8,7 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="16" />
 
-    <!-- Synchronization -->
+    <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Notifications -->
@@ -62,21 +62,9 @@
         </receiver>
 
         <provider
-            android:authorities="org.opennms.android.dao.nodes.NodesListProvider"
-            android:multiprocess="true"
-            android:name=".dao.nodes.NodesListProvider" />
-        <provider
-            android:authorities="org.opennms.android.dao.outages.OutagesListProvider"
-            android:multiprocess="true"
-            android:name=".dao.outages.OutagesListProvider" />
-        <provider
-            android:authorities="org.opennms.android.dao.events.EventsListProvider"
-            android:multiprocess="true"
-            android:name=".dao.events.EventsListProvider" />
-        <provider
-            android:authorities="org.opennms.android.dao.alarms.AlarmsListProvider"
-            android:multiprocess="true"
-            android:name=".dao.alarms.AlarmsListProvider" />
+            android:authorities="org.opennms.android.provider.AppContentProvider"
+            android:exported="false"
+            android:name=".provider.AppContentProvider" />
 
     </application>
 

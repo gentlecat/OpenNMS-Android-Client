@@ -2,7 +2,7 @@ package org.opennms.android.communication;
 
 import android.content.ContentValues;
 import android.util.Log;
-import org.opennms.android.dao.Contract;
+import org.opennms.android.provider.Contract;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -22,30 +22,28 @@ public class NodesParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     Node id = getXmlNodeForExpression("@id", currentNode);
-                    values.put(Contract.Nodes.COLUMN_NODE_ID, id.getNodeValue());
+                    values.put(Contract.Nodes.NODE_ID, id.getNodeValue());
 
                     Node name = getXmlNodeForExpression("@label", currentNode);
-                    if (name != null) values.put(Contract.Nodes.COLUMN_NAME, name.getNodeValue());
+                    if (name != null) values.put(Contract.Nodes.NAME, name.getNodeValue());
 
                     Node type = getXmlNodeForExpression("@type", currentNode);
-                    if (type != null) values.put(Contract.Nodes.COLUMN_TYPE, type.getNodeValue());
+                    if (type != null) values.put(Contract.Nodes.TYPE, type.getNodeValue());
 
                     Node createTime = getXmlNodeForExpression("createTime", currentNode);
-                    if (createTime != null) values.put(Contract.Nodes.COLUMN_CREATED_TIME, createTime.getTextContent());
+                    if (createTime != null) values.put(Contract.Nodes.CREATED_TIME, createTime.getTextContent());
 
                     Node sysContact = getXmlNodeForExpression("sysContact", currentNode);
-                    if (sysContact != null) values.put(Contract.Nodes.COLUMN_SYS_CONTACT, sysContact.getTextContent());
+                    if (sysContact != null) values.put(Contract.Nodes.SYS_CONTACT, sysContact.getTextContent());
 
                     Node labelSource = getXmlNodeForExpression("labelSource", currentNode);
-                    if (labelSource != null)
-                        values.put(Contract.Nodes.COLUMN_LABEL_SOURCE, labelSource.getTextContent());
+                    if (labelSource != null) values.put(Contract.Nodes.LABEL_SOURCE, labelSource.getTextContent());
 
                     Node sysDescription = getXmlNodeForExpression("sysDescription", currentNode);
-                    if (sysDescription != null)
-                        values.put(Contract.Nodes.COLUMN_DESCRIPTION, sysDescription.getTextContent());
+                    if (sysDescription != null) values.put(Contract.Nodes.DESCRIPTION, sysDescription.getTextContent());
 
                     Node sysLocation = getXmlNodeForExpression("sysLocation", currentNode);
-                    if (sysLocation != null) values.put(Contract.Nodes.COLUMN_LOCATION, sysLocation.getTextContent());
+                    if (sysLocation != null) values.put(Contract.Nodes.LOCATION, sysLocation.getTextContent());
 
                     valuesArray.add(values);
                 }

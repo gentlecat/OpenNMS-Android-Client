@@ -15,8 +15,7 @@ import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.R;
 import org.opennms.android.communication.AlarmsParser;
 import org.opennms.android.communication.ServerCommunication;
-import org.opennms.android.dao.Contract;
-import org.opennms.android.dao.alarms.AlarmsListProvider;
+import org.opennms.android.provider.Contract;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.util.ArrayList;
@@ -51,13 +50,13 @@ public class AlarmsSyncService extends IntentService {
         try {
             ContentResolver contentResolver = getContentResolver();
             ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
-            ArrayList<ContentValues> valuesArray = AlarmsParser.parse(response.getContentData().getContentInString());
-            contentResolver.delete(AlarmsListProvider.CONTENT_URI, null, null); // Deleting old data
-            for (ContentValues values : valuesArray) {
-                contentResolver.insert(AlarmsListProvider.CONTENT_URI, values);
-                int id = values.getAsInteger(Contract.Alarms.COLUMN_ALARM_ID);
+            ArrayList<ContentValues> values = AlarmsParser.parse(response.getContentData().getContentInString());
+            contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
+            contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+            for (ContentValues currentValues : values) {
+                int id = currentValues.getAsInteger(Contract.Alarms.ALARM_ID);
                 if (id > latestShownAlarmId) {
-                    String severity = values.getAsString(Contract.Alarms.COLUMN_SEVERITY);
+                    String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
                     for (String curSeverityVal : severityValues) {
                         if (curSeverityVal.equals(severity)) {
                             newAlarmsCount++;

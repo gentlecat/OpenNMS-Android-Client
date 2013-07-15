@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
-import org.opennms.android.dao.events.Event;
+import org.opennms.android.dao.Event;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

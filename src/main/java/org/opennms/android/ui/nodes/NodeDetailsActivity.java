@@ -3,7 +3,7 @@ package org.opennms.android.ui.nodes;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import org.opennms.android.R;
-import org.opennms.android.dao.nodes.Node;
+import org.opennms.android.dao.Node;
 import org.opennms.android.ui.DetailsActivity;
 
 public class NodeDetailsActivity extends DetailsActivity {

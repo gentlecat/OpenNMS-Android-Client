@@ -1,4 +1,4 @@
-package org.opennms.android.dao.nodes;
+package org.opennms.android.dao;
 
 import java.io.Serializable;
 

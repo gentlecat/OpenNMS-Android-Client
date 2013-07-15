@@ -3,7 +3,7 @@ package org.opennms.android.ui.events;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import org.opennms.android.R;
-import org.opennms.android.dao.events.Event;
+import org.opennms.android.dao.Event;
 import org.opennms.android.ui.DetailsActivity;
 
 public class EventDetailsActivity extends DetailsActivity {

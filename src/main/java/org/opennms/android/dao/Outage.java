@@ -1,4 +1,4 @@
-package org.opennms.android.dao.outages;
+package org.opennms.android.dao;
 
 import java.io.Serializable;
 
