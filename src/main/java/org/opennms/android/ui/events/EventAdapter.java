@@ -52,7 +52,7 @@ public class EventAdapter extends CursorAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Events.EVENT_ID));
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Events._ID));
         viewHolder.id.setText(String.valueOf(id));
 
         String log = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));

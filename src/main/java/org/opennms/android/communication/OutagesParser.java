@@ -22,7 +22,7 @@ public class OutagesParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Outages.OUTAGE_ID, id);
+                    values.put(Contract.Outages._ID, id);
 
                     String ipAddress = getXmlNodeForExpression("ipAddress", currentNode).getTextContent();
                     if (ipAddress != null) values.put(Contract.Outages.IP_ADDRESS, ipAddress);

@@ -22,7 +22,7 @@ public class AlarmsParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Alarms.ALARM_ID, id);
+                    values.put(Contract.Alarms._ID, id);
 
                     Node severity = getXmlNodeForExpression("@severity", currentNode);
                     if (severity != null) values.put(Contract.Alarms.SEVERITY, severity.getNodeValue());

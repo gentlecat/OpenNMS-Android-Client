@@ -22,7 +22,7 @@ public class EventsParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Events.EVENT_ID, id);
+                    values.put(Contract.Events._ID, id);
 
                     String description = getXmlNodeForExpression("description", currentNode).getTextContent();
                     if (description != null) values.put(Contract.Events.DESCRIPTION, description);

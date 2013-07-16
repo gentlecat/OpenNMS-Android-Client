@@ -23,7 +23,6 @@ public final class Contract {
     }
 
     interface NodeColumns {
-        String NODE_ID = "node_id";
         String TYPE = "type";
         String NAME = "name";
         String CREATED_TIME = "created_time";
@@ -34,7 +33,6 @@ public final class Contract {
     }
 
     interface AlarmColumns {
-        String ALARM_ID = "alarm_id";
         String SEVERITY = "severity";
         String DESCRIPTION = "description";
         String LOG_MESSAGE = "log_message";
@@ -52,7 +50,6 @@ public final class Contract {
     }
 
     interface OutageColumns {
-        String OUTAGE_ID = "outage_id";
         String IP_ADDRESS = "ip_address";
         // Service
         String SERVICE_ID = "service_id";
@@ -68,7 +65,6 @@ public final class Contract {
     }
 
     interface EventColumns {
-        String EVENT_ID = "event_id";
         String SEVERITY = "severity";
         String LOG_MESSAGE = "log_message";
         String DESCRIPTION = "description";

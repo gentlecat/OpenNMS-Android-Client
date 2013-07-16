@@ -26,14 +26,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Alarm;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.AlarmsSyncService;
 
 public class AlarmsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_ALARM = "alarm";
+    public static final String EXTRA_ALARM_ID = "alarm";
     private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
@@ -87,11 +86,10 @@ public class AlarmsListFragment extends SherlockListFragment
         }
         String[] projection = {
                 Contract.Alarms._ID,
-                Contract.Alarms.ALARM_ID,
                 Contract.Alarms.DESCRIPTION,
                 Contract.Alarms.SEVERITY
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Alarms.ALARM_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Alarms._ID + " DESC");
     }
 
     @Override
@@ -140,46 +138,18 @@ public class AlarmsListFragment extends SherlockListFragment
     }
 
     private void showDetails(long id) {
-        Alarm alarm = getAlarm(id);
-        if (alarm != null) {
-            if (isDualPane) {
-                detailsContainer.removeAllViews();
-                AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarm);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                fragmentTransaction.commit();
-            } else {
-                Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
-                detailsIntent.putExtra(EXTRA_ALARM, alarm);
-                startActivity(detailsIntent);
-            }
+        if (isDualPane) {
+            detailsContainer.removeAllViews();
+            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(id);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
+            detailsIntent.putExtra(EXTRA_ALARM_ID, id);
+            startActivity(detailsIntent);
         }
-    }
-
-    private Alarm getAlarm(long id) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(id)),
-                null, null, null, null
-        );
-        if (cursor.moveToFirst()) {
-            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.ALARM_ID)));
-            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY)));
-            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION)));
-            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE)));
-            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.FIRST_EVENT_TIME)));
-            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME)));
-            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID)));
-            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY)));
-            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID)));
-            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL)));
-            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID)));
-            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME)));
-            cursor.close();
-            return alarm;
-        }
-        cursor.close();
-        return null;
     }
 
     @Override

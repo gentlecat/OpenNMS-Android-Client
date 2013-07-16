@@ -22,7 +22,7 @@ public class NodesParser extends Parser {
                     Node currentNode = nodes.item(i);
 
                     Node id = getXmlNodeForExpression("@id", currentNode);
-                    values.put(Contract.Nodes.NODE_ID, id.getNodeValue());
+                    values.put(Contract.Nodes._ID, id.getNodeValue());
 
                     Node name = getXmlNodeForExpression("@label", currentNode);
                     if (name != null) values.put(Contract.Nodes.NAME, name.getNodeValue());

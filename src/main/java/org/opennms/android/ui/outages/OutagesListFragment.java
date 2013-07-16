@@ -27,14 +27,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Outage;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.OutagesSyncService;
 
 public class OutagesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_OUTAGE = "outage";
+    public static final String EXTRA_OUTAGE_ID = "outage";
     private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
@@ -70,7 +69,7 @@ public class OutagesListFragment extends SherlockListFragment
                 getActivity(),
                 android.R.layout.simple_list_item_2,
                 null,
-                new String[]{Contract.Outages.OUTAGE_ID, Contract.Outages.SERVICE_TYPE_NAME},
+                new String[]{Contract.Outages._ID, Contract.Outages.SERVICE_TYPE_NAME},
                 new int[]{android.R.id.text1, android.R.id.text2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -87,8 +86,7 @@ public class OutagesListFragment extends SherlockListFragment
         if (isDualPane) {
             long activeOutageId = sharedPref.getLong(STATE_ACTIVE_OUTAGE_ID, -1);
             if (activeOutageId != -1) {
-                Outage outage = getOutage(activeOutageId);
-                if (outage != null) showDetails(outage);
+                showDetails(activeOutageId);
             } else {
                 detailsContainer.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -113,47 +111,22 @@ public class OutagesListFragment extends SherlockListFragment
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
         sharedPref.edit().putLong(STATE_ACTIVE_OUTAGE_ID, id).commit();
-        Outage outage = getOutage(id);
-        showDetails(outage);
+        showDetails(id);
     }
 
-    private void showDetails(Outage outage) {
+    private void showDetails(long id) {
         if (isDualPane) {
             detailsContainer.removeAllViews();
-            OutageDetailsFragment detailsFragment = new OutageDetailsFragment();
-            detailsFragment.bindOutage(outage);
+            OutageDetailsFragment detailsFragment = new OutageDetailsFragment(id);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_OUTAGE, outage);
+            detailsIntent.putExtra(EXTRA_OUTAGE_ID, id);
             startActivity(detailsIntent);
         }
-    }
-
-    private Outage getOutage(long id) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(id)),
-                null, null, null, null
-        );
-        if (cursor.moveToFirst()) {
-            Outage outage = new Outage(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.OUTAGE_ID)));
-            outage.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.IP_ADDRESS)));
-            outage.setIpInterfaceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.IP_INTERFACE_ID)));
-            outage.setServiceId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_ID)));
-            outage.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_TYPE_ID)));
-            outage.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_TYPE_NAME)));
-            outage.setLostServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_TIME)));
-            outage.setServiceLostEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID)));
-            outage.setRegainedServiceTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME)));
-            outage.setServiceRegainedEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_EVENT_ID)));
-            cursor.close();
-            return outage;
-        }
-        cursor.close();
-        return null;
     }
 
     @Override
@@ -210,7 +183,7 @@ public class OutagesListFragment extends SherlockListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(Contract.Outages.CONTENT_URI, Contract.Outages.OUTAGE_ID),
+                    Uri.withAppendedPath(Contract.Outages.CONTENT_URI, Contract.Outages._ID),
                     Uri.encode(this.currentFilter)
             );
         } else {
@@ -218,11 +191,9 @@ public class OutagesListFragment extends SherlockListFragment
         }
         String[] projection = {
                 Contract.Outages._ID,
-                Contract.Outages.OUTAGE_ID,
                 Contract.Outages.SERVICE_TYPE_NAME
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Outages.OUTAGE_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Outages._ID + " DESC");
     }
 
     @Override

@@ -27,14 +27,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Node;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.NodesSyncService;
 
 public class NodesListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_NODE = "node";
+    public static final String EXTRA_NODE_ID = "node";
     private static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
@@ -70,7 +69,7 @@ public class NodesListFragment extends SherlockListFragment
                 getActivity(),
                 R.layout.node_list_item,
                 null,
-                new String[]{Contract.Nodes.NAME, Contract.Nodes.NODE_ID},
+                new String[]{Contract.Nodes.NAME, Contract.Nodes._ID},
                 new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -116,42 +115,18 @@ public class NodesListFragment extends SherlockListFragment
     }
 
     private void showDetails(long id) {
-        Node node = getNode(id);
-        if (node != null) {
-            if (isDualPane) {
-                detailsContainer.removeAllViews();
-                NodeDetailsFragment detailsFragment = new NodeDetailsFragment(node);
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                fragmentTransaction.commit();
-            } else {
-                Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
-                detailsIntent.putExtra(EXTRA_NODE, node);
-                startActivity(detailsIntent);
-            }
+        if (isDualPane) {
+            detailsContainer.removeAllViews();
+            NodeDetailsFragment detailsFragment = new NodeDetailsFragment(id);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
+            detailsIntent.putExtra(EXTRA_NODE_ID, id);
+            startActivity(detailsIntent);
         }
-    }
-
-    private Node getNode(long id) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(id)),
-                null, null, null, null
-        );
-        if (cursor.moveToFirst()) {
-            Node node = new Node((cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Nodes.NODE_ID))));
-            node.setType(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.TYPE)));
-            node.setName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.NAME)));
-            node.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.CREATED_TIME)));
-            node.setSysContact(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.SYS_CONTACT)));
-            node.setLabelSource(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL_SOURCE)));
-            node.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.LOCATION)));
-            node.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.DESCRIPTION)));
-            cursor.close();
-            return node;
-        }
-        cursor.close();
-        return null;
     }
 
     @Override
@@ -216,11 +191,9 @@ public class NodesListFragment extends SherlockListFragment
         }
         String[] projection = {
                 Contract.Nodes._ID,
-                Contract.Nodes.NODE_ID,
                 Contract.Nodes.NAME
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Nodes.NAME);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Nodes.NAME);
     }
 
     @Override

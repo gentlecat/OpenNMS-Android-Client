@@ -1,5 +1,7 @@
 package org.opennms.android.ui.alarms;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -14,6 +16,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
 import org.opennms.android.dao.Alarm;
+import org.opennms.android.provider.Contract;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,13 +25,14 @@ import java.util.Date;
 public class AlarmDetailsFragment extends SherlockFragment {
     public static final String TAG = "AlarmDetailsFragment";
     private Alarm alarm;
+    private long alarmId;
 
     // Do not remove
     public AlarmDetailsFragment() {
     }
 
-    public AlarmDetailsFragment(Alarm alarm) {
-        this.alarm = alarm;
+    public AlarmDetailsFragment(long alarmId) {
+        this.alarmId = alarmId;
     }
 
     @Override
@@ -67,6 +71,8 @@ public class AlarmDetailsFragment extends SherlockFragment {
     }
 
     public void updateContent() {
+        alarm = getAlarm(alarmId);
+
         if (alarm != null) {
             // Alarm ID
             TextView id = (TextView) getActivity().findViewById(R.id.alarm_id);
@@ -123,6 +129,31 @@ public class AlarmDetailsFragment extends SherlockFragment {
             TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
             lastEvent.setText("#" + alarm.getLastEventId() + " " + alarm.getLastEventSeverity() + "\n" + lastEventTime.toString());
         }
+    }
+
+    private Alarm getAlarm(long id) {
+        Cursor cursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(id)),
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID)));
+            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY)));
+            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION)));
+            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE)));
+            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.FIRST_EVENT_TIME)));
+            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME)));
+            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID)));
+            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY)));
+            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID)));
+            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL)));
+            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID)));
+            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME)));
+            cursor.close();
+            return alarm;
+        }
+        cursor.close();
+        return null;
     }
 
 }

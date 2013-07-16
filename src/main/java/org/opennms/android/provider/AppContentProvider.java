@@ -81,37 +81,6 @@ public class AppContentProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-        final int match = uriMatcher.match(uri);
-        switch (match) {
-            case NODES: {
-                long id = db.insertWithOnConflict(Tables.NODES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(uri, id);
-            }
-            case EVENTS: {
-                long id = db.insertWithOnConflict(Tables.EVENTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(uri, id);
-            }
-            case ALARMS: {
-                long id = db.insertWithOnConflict(Tables.ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(uri, id);
-            }
-            case OUTAGES: {
-                long id = db.insertWithOnConflict(Tables.OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                getContext().getContentResolver().notifyChange(uri, null);
-                return ContentUris.withAppendedId(uri, id);
-            }
-            default: {
-                throw new UnsupportedOperationException("Unknown URI: " + uri);
-            }
-        }
-    }
-
-    @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
@@ -156,9 +125,87 @@ public class AppContentProvider extends ContentProvider {
     }
 
     @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case NODES: {
+                long id = db.insertWithOnConflict(Tables.NODES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                getContext().getContentResolver().notifyChange(uri, null);
+                return ContentUris.withAppendedId(uri, id);
+            }
+            case EVENTS: {
+                long id = db.insertWithOnConflict(Tables.EVENTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                getContext().getContentResolver().notifyChange(uri, null);
+                return ContentUris.withAppendedId(uri, id);
+            }
+            case ALARMS: {
+                long id = db.insertWithOnConflict(Tables.ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                getContext().getContentResolver().notifyChange(uri, null);
+                return ContentUris.withAppendedId(uri, id);
+            }
+            case OUTAGES: {
+                long id = db.insertWithOnConflict(Tables.OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                getContext().getContentResolver().notifyChange(uri, null);
+                return ContentUris.withAppendedId(uri, id);
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+            }
+        }
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        int rowsAffected;
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case NODES: {
+                rowsAffected = bulkInsertHelper(Tables.NODES, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            }
+            case EVENTS: {
+                rowsAffected = bulkInsertHelper(Tables.EVENTS, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            }
+            case ALARMS: {
+                rowsAffected = bulkInsertHelper(Tables.ALARMS, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            }
+            case OUTAGES: {
+                rowsAffected = bulkInsertHelper(Tables.OUTAGES, values);
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            }
+            default: {
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+            }
+        }
+        return rowsAffected;
+    }
+
+    private int bulkInsertHelper(String table, ContentValues[] values) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int rowsAffected = values.length;
+            for (ContentValues currentValues : values) {
+                db.insertWithOnConflict(table, null, currentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                db.yieldIfContendedSafely();
+            }
+            db.setTransactionSuccessful();
+            return rowsAffected;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
 
         int rowsAffected = 0;
 
@@ -167,7 +214,7 @@ public class AppContentProvider extends ContentProvider {
             case NODES_ID:
                 StringBuilder modSelectionNode = new StringBuilder(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 if (!TextUtils.isEmpty(selection)) {
-                    modSelectionNode.append(" AND " + selection);
+                    modSelectionNode.append(" AND ").append(selection);
                 }
                 rowsAffected = db.update(Tables.NODES, values, modSelectionNode.toString(), null);
                 break;
@@ -177,7 +224,7 @@ public class AppContentProvider extends ContentProvider {
             case ALARMS_ID:
                 StringBuilder modSelectionAlarm = new StringBuilder(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 if (!TextUtils.isEmpty(selection)) {
-                    modSelectionAlarm.append(" AND " + selection);
+                    modSelectionAlarm.append(" AND ").append(selection);
                 }
                 rowsAffected = db.update(Tables.ALARMS, values, modSelectionAlarm.toString(), null);
                 break;
@@ -187,7 +234,7 @@ public class AppContentProvider extends ContentProvider {
             case EVENTS_ID:
                 StringBuilder modSelectionEvent = new StringBuilder(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 if (!TextUtils.isEmpty(selection)) {
-                    modSelectionEvent.append(" AND " + selection);
+                    modSelectionEvent.append(" AND ").append(selection);
                 }
                 rowsAffected = db.update(Tables.ALARMS, values, modSelectionEvent.toString(), null);
                 break;
@@ -197,7 +244,7 @@ public class AppContentProvider extends ContentProvider {
             case OUTAGES_ID:
                 StringBuilder modSelectionOutage = new StringBuilder(BaseColumns._ID + "=" + uri.getLastPathSegment());
                 if (!TextUtils.isEmpty(selection)) {
-                    modSelectionOutage.append(" AND " + selection);
+                    modSelectionOutage.append(" AND ").append(selection);
                 }
                 rowsAffected = db.update(Tables.ALARMS, values, modSelectionOutage.toString(), null);
                 break;
@@ -208,6 +255,7 @@ public class AppContentProvider extends ContentProvider {
                 break;
         }
         getContext().getContentResolver().notifyChange(uri, null);
+
         return rowsAffected;
     }
 
@@ -266,56 +314,9 @@ public class AppContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
         }
+
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsAffected;
-    }
-
-    @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
-        int rowsAffected;
-        final int match = uriMatcher.match(uri);
-        switch (match) {
-            case NODES: {
-                rowsAffected = bulkInsertHelper(Tables.NODES, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                break;
-            }
-            case EVENTS: {
-                rowsAffected = bulkInsertHelper(Tables.EVENTS, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                break;
-            }
-            case ALARMS: {
-                rowsAffected = bulkInsertHelper(Tables.ALARMS, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                break;
-            }
-            case OUTAGES: {
-                rowsAffected = bulkInsertHelper(Tables.OUTAGES, values);
-                getContext().getContentResolver().notifyChange(uri, null);
-                break;
-            }
-            default: {
-                throw new UnsupportedOperationException("Unknown URI: " + uri);
-            }
-        }
-        return rowsAffected;
-    }
-
-    private int bulkInsertHelper(String table, ContentValues[] values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            int rowsAffected = values.length;
-            for (ContentValues currentValues : values) {
-                db.insertWithOnConflict(table, null, currentValues, SQLiteDatabase.CONFLICT_REPLACE);
-                db.yieldIfContendedSafely();
-            }
-            db.setTransactionSuccessful();
-            return rowsAffected;
-        } finally {
-            db.endTransaction();
-        }
     }
 
 }

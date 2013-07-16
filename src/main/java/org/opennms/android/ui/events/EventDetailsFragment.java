@@ -1,5 +1,7 @@
 package org.opennms.android.ui.events;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
 import org.opennms.android.dao.Event;
+import org.opennms.android.provider.Contract;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,6 +22,15 @@ import java.util.Date;
 public class EventDetailsFragment extends SherlockFragment {
     private static final String TAG = "EventDetailsFragment";
     Event event;
+    private long eventId;
+
+    // Do not remove
+    public EventDetailsFragment() {
+    }
+
+    public EventDetailsFragment(long eventId) {
+        this.eventId = eventId;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,12 +43,9 @@ public class EventDetailsFragment extends SherlockFragment {
         updateContent();
     }
 
-    public void bindEvent(Event event) {
-        this.event = event;
-        if (this.isVisible()) updateContent();
-    }
-
     public void updateContent() {
+        event = getEvent(eventId);
+
         if (event != null) {
             // Event ID
             TextView id = (TextView) getActivity().findViewById(R.id.event_id);
@@ -102,6 +111,30 @@ public class EventDetailsFragment extends SherlockFragment {
 
 
         }
+    }
+
+    private Event getEvent(long id) {
+        Cursor cursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(id)),
+                null, null, null, null
+        );
+        if (cursor.moveToFirst()) {
+            Event event = new Event(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID)));
+            event.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SEVERITY)));
+            event.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE)));
+            event.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.DESCRIPTION)));
+            event.setHost(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.HOST)));
+            event.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.IP_ADDRESS)));
+            event.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME)));
+            event.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID)));
+            event.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.NODE_LABEL)));
+            event.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_ID)));
+            event.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_NAME)));
+            cursor.close();
+            return event;
+        }
+        cursor.close();
+        return null;
     }
 
 }

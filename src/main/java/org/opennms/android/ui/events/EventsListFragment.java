@@ -26,14 +26,13 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
-import org.opennms.android.dao.Event;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.EventsSyncService;
 
 public class EventsListFragment extends SherlockListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_EVENT = "event";
+    public static final String EXTRA_EVENT_ID = "event";
     private static final String STATE_ACTIVE_EVENT_ID = "active_event_id";
     private EventAdapter adapter;
     private boolean isDualPane = false;
@@ -87,12 +86,10 @@ public class EventsListFragment extends SherlockListFragment
         }
         String[] projection = {
                 Contract.Events._ID,
-                Contract.Events.EVENT_ID,
                 Contract.Events.LOG_MESSAGE,
                 Contract.Events.SEVERITY
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Events.EVENT_ID + " DESC");
+        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Events._ID + " DESC");
     }
 
     @Override
@@ -112,8 +109,7 @@ public class EventsListFragment extends SherlockListFragment
         if (isDualPane) {
             long activeEventId = sharedPref.getLong(STATE_ACTIVE_EVENT_ID, -1);
             if (activeEventId != -1) {
-                Event event = getEvent(activeEventId);
-                if (event != null) showDetails(event);
+                showDetails(activeEventId);
             } else {
                 detailsContainer.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -138,48 +134,22 @@ public class EventsListFragment extends SherlockListFragment
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
         sharedPref.edit().putLong(STATE_ACTIVE_EVENT_ID, id).commit();
-        Event event = getEvent(id);
-        showDetails(event);
+        showDetails(id);
     }
 
-    private void showDetails(Event event) {
+    private void showDetails(long id) {
         if (isDualPane) {
             detailsContainer.removeAllViews();
-            EventDetailsFragment detailsFragment = new EventDetailsFragment();
-            detailsFragment.bindEvent(event);
+            EventDetailsFragment detailsFragment = new EventDetailsFragment(id);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), EventDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_EVENT, event);
+            detailsIntent.putExtra(EXTRA_EVENT_ID, id);
             startActivity(detailsIntent);
         }
-    }
-
-    private Event getEvent(long id) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(id)),
-                null, null, null, null
-        );
-        if (cursor.moveToFirst()) {
-            Event event = new Event(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.EVENT_ID)));
-            event.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SEVERITY)));
-            event.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE)));
-            event.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.DESCRIPTION)));
-            event.setHost(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.HOST)));
-            event.setIpAddress(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.IP_ADDRESS)));
-            event.setCreateTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME)));
-            event.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID)));
-            event.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.NODE_LABEL)));
-            event.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_ID)));
-            event.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_NAME)));
-            cursor.close();
-            return event;
-        }
-        cursor.close();
-        return null;
     }
 
     @Override

@@ -54,7 +54,7 @@ public class AlarmsSyncService extends IntentService {
             contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
             contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
             for (ContentValues currentValues : values) {
-                int id = currentValues.getAsInteger(Contract.Alarms.ALARM_ID);
+                int id = currentValues.getAsInteger(Contract.Alarms._ID);
                 if (id > latestShownAlarmId) {
                     String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
                     for (String curSeverityVal : severityValues) {

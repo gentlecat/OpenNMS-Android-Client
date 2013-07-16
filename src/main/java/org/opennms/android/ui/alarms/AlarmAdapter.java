@@ -52,7 +52,7 @@ public class AlarmAdapter extends CursorAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Alarms.ALARM_ID));
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Alarms._ID));
         viewHolder.id.setText(String.valueOf(id));
 
         String description = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));

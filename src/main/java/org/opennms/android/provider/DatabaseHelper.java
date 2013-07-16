@@ -15,8 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private static final String SQL_CREATE_TABLE_NODES = "CREATE TABLE IF NOT EXISTS " + Tables.NODES
             + " ("
-            + Nodes._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + Nodes.NODE_ID + " INTEGER UNIQUE, "
+            + Nodes._ID + " INTEGER PRIMARY KEY, "
             + Nodes.TYPE + " TEXT, "
             + Nodes.NAME + " TEXT, "
             + Nodes.CREATED_TIME + " TEXT, "
@@ -28,8 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_TABLE_NODES = "DROP TABLE IF EXISTS " + Tables.NODES;
     private static final String SQL_CREATE_TABLE_OUTAGES = "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
             + " ("
-            + Outages._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + Outages.OUTAGE_ID + " INTEGER UNIQUE, "
+            + Outages._ID + " INTEGER PRIMARY KEY, "
             + Outages.IP_ADDRESS + " TEXT, "
             + Outages.IP_INTERFACE_ID + " INTEGER, "
             + Outages.SERVICE_ID + " INTEGER, "
@@ -43,8 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_TABLE_OUTAGES = "DROP TABLE IF EXISTS " + Tables.OUTAGES;
     private static final String SQL_CREATE_TABLE_EVENTS = "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
             + " ("
-            + Events._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + Events.EVENT_ID + " INTEGER UNIQUE, "
+            + Events._ID + " INTEGER PRIMARY KEY, "
             + Events.SEVERITY + " TEXT, "
             + Events.LOG_MESSAGE + " TEXT, "
             + Events.DESCRIPTION + " TEXT, "
@@ -59,8 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SQL_DROP_TABLE_EVENTS = "DROP TABLE IF EXISTS " + Tables.EVENTS;
     private static final String SQL_CREATE_TABLE_ALARMS = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
             + " ("
-            + Alarms._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + Alarms.ALARM_ID + " INTEGER UNIQUE, "
+            + Alarms._ID + " INTEGER PRIMARY KEY, "
             + Alarms.SEVERITY + " TEXT, "
             + Alarms.DESCRIPTION + " TEXT, "
             + Alarms.FIRST_EVENT_TIME + " TEXT, "
