@@ -21,39 +21,40 @@ public class EventsParser extends Parser {
                     ContentValues values = new ContentValues();
                     Node currentNode = nodes.item(i);
 
-                    String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Events._ID, id);
+                    Node id = getXmlNodeForExpression("@id", currentNode);
+                    values.put(Contract.Events._ID, id.getNodeValue());
 
-                    String description = getXmlNodeForExpression("description", currentNode).getTextContent();
-                    if (description != null) values.put(Contract.Events.DESCRIPTION, description);
+                    Node description = getXmlNodeForExpression("description", currentNode);
+                    if (description != null) values.put(Contract.Events.DESCRIPTION, description.getTextContent());
 
-                    String logMessage = getXmlNodeForExpression("logMessage", currentNode).getTextContent();
-                    if (logMessage != null) values.put(Contract.Events.LOG_MESSAGE, logMessage);
+                    Node logMessage = getXmlNodeForExpression("logMessage", currentNode);
+                    if (logMessage != null) values.put(Contract.Events.LOG_MESSAGE, logMessage.getTextContent());
 
-                    String severity = getXmlNodeForExpression("@severity", currentNode).getNodeValue();
-                    if (severity != null) values.put(Contract.Events.SEVERITY, severity);
+                    Node severity = getXmlNodeForExpression("@severity", currentNode);
+                    if (severity != null) values.put(Contract.Events.SEVERITY, severity.getNodeValue());
 
-                    String host = getXmlNodeForExpression("host", currentNode).getTextContent();
-                    if (host != null) values.put(Contract.Events.HOST, host);
+                    Node host = getXmlNodeForExpression("host", currentNode);
+                    if (host != null) values.put(Contract.Events.HOST, host.getTextContent());
 
-                    String ipAddress = getXmlNodeForExpression("ipAddress", currentNode).getTextContent();
-                    if (ipAddress != null) values.put(Contract.Events.IP_ADDRESS, ipAddress);
+                    Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
+                    if (ipAddress != null) values.put(Contract.Events.IP_ADDRESS, ipAddress.getTextContent());
 
-                    String nodeId = getXmlNodeForExpression("nodeId", currentNode).getTextContent();
-                    if (nodeId != null) values.put(Contract.Events.NODE_ID, Integer.parseInt(nodeId));
+                    Node nodeId = getXmlNodeForExpression("nodeId", currentNode);
+                    if (nodeId != null) values.put(Contract.Events.NODE_ID, Integer.parseInt(nodeId.getTextContent()));
 
-                    String nodeLabel = getXmlNodeForExpression("nodeLabel", currentNode).getTextContent();
-                    if (nodeLabel != null) values.put(Contract.Events.NODE_LABEL, nodeLabel);
+                    Node nodeLabel = getXmlNodeForExpression("nodeLabel", currentNode);
+                    if (nodeLabel != null) values.put(Contract.Events.NODE_LABEL, nodeLabel.getTextContent());
 
-                    String createTime = getXmlNodeForExpression("createTime", currentNode).getTextContent();
-                    if (createTime != null) values.put(Contract.Events.CREATE_TIME, createTime);
+                    Node createTime = getXmlNodeForExpression("createTime", currentNode);
+                    if (createTime != null) values.put(Contract.Events.CREATE_TIME, createTime.getTextContent());
 
-                    String serviceTypeId = getXmlNodeForExpression("serviceType/@id", currentNode).getTextContent();
+                    Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", currentNode);
                     if (serviceTypeId != null)
-                        values.put(Contract.Events.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId));
+                        values.put(Contract.Events.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
 
-                    String serviceTypeName = getXmlNodeForExpression("serviceType/name", currentNode).getTextContent();
-                    if (serviceTypeName != null) values.put(Contract.Events.SERVICE_TYPE_NAME, serviceTypeName);
+                    Node serviceTypeName = getXmlNodeForExpression("serviceType/name", currentNode);
+                    if (serviceTypeName != null)
+                        values.put(Contract.Events.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
 
                     valuesArray.add(values);
                 }

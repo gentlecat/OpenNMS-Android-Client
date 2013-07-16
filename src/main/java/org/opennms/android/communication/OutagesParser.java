@@ -21,40 +21,43 @@ public class OutagesParser extends Parser {
                     ContentValues values = new ContentValues();
                     Node currentNode = nodes.item(i);
 
-                    String id = getXmlNodeForExpression("@id", currentNode).getNodeValue();
-                    values.put(Contract.Outages._ID, id);
+                    Node id = getXmlNodeForExpression("@id", currentNode);
+                    values.put(Contract.Outages._ID, id.getNodeValue());
 
-                    String ipAddress = getXmlNodeForExpression("ipAddress", currentNode).getTextContent();
-                    if (ipAddress != null) values.put(Contract.Outages.IP_ADDRESS, ipAddress);
+                    Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
+                    if (ipAddress != null) values.put(Contract.Outages.IP_ADDRESS, ipAddress.getTextContent());
 
-                    String serviceId = getXmlNodeForExpression("monitoredService/@id", currentNode).getTextContent();
-                    if (serviceId != null) values.put(Contract.Outages.SERVICE_ID, Integer.parseInt(serviceId));
+                    Node serviceId = getXmlNodeForExpression("monitoredService/@id", currentNode);
+                    if (serviceId != null)
+                        values.put(Contract.Outages.SERVICE_ID, Integer.parseInt(serviceId.getTextContent()));
 
-                    String ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", currentNode).getTextContent();
+                    Node ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", currentNode);
                     if (ipInterfaceId != null)
-                        values.put(Contract.Outages.IP_INTERFACE_ID, Integer.parseInt(ipInterfaceId));
+                        values.put(Contract.Outages.IP_INTERFACE_ID, Integer.parseInt(ipInterfaceId.getTextContent()));
 
-                    String serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", currentNode).getTextContent();
+                    Node serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", currentNode);
                     if (serviceTypeId != null)
-                        values.put(Contract.Outages.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId));
+                        values.put(Contract.Outages.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
 
-                    String serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", currentNode).getTextContent();
-                    if (serviceTypeName != null) values.put(Contract.Outages.SERVICE_TYPE_NAME, serviceTypeName);
+                    Node serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", currentNode);
+                    if (serviceTypeName != null)
+                        values.put(Contract.Outages.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
 
-                    String lostServiceTime = getXmlNodeForExpression("ifLostService", currentNode).getTextContent();
-                    if (lostServiceTime != null) values.put(Contract.Outages.SERVICE_LOST_TIME, lostServiceTime);
+                    Node lostServiceTime = getXmlNodeForExpression("ifLostService", currentNode);
+                    if (lostServiceTime != null)
+                        values.put(Contract.Outages.SERVICE_LOST_TIME, lostServiceTime.getTextContent());
 
-                    String serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", currentNode).getTextContent();
+                    Node serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", currentNode);
                     if (serviceLostEventId != null)
-                        values.put(Contract.Outages.SERVICE_LOST_EVENT_ID, Integer.parseInt(serviceLostEventId));
+                        values.put(Contract.Outages.SERVICE_LOST_EVENT_ID, Integer.parseInt(serviceLostEventId.getTextContent()));
 
-                    String regainedServiceTime = getXmlNodeForExpression("ifRegainedService", currentNode).getTextContent();
+                    Node regainedServiceTime = getXmlNodeForExpression("ifRegainedService", currentNode);
                     if (regainedServiceTime != null)
-                        values.put(Contract.Outages.SERVICE_REGAINED_TIME, regainedServiceTime);
+                        values.put(Contract.Outages.SERVICE_REGAINED_TIME, regainedServiceTime.getTextContent());
 
-                    String serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", currentNode).getTextContent();
+                    Node serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", currentNode);
                     if (serviceRegainedEventId != null)
-                        values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID, Integer.parseInt(serviceRegainedEventId));
+                        values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID, Integer.parseInt(serviceRegainedEventId.getTextContent()));
 
                     valuesArray.add(values);
                 }
