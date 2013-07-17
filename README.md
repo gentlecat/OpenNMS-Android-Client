@@ -12,9 +12,4 @@ If you want to deploy APK to all connected devices:
 *More information about using Maven during Android development is available at
 https://code.google.com/p/maven-android-plugin/wiki/GettingStarted.*
 
-Since tests might not work use:
-
-    mvn clean package android:deploy -Dmaven.test.skip=true
-
-
 ![](http://i.imgur.com/bWnpIQT.png)
