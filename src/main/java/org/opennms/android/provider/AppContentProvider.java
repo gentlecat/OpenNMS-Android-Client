@@ -16,6 +16,7 @@ public class AppContentProvider extends ContentProvider {
 
     private static final int NODES = 100;
     private static final int NODES_ID = 101;
+    private static final int NODES_NAME = 102;
     private static final int ALARMS = 200;
     private static final int ALARMS_ID = 201;
     private static final int EVENTS = 300;
@@ -32,6 +33,7 @@ public class AppContentProvider extends ContentProvider {
         // Nodes
         matcher.addURI(authority, Contract.PATH_NODES, NODES);
         matcher.addURI(authority, Contract.PATH_NODES + "/#", NODES_ID);
+        matcher.addURI(authority, Contract.PATH_NODES + "/" + Nodes.NAME + "/*", NODES_NAME);
 
         // Alarms
         matcher.addURI(authority, Contract.PATH_ALARMS, ALARMS);
@@ -93,6 +95,10 @@ public class AppContentProvider extends ContentProvider {
             case NODES_ID:
                 queryBuilder.setTables(Tables.NODES);
                 queryBuilder.appendWhere(Nodes._ID + "=" + uri.getLastPathSegment());
+                break;
+            case NODES_NAME:
+                queryBuilder.setTables(Tables.NODES);
+                queryBuilder.appendWhere(Nodes.NAME + " LIKE '%" + uri.getLastPathSegment() + "%'");
                 break;
             case ALARMS:
                 queryBuilder.setTables(Tables.ALARMS);

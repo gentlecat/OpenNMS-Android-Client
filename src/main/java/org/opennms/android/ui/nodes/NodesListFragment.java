@@ -162,12 +162,8 @@ public class NodesListFragment extends SherlockListFragment
     @Override
     public boolean onQueryTextChange(String newText) {
         String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        if (currentFilter == null && newFilter == null) {
-            return true;
-        }
-        if (currentFilter != null && currentFilter.equals(newFilter)) {
-            return true;
-        }
+        if (currentFilter == null && newFilter == null) return true;
+        if (currentFilter != null && currentFilter.equals(newFilter)) return true;
         currentFilter = newFilter;
         getActivity().getSupportLoaderManager().restartLoader(0, null, this);
         return true;
@@ -184,8 +180,7 @@ public class NodesListFragment extends SherlockListFragment
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
                     Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, Contract.Nodes.NAME),
-                    Uri.encode(this.currentFilter)
-            );
+                    Uri.encode(this.currentFilter));
         } else {
             baseUri = Contract.Nodes.CONTENT_URI;
         }
