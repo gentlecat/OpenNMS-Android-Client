@@ -15,7 +15,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
-import org.opennms.android.dao.Alarm;
 import org.opennms.android.provider.Contract;
 
 import java.text.ParseException;
@@ -23,8 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class AlarmDetailsFragment extends SherlockFragment {
+
     public static final String TAG = "AlarmDetailsFragment";
-    private Alarm alarm;
     private long alarmId;
 
     // Do not remove
@@ -49,7 +48,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        updateContent();
+        updateContent(alarmId);
     }
 
     @Override
@@ -70,52 +69,61 @@ public class AlarmDetailsFragment extends SherlockFragment {
         }
     }
 
-    public void updateContent() {
-        alarm = getAlarm(alarmId);
-
-        if (alarm != null) {
-            // Alarm ID
-            TextView id = (TextView) getActivity().findViewById(R.id.alarm_id);
-            id.setText(getString(R.string.alarm_details_id) + alarm.getId());
+    public void updateContent(long alarmId) {
+        Cursor cursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
+            // Alarm ID                    
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
+            TextView idView = (TextView) getActivity().findViewById(R.id.alarm_id);
+            idView.setText(getString(R.string.alarm_details_id) + id);
 
             // Severity
-            TextView severity = (TextView) getActivity().findViewById(R.id.alarm_severity);
-            severity.setText(String.valueOf(alarm.getSeverity()));
+            String severity = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
+            TextView severityView = (TextView) getActivity().findViewById(R.id.alarm_severity);
+            severityView.setText(String.valueOf(severity));
             LinearLayout severityRow = (LinearLayout) getActivity().findViewById(R.id.alarm_severity_row);
-            if (alarm.getSeverity().equals("CLEARED")) {
+            if (severity.equals("CLEARED")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
-            } else if (alarm.getSeverity().equals("MINOR")) {
+            } else if (severity.equals("MINOR")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
-            } else if (alarm.getSeverity().equals("NORMAL")) {
+            } else if (severity.equals("NORMAL")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_normal));
-            } else if (alarm.getSeverity().equals("INDETERMINATE")) {
+            } else if (severity.equals("INDETERMINATE")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
-            } else if (alarm.getSeverity().equals("WARNING")) {
+            } else if (severity.equals("WARNING")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_warning));
-            } else if (alarm.getSeverity().equals("MAJOR")) {
+            } else if (severity.equals("MAJOR")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_major));
-            } else if (alarm.getSeverity().equals("CRITICAL")) {
+            } else if (severity.equals("CRITICAL")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
             }
 
             // Description
-            TextView description = (TextView) getActivity().findViewById(R.id.alarm_description);
-            description.setText(Html.fromHtml(alarm.getDescription()));
+            String desc = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
+            TextView descView = (TextView) getActivity().findViewById(R.id.alarm_description);
+            descView.setText(Html.fromHtml(desc));
 
             // Log message
-            TextView message = (TextView) getActivity().findViewById(R.id.alarm_log_message);
-            message.setText(alarm.getLogMessage());
+            String logMessage = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
+            TextView logMessageView = (TextView) getActivity().findViewById(R.id.alarm_log_message);
+            logMessageView.setText(logMessage);
 
-            // Node
+            // Node         
+            int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
+            String nodeLabel = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL));
             TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
-            node.setText(alarm.getNodeLabel() + " (#" + alarm.getNodeId() + ")");
+            node.setText(nodeLabel + " (#" + nodeId + ")");
 
-            // Service type
+            // Service type               
+            int serviceTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID));
+            String serviceTypeName = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME));
             TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
-            serviceType.setText(alarm.getServiceTypeName() + " (#" + alarm.getServiceTypeId() + ")");
+            serviceType.setText(serviceTypeName + " (#" + serviceTypeId + ")");
 
             // Last event
-            String lastEventTimeString = alarm.getLastEventTime();
+            String lastEventTimeString = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
             // Example: "2011-09-27T12:15:32.363-04:00"
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             Date lastEventTime = new Date();
@@ -127,33 +135,11 @@ public class AlarmDetailsFragment extends SherlockFragment {
                 }
             }
             TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
-            lastEvent.setText("#" + alarm.getLastEventId() + " " + alarm.getLastEventSeverity() + "\n" + lastEventTime.toString());
-        }
-    }
-
-    private Alarm getAlarm(long id) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(id)),
-                null, null, null, null
-        );
-        if (cursor.moveToFirst()) {
-            Alarm alarm = new Alarm(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID)));
-            alarm.setSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY)));
-            alarm.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION)));
-            alarm.setLogMessage(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE)));
-            alarm.setFirstEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.FIRST_EVENT_TIME)));
-            alarm.setLastEventTime(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME)));
-            alarm.setLastEventId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID)));
-            alarm.setLastEventSeverity(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY)));
-            alarm.setNodeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID)));
-            alarm.setNodeLabel(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL)));
-            alarm.setServiceTypeId(cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID)));
-            alarm.setServiceTypeName(cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME)));
-            cursor.close();
-            return alarm;
+            int lastEventId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID));
+            String lastEventSeverity = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
+            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + lastEventTime.toString());
         }
         cursor.close();
-        return null;
     }
 
 }
