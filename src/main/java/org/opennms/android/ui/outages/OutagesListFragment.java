@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +12,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,21 +22,19 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.OutagesSyncService;
 
 public class OutagesListFragment extends SherlockListFragment
-        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_OUTAGE_ID = "outage";
     private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private MenuItem refreshItem;
-    private String currentFilter;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
 
@@ -132,12 +128,6 @@ public class OutagesListFragment extends SherlockListFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.list, menu);
-        MenuItem searchItem = menu.add("Search");
-        searchItem.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
-        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        SearchView search = new SearchView(getActivity());
-        search.setOnQueryTextListener(this);
-        searchItem.setActionView(search);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -160,40 +150,19 @@ public class OutagesListFragment extends SherlockListFragment
     }
 
     @Override
-    public boolean onQueryTextChange(String newText) {
-        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        if (currentFilter == null && newFilter == null) {
-            return true;
-        }
-        if (currentFilter != null && currentFilter.equals(newFilter)) {
-            return true;
-        }
-        currentFilter = newFilter;
-        getActivity().getSupportLoaderManager().restartLoader(0, null, this);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return true;
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        if (this.currentFilter != null) {
-            baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(Contract.Outages.CONTENT_URI, Contract.Outages._ID),
-                    Uri.encode(this.currentFilter)
-            );
-        } else {
-            baseUri = Contract.Outages.CONTENT_URI;
-        }
         String[] projection = {
                 Contract.Outages._ID,
                 Contract.Outages.SERVICE_TYPE_NAME
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Outages._ID + " DESC");
+        return new CursorLoader(
+                getActivity(),
+                Contract.Outages.CONTENT_URI,
+                projection,
+                null,
+                null,
+                Contract.Outages._ID + " DESC"
+        );
     }
 
     @Override

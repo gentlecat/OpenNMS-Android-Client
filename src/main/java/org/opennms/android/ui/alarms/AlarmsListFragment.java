@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,7 +11,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +21,19 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.SearchView;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.AlarmsSyncService;
 
 public class AlarmsListFragment extends SherlockListFragment
-        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_ALARM_ID = "alarm";
     private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private MenuItem refreshItem;
-    private String currentFilter;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
 
@@ -75,21 +71,19 @@ public class AlarmsListFragment extends SherlockListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri;
-        if (currentFilter != null) {
-            baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, Contract.Alarms.SEVERITY),
-                    Uri.encode(currentFilter)
-            );
-        } else {
-            baseUri = Contract.Alarms.CONTENT_URI;
-        }
         String[] projection = {
                 Contract.Alarms._ID,
                 Contract.Alarms.DESCRIPTION,
                 Contract.Alarms.SEVERITY
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Alarms._ID + " DESC");
+        return new CursorLoader(
+                getActivity(),
+                Contract.Alarms.CONTENT_URI,
+                projection,
+                null,
+                null,
+                Contract.Alarms._ID + " DESC"
+        );
     }
 
     @Override
@@ -155,12 +149,6 @@ public class AlarmsListFragment extends SherlockListFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.list, menu);
-        MenuItem searchItem = menu.add("Search");
-        searchItem.setIcon(getResources().getDrawable(R.drawable.ic_action_search));
-        searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        SearchView search = new SearchView(getActivity());
-        search.setOnQueryTextListener(this);
-        searchItem.setActionView(search);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -180,25 +168,6 @@ public class AlarmsListFragment extends SherlockListFragment
         startRefreshAnimation();
         Intent intent = new Intent(getActivity(), AlarmsSyncService.class);
         getActivity().startService(intent);
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        if (currentFilter == null && newFilter == null) {
-            return true;
-        }
-        if (currentFilter != null && currentFilter.equals(newFilter)) {
-            return true;
-        }
-        currentFilter = newFilter;
-        getActivity().getSupportLoaderManager().restartLoader(0, null, this);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return true;
     }
 
     private void startRefreshAnimation() {
