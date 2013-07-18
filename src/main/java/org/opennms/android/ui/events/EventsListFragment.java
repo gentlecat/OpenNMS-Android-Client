@@ -136,7 +136,7 @@ public class EventsListFragment extends SherlockListFragment
             detailsContainer.removeAllViews();
             EventDetailsFragment detailsFragment = new EventDetailsFragment(id);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
