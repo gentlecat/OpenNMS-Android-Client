@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -53,8 +54,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO: Uncomment when feature is implemented
-        //inflater.inflate(R.menu.alarm, menu);
+        if (menu.findItem(R.id.menu_acknowledge_alarm) == null) inflater.inflate(R.menu.alarm, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -62,11 +62,16 @@ public class AlarmDetailsFragment extends SherlockFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_acknowledge_alarm:
-                // TODO: Implement
+                acknowledge(alarmId);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void acknowledge(long alarmId) {
+        // TODO: Implement
+        Toast.makeText(getActivity(), "This function is not implemented yet!\nAlarm ID: " + alarmId, Toast.LENGTH_LONG).show();
     }
 
     public void updateContent(long alarmId) {
