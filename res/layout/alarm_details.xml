@@ -37,6 +37,23 @@
         </LinearLayout>
 
         <TextView
+        android:id="@+id/alarm_ack_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/details_layout_padding"
+        android:paddingRight="@dimen/details_layout_padding"
+        android:paddingTop="@dimen/details_section_padding_top"
+        android:textAllCaps="true"
+        android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/alarm_ack_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/details_layout_padding"
+            android:paddingRight="@dimen/details_layout_padding" />
+
+        <TextView
             android:id="@+id/alarm_log_message_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

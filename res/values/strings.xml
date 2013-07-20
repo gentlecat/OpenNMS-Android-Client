@@ -33,6 +33,9 @@
     <string name="alarms_list_empty">No alarms</string>
     <string name="alarm_details">Details about alarm #</string>
     <string name="alarm_details_id">Alarm #</string>
+    <string name="alarm_details_acked">Acknowledged</string>
+    <string name="alarm_details_not_acked">Not acknowledged</string>
+    <string name="alarm_details_acked_by">by</string>
     <string name="alarm_details_node">Node</string>
     <string name="alarm_details_service_type">Service type</string>
     <string name="alarm_details_last_event">Last event</string>

@@ -105,6 +105,18 @@ public class AlarmDetailsFragment extends SherlockFragment {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
             }
 
+            // Acknowledgement info
+            String ackTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+            String ackUser = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_USER));
+            TextView ackStatus = (TextView) getActivity().findViewById(R.id.alarm_ack_status);
+            if (ackTime != null) {
+                ackStatus.setText(getString(R.string.alarm_details_acked));
+                TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
+                ackMessage.setText(ackTime + " " + getString(R.string.alarm_details_acked_by) + " " + ackUser);
+            } else {
+                ackStatus.setText(getString(R.string.alarm_details_not_acked));
+            }
+
             // Description
             String desc = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
             TextView descView = (TextView) getActivity().findViewById(R.id.alarm_description);
