@@ -58,6 +58,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " ("
             + Alarms._ID + " INTEGER PRIMARY KEY, "
             + Alarms.SEVERITY + " TEXT, "
+            + Alarms.ACK_USER + " TEXT, "
+            + Alarms.ACK_TIME + " TEXT, "
             + Alarms.DESCRIPTION + " TEXT, "
             + Alarms.FIRST_EVENT_TIME + " TEXT, "
             + Alarms.LAST_EVENT_TIME + " TEXT, "

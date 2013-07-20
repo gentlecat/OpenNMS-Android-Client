@@ -36,6 +36,8 @@ public final class Contract {
         String SEVERITY = "severity";
         String DESCRIPTION = "description";
         String LOG_MESSAGE = "log_message";
+        String ACK_USER = "ack_user";
+        String ACK_TIME = "ack_time";
         // Event info
         String FIRST_EVENT_TIME = "first_event_time";
         String LAST_EVENT_TIME = "last_event_time";

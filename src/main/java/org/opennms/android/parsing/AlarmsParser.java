@@ -27,6 +27,12 @@ public class AlarmsParser extends Parser {
                     Node severity = getXmlNodeForExpression("@severity", currentNode);
                     if (severity != null) values.put(Contract.Alarms.SEVERITY, severity.getNodeValue());
 
+                    Node ackUser = getXmlNodeForExpression("ackUser", currentNode);
+                    if (ackUser != null) values.put(Contract.Alarms.ACK_USER, ackUser.getTextContent());
+
+                    Node ackTime = getXmlNodeForExpression("ackTime", currentNode);
+                    if (ackTime != null) values.put(Contract.Alarms.ACK_TIME, ackTime.getTextContent());
+
                     Node logMessage = getXmlNodeForExpression("logMessage", currentNode);
                     if (logMessage != null) values.put(Contract.Alarms.LOG_MESSAGE, logMessage.getTextContent());
 
