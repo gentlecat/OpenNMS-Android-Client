@@ -1,4 +1,4 @@
-package org.opennms.android.communication;
+package org.opennms.android.parsing;
 
 import android.content.ContentValues;
 import android.util.Log;

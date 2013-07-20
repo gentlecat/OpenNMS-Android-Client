@@ -6,8 +6,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.util.Log;
 import com.google.resting.component.impl.ServiceResponse;
-import org.opennms.android.communication.EventsParser;
 import org.opennms.android.communication.ServerCommunication;
+import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.provider.Contract;
 
 import java.util.ArrayList;

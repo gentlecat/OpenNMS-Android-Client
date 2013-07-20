@@ -13,8 +13,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.R;
-import org.opennms.android.communication.AlarmsParser;
 import org.opennms.android.communication.ServerCommunication;
+import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 

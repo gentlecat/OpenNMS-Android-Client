@@ -1,4 +1,4 @@
-package org.opennms.android.communication;
+package org.opennms.android.parsing;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
