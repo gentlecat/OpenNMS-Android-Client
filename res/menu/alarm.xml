@@ -3,6 +3,7 @@
     <item
         android:id="@+id/menu_acknowledge_alarm"
         android:icon="@drawable/ic_action_accept"
+        android:orderInCategory="1"
         android:showAsAction="always|withText"
-        android:title="@string/acknowledge" />
+        android:title="@string/acknowledge"/>
 </menu>
