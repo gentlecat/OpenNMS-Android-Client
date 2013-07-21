@@ -26,6 +26,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     public static final String TAG = "AlarmDetailsFragment";
     private long alarmId;
+    private Cursor cursor;
 
     // Do not remove
     public AlarmDetailsFragment() {
@@ -38,7 +39,16 @@ public class AlarmDetailsFragment extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                null, null, null, null);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onStop() {
+        cursor.close();
+        super.onStop();
     }
 
     @Override
@@ -49,12 +59,17 @@ public class AlarmDetailsFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        updateContent(alarmId);
+        updateContent();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (menu.findItem(R.id.menu_acknowledge_alarm) == null) inflater.inflate(R.menu.alarm, menu);
+        if (cursor.moveToFirst()) {
+            String ackTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+            if (ackTime == null) {
+                if (menu.findItem(R.id.menu_acknowledge_alarm) == null) inflater.inflate(R.menu.alarm, menu);
+            }
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -74,12 +89,9 @@ public class AlarmDetailsFragment extends SherlockFragment {
         Toast.makeText(getActivity(), "This function is not implemented yet!\nAlarm ID: " + alarmId, Toast.LENGTH_LONG).show();
     }
 
-    public void updateContent(long alarmId) {
-        Cursor cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                null, null, null, null);
+    public void updateContent() {
         if (cursor.moveToFirst()) {
-            // Alarm ID                    
+            // Alarm ID
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
             TextView idView = (TextView) getActivity().findViewById(R.id.alarm_id);
             idView.setText(getString(R.string.alarm_details_id) + id);
@@ -127,13 +139,13 @@ public class AlarmDetailsFragment extends SherlockFragment {
             TextView logMessageView = (TextView) getActivity().findViewById(R.id.alarm_log_message);
             logMessageView.setText(logMessage);
 
-            // Node         
+            // Node
             int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
             String nodeLabel = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL));
             TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
             node.setText(nodeLabel + " (#" + nodeId + ")");
 
-            // Service type               
+            // Service type
             int serviceTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID));
             String serviceTypeName = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME));
             TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
@@ -156,7 +168,6 @@ public class AlarmDetailsFragment extends SherlockFragment {
             String lastEventSeverity = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
             lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + lastEventTime.toString());
         }
-        cursor.close();
     }
 
 }
