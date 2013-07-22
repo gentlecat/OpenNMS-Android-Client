@@ -101,22 +101,22 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String refreshRate = sharedPref.getString("refresh_rate",
-                String.valueOf(getResources().getInteger(R.integer.default_refresh_rate)));
-        int refreshRateVal = Integer.parseInt(refreshRate);
-        String refreshRateSummary = refreshRate + " ";
+        String syncRate = sharedPref.getString("sync_rate",
+                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        int refreshRateVal = Integer.parseInt(syncRate);
+        String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {
-            refreshRateSummary += getString(R.string.settings_refresh_rate_minutes_singular);
+            syncRateSummary += getString(R.string.settings_sync_rate_minutes_singular);
         } else {
-            refreshRateSummary += getString(R.string.settings_refresh_rate_minutes_plural);
+            syncRateSummary += getString(R.string.settings_sync_rate_minutes_plural);
         }
-        findPreference("refresh_rate").setSummary(refreshRateSummary);
+        findPreference("sync_rate").setSummary(syncRateSummary);
     }
 
     void setNotificationPrefsEnabled(Boolean enabled) {
         findPreference("wifi_only").setEnabled(enabled);
         findPreference("minimal_severity").setEnabled(enabled);
-        findPreference("refresh_rate").setEnabled(enabled);
+        findPreference("sync_rate").setEnabled(enabled);
     }
 
 }

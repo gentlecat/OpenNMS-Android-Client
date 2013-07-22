@@ -28,8 +28,8 @@ public class Utils {
         Intent intent = new Intent(context, SyncAlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        int defaultRefreshRate = context.getResources().getInteger(R.integer.default_refresh_rate);
-        int refreshRate = Integer.parseInt(sharedPref.getString("refresh_rate", String.valueOf(defaultRefreshRate)));
+        int defaultRefreshRate = context.getResources().getInteger(R.integer.default_sync_rate_minutes);
+        int refreshRate = Integer.parseInt(sharedPref.getString("sync_rate", String.valueOf(defaultRefreshRate)));
 
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         am.setRepeating(

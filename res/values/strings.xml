@@ -83,12 +83,12 @@
     <string name="settings_notifications_enabled">Notifications enabled</string>
     <string name="settings_notifications_enabled_true">Alarm notifications enabled</string>
     <string name="settings_notifications_enabled_false">Alarm notifications disabled</string>
-    <string name="settings_wifi_only">Wi-Fi only</string>
+    <string name="settings_wifi_only">Wi-Fi only synchronization</string>
     <string name="settings_minimal_severity">Minimal severity</string>
-    <string name="settings_refresh_rate">Refresh rate</string>
-    <string name="settings_refresh_rate_dialog_title">Alarms refresh rate (minutes)</string>
-    <string name="settings_refresh_rate_minutes_singular">minute</string>
-    <string name="settings_refresh_rate_minutes_plural">minutes</string>
+    <string name="settings_sync_rate">Synchronization rate</string>
+    <string name="settings_sync_rate_dialog_title">Alarms synchronization rate (minutes)</string>
+    <string name="settings_sync_rate_minutes_singular">minute</string>
+    <string name="settings_sync_rate_minutes_plural">minutes</string>
 
     <!-- "Welcome" dialog -->
     <string name="welcome_message">Do you want to use demo server or change settings to use your server?</string>
