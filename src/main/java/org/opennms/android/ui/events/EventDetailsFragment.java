@@ -42,6 +42,8 @@ public class EventDetailsFragment extends SherlockFragment {
                 Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity().findViewById(R.id.event_details);
+
             // Event ID
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID));
             TextView idView = (TextView) getActivity().findViewById(R.id.event_id);
@@ -86,12 +88,24 @@ public class EventDetailsFragment extends SherlockFragment {
             // Host
             String host = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.HOST));
             TextView hostView = (TextView) getActivity().findViewById(R.id.event_host);
-            hostView.setText(host);
+            if (host != null) {
+                hostView.setText(host);
+            } else {
+                detailsLayout.removeView(hostView);
+                TextView title = (TextView) getActivity().findViewById(R.id.event_host_title);
+                detailsLayout.removeView(title);
+            }
 
             // IP address
             String ipAddress = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.IP_ADDRESS));
             TextView ipAddressView = (TextView) getActivity().findViewById(R.id.event_ip_address);
-            ipAddressView.setText(ipAddress);
+            if (ipAddress != null) {
+                ipAddressView.setText(ipAddress);
+            } else {
+                detailsLayout.removeView(ipAddressView);
+                TextView title = (TextView) getActivity().findViewById(R.id.event_ip_address_title);
+                detailsLayout.removeView(title);
+            }
 
             // Node
             int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID));
@@ -99,11 +113,17 @@ public class EventDetailsFragment extends SherlockFragment {
             TextView nodeView = (TextView) getActivity().findViewById(R.id.event_node);
             nodeView.setText(nodeLabel + " (#" + nodeId + ")");
 
-            // Service type                               
+            // Service type
             int serviceTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_ID));
             String serviceTypeName = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_NAME));
             TextView serviceTypeView = (TextView) getActivity().findViewById(R.id.event_service_type);
-            serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+            if (serviceTypeName != null) {
+                serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+            } else {
+                detailsLayout.removeView(serviceTypeView);
+                TextView title = (TextView) getActivity().findViewById(R.id.event_service_type_title);
+                detailsLayout.removeView(title);
+            }
         }
         cursor.close();
     }

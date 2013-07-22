@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
@@ -40,6 +41,8 @@ public class OutageDetailsFragment extends SherlockFragment {
                 Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity().findViewById(R.id.outage_details);
+
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages._ID));
             TextView idView = (TextView) getActivity().findViewById(R.id.outage_id);
             idView.setText(getString(R.string.outage_details_id) + id);
@@ -60,7 +63,13 @@ public class OutageDetailsFragment extends SherlockFragment {
             String serviceRegainedTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME));
             int serviceRegainedEventId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_EVENT_ID));
             TextView regainedServiceEvent = (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
-            regainedServiceEvent.setText(Utils.parseDate(serviceRegainedTime).toString() + "\n#" + serviceRegainedEventId);
+            if (serviceRegainedTime != null) {
+                regainedServiceEvent.setText(Utils.parseDate(serviceRegainedTime).toString() + "\n#" + serviceRegainedEventId);
+            } else {
+                detailsLayout.removeView(regainedServiceEvent);
+                TextView title = (TextView) getActivity().findViewById(R.id.outage_regained_service_event_title);
+                detailsLayout.removeView(title);
+            }
 
             int serviceId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_ID));
             TextView serviceIdView = (TextView) getActivity().findViewById(R.id.outage_service_id);

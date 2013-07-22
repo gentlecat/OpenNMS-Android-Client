@@ -108,6 +108,8 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     public void updateContent() {
         if (cursor.moveToFirst()) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity().findViewById(R.id.alarm_details);
+
             // Alarm ID
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
             TextView idView = (TextView) getActivity().findViewById(R.id.alarm_id);
@@ -166,7 +168,13 @@ public class AlarmDetailsFragment extends SherlockFragment {
             int serviceTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID));
             String serviceTypeName = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME));
             TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
-            serviceType.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+            if (serviceTypeName != null) {
+                serviceType.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+            } else {
+                detailsLayout.removeView(serviceType);
+                TextView title = (TextView) getActivity().findViewById(R.id.alarm_service_type_title);
+                detailsLayout.removeView(title);
+            }
 
             // Last event
             String lastEventTimeString = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
