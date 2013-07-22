@@ -3,47 +3,78 @@ package org.opennms.android.communication;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Base64;
-import com.google.resting.Resting;
-import com.google.resting.component.EncodingTypes;
-import com.google.resting.component.impl.ServiceResponse;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+import com.squareup.okhttp.OkAuthenticator;
+import com.squareup.okhttp.OkHttpClient;
 import org.opennms.android.R;
 
-import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URL;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-public class ServerCommunication implements Callable<ServiceResponse> {
-
-    private String url;
+public class ServerCommunication {
+    private static final String ENCODING = "UTF-8";
+    private SharedPreferences settings;
+    private OkHttpClient client;
     private Context appContext;
 
-    public ServerCommunication(Context appContext, String url) {
+    public ServerCommunication(Context appContext) {
+        client = new OkHttpClient();
         this.appContext = appContext;
-        this.url = url;
+        settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+
+        final String user = settings.getString("user", appContext.getResources().getString(R.string.default_user));
+        final String password = settings.getString("password", appContext.getResources().getString(R.string.default_password));
+        client.setAuthenticator(new OkAuthenticator() {
+            @Override
+            public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges) throws IOException {
+                return Credential.basic(user, password);
+            }
+
+            @Override
+            public Credential authenticateProxy(Proxy proxy, URL url, List<Challenge> challenges) throws IOException {
+                return Credential.basic(user, password);
+            }
+        });
     }
 
-    @Override
-    public ServiceResponse call() throws Exception {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+    public String get(String path) throws IOException {
+        HttpURLConnection connection = client.open(getURL(path));
+        InputStream in = null;
+        try {
+            // Read the response
+            in = connection.getInputStream();
+            byte[] response = readFully(in);
+            return new String(response, ENCODING);
+        } finally {
+            if (in != null) in.close();
+        }
+    }
 
-        String user = settings.getString("user", appContext.getResources().getString(R.string.default_user));
-        String password = settings.getString("password", appContext.getResources().getString(R.string.default_password));
-        String auth = new String(Base64.encode((user + ":" + password).getBytes(), Base64.URL_SAFE | Base64.NO_WRAP));
-        Header httpHeader = new BasicHeader("Authorization", "Basic " + auth);
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(httpHeader);
+    private byte[] readFully(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for (int count; (count = in.read(buffer)) != -1; ) {
+            out.write(buffer, 0, count);
+        }
+        return out.toByteArray();
+    }
 
-        Boolean https = settings.getBoolean("https", appContext.getResources().getBoolean(R.bool.default_https));
+    private int getPort() {
+        return Integer.parseInt(settings.getString("port", Integer.toString(appContext.getResources().getInteger(R.integer.default_port))));
+    }
+
+    private URL getURL(String path) throws MalformedURLException {
+        Boolean isHttps = settings.getBoolean("https", appContext.getResources().getBoolean(R.bool.default_https));
         String host = settings.getString("host", appContext.getResources().getString(R.string.default_host));
-        String path = settings.getString("path", appContext.getResources().getString(R.string.default_path));
-        int port = Integer.parseInt(settings.getString("port", Integer.toString(appContext.getResources().getInteger(R.integer.default_port))));
-
-        String base = String.format("http%s://%s%s/", (https ? "s" : ""), host, path);
-
-        return Resting.get(base + url, port, null, EncodingTypes.UTF8, headers);
+        String basePath = settings.getString("path", appContext.getResources().getString(R.string.default_path));
+        String base = String.format("http%s://%s:%d%s/", (isHttps ? "s" : ""), host, getPort(), basePath);
+        return new URL(base + path);
     }
+
 
 }

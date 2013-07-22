@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import com.google.resting.component.impl.ServiceResponse;
 import org.opennms.android.R;
 import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.parsing.AlarmsParser;
@@ -19,16 +18,11 @@ import org.opennms.android.provider.Contract;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class AlarmsSyncService extends IntentService {
 
     private static final String TAG = "AlarmsSyncService";
     private static final int ALARM_NOTIFICATION_ID = 1;
-    private static final int TIMEOUT_SEC = 25;
 
     public AlarmsSyncService() {
         super(TAG);
@@ -43,14 +37,10 @@ public class AlarmsSyncService extends IntentService {
         String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
         String[] severityValues = getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
-
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        Future<ServiceResponse> future = executorService.submit(
-                new ServerCommunication(getApplicationContext(), "alarms?orderBy=id&order=desc&limit=0"));
         try {
+            String result = new ServerCommunication(getApplicationContext()).get("alarms?orderBy=id&order=desc&limit=0");
+            ArrayList<ContentValues> values = AlarmsParser.parse(result);
             ContentResolver contentResolver = getContentResolver();
-            ServiceResponse response = future.get(TIMEOUT_SEC, TimeUnit.SECONDS);
-            ArrayList<ContentValues> values = AlarmsParser.parse(response.getContentData().getContentInString());
             contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
             contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
             for (ContentValues currentValues : values) {
