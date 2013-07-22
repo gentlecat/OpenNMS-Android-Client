@@ -4,10 +4,11 @@
     <!-- Server -->
     <string name="default_host">demo.opennms.org</string>
     <integer name="default_port">8980</integer>
-    <string name="default_path">/opennms/rest</string>
+    <bool name="default_https">false</bool>
+
+    <!-- Authentication -->
     <string name="default_user">demo</string>
     <string name="default_password">demo</string>
-    <bool name="default_https">false</bool>
 
     <!-- Notifications -->
     <bool name="default_notifications">false</bool>

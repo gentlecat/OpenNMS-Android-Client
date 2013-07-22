@@ -18,6 +18,7 @@ import java.util.List;
 
 public class ServerCommunication {
     private static final String ENCODING = "UTF-8";
+    private static final String BASE_PATH = "opennms/rest/";
     private SharedPreferences settings;
     private OkHttpClient client;
     private Context appContext;
@@ -71,8 +72,7 @@ public class ServerCommunication {
     private URL getURL(String path) throws MalformedURLException {
         Boolean isHttps = settings.getBoolean("https", appContext.getResources().getBoolean(R.bool.default_https));
         String host = settings.getString("host", appContext.getResources().getString(R.string.default_host));
-        String basePath = settings.getString("path", appContext.getResources().getString(R.string.default_path));
-        String base = String.format("http%s://%s:%d%s/", (isHttps ? "s" : ""), host, getPort(), basePath);
+        String base = String.format("http%s://%s:%d/" + BASE_PATH, (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);
     }
 

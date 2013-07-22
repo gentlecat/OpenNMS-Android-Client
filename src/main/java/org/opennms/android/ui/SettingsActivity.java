@@ -79,9 +79,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
         // Server
         findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(sharedPref.getString("port",
-                Integer.toString(getResources().getInteger(R.integer.default_port))));
-        findPreference("path").setSummary(sharedPref.getString("path", getResources().getString(R.string.default_path)));
+        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
             findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
         } else {

@@ -76,8 +76,6 @@
     <string name="settings_host_dialog_title">Set host</string>
     <string name="settings_port">Port</string>
     <string name="settings_port_dialog_title">Set port number</string>
-    <string name="settings_path">Path</string>
-    <string name="settings_path_dialog_title">Set path</string>
     <string name="settings_https">HTTPS</string>
     <string name="settings_https_on">Turned on</string>
     <string name="settings_https_off">Turned off</string>
