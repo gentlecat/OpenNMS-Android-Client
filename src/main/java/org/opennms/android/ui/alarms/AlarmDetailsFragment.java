@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
+import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.provider.Contract;
 
 import java.text.ParseException;
@@ -84,9 +85,24 @@ public class AlarmDetailsFragment extends SherlockFragment {
         }
     }
 
-    public void acknowledge(long alarmId) {
-        // TODO: Implement
-        Toast.makeText(getActivity(), "This function is not implemented yet!\nAlarm ID: " + alarmId, Toast.LENGTH_LONG).show();
+    public void acknowledge(final long alarmId) {
+        // TODO: Hide menu item
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new ServerCommunication(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getActivity(), "Alarm #" + alarmId + " has been acknowledged.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    // TODO: Refresh details view
+                } catch (Exception e) {
+                    Log.e(TAG, "Error occurred during acknowledgement process!", e);
+                }
+            }
+        }).start();
     }
 
     public void updateContent() {
