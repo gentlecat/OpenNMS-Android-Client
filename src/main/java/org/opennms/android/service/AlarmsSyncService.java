@@ -1,6 +1,5 @@
 package org.opennms.android.service;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,7 +18,7 @@ import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.util.ArrayList;
 
-public class AlarmsSyncService extends IntentService {
+public class AlarmsSyncService extends SyncService {
 
     private static final String TAG = "AlarmsSyncService";
     private static final int ALARM_NOTIFICATION_ID = 1;
@@ -29,38 +28,39 @@ public class AlarmsSyncService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Log.i(TAG, "Synchronizing alarms...");
+    protected void synchronize() {
+        String result;
+        try {
+            result = new ServerCommunication(getApplicationContext()).get("alarms?orderBy=id&order=desc&limit=0");
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred during synchronization process", e);
+            return;
+        }
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
         String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
         String[] severityValues = getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
-        try {
-            String result = new ServerCommunication(getApplicationContext()).get("alarms?orderBy=id&order=desc&limit=0");
-            ArrayList<ContentValues> values = AlarmsParser.parse(result);
-            ContentResolver contentResolver = getContentResolver();
-            contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
-            contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
-            for (ContentValues currentValues : values) {
-                int id = currentValues.getAsInteger(Contract.Alarms._ID);
-                if (id > latestShownAlarmId) {
-                    String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
-                    for (String curSeverityVal : severityValues) {
-                        if (curSeverityVal.equals(severity)) {
-                            newAlarmsCount++;
-                            break;
-                        }
-                        if (curSeverityVal.equals(minimalSeverity)) break;
+        ArrayList<ContentValues> values = AlarmsParser.parse(result);
+        ContentResolver contentResolver = getContentResolver();
+        contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
+        contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        for (ContentValues currentValues : values) {
+            int id = currentValues.getAsInteger(Contract.Alarms._ID);
+            if (id > latestShownAlarmId) {
+                String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
+                for (String curSeverityVal : severityValues) {
+                    if (curSeverityVal.equals(severity)) {
+                        newAlarmsCount++;
+                        break;
                     }
+                    if (curSeverityVal.equals(minimalSeverity)) break;
                 }
-                if (id > maxId) maxId = id;
             }
-            Log.i(TAG, "Done!");
-        } catch (Exception e) {
-            Log.e(TAG, "Error occurred during synchronization process", e);
+            if (id > maxId) maxId = id;
         }
+        Log.i(TAG, "Done!");
 
         if (latestShownAlarmId != maxId) sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
         boolean notificationsOn = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
