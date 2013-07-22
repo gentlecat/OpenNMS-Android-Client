@@ -3,18 +3,14 @@ package org.opennms.android.ui.nodes;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class NodeDetailsFragment extends SherlockFragment {
     private static final String TAG = "NodeDetailsFragment";
@@ -56,18 +52,9 @@ public class NodeDetailsFragment extends SherlockFragment {
             TextView sysContactView = (TextView) getActivity().findViewById(R.id.node_contact);
             sysContactView.setText(sysContact);
 
-            TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
-            // Example: "2011-09-27T12:15:32.363-04:00"
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String createdTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.CREATED_TIME));
-            if (createdTime != null) {
-                try {
-                    Date createTime = format.parse(createdTime);
-                    timeView.setText(createTime.toString());
-                } catch (ParseException e) {
-                    Log.e(TAG, "Creation time parsing error");
-                }
-            }
+            TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
+            timeView.setText(Utils.parseDate(createdTime).toString());
 
             String labelSource = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL_SOURCE));
             TextView labelSourceView = (TextView) getActivity().findViewById(R.id.node_label_source);

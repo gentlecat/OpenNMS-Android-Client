@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class EventDetailsFragment extends SherlockFragment {
     private static final String TAG = "EventDetailsFragment";
@@ -73,18 +69,9 @@ public class EventDetailsFragment extends SherlockFragment {
             }
 
             // Creation time
-            TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
-            // Example: "2011-09-27T12:15:32.363-04:00"
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             String createTimeString = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
-            if (createTimeString != null) {
-                try {
-                    Date createTime = format.parse(createTimeString);
-                    timeTextView.setText(createTime.toString());
-                } catch (ParseException e) {
-                    Log.e(TAG, "Creation time parsing error");
-                }
-            }
+            TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
+            timeTextView.setText(Utils.parseDate(createTimeString).toString());
 
             // Log message
             String logMessage = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));

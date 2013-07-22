@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.provider.Contract;
 
@@ -140,7 +141,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
             if (ackTime != null) {
                 ackStatus.setText(getString(R.string.alarm_details_acked));
                 TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
-                ackMessage.setText(ackTime + " " + getString(R.string.alarm_details_acked_by) + " " + ackUser);
+                ackMessage.setText(Utils.parseDate(ackTime).toString() + " " + getString(R.string.alarm_details_acked_by) + " " + ackUser);
             } else {
                 ackStatus.setText(getString(R.string.alarm_details_not_acked));
             }
@@ -169,20 +170,10 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
             // Last event
             String lastEventTimeString = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
-            // Example: "2011-09-27T12:15:32.363-04:00"
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            Date lastEventTime = new Date();
-            if (lastEventTimeString != null) {
-                try {
-                    lastEventTime = format.parse(lastEventTimeString);
-                } catch (ParseException e) {
-                    Log.e(TAG, "Creation time parsing error");
-                }
-            }
-            TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
             int lastEventId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID));
             String lastEventSeverity = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
-            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + lastEventTime.toString());
+            TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
+            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + Utils.parseDate(lastEventTimeString).toString());
         }
     }
 

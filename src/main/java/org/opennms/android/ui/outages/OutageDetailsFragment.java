@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 
 public class OutageDetailsFragment extends SherlockFragment {
@@ -54,12 +55,12 @@ public class OutageDetailsFragment extends SherlockFragment {
             String serviceLostTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_TIME));
             int serviceLostEventId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID));
             TextView lostServiceEvent = (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
-            lostServiceEvent.setText(serviceLostTime + "\n#" + serviceLostEventId);
+            lostServiceEvent.setText(Utils.parseDate(serviceLostTime).toString() + "\n#" + serviceLostEventId);
 
             String serviceRegainedTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME));
             int serviceRegainedEventId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_EVENT_ID));
             TextView regainedServiceEvent = (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
-            regainedServiceEvent.setText(serviceRegainedTime + "\n#" + serviceRegainedEventId);
+            regainedServiceEvent.setText(Utils.parseDate(serviceRegainedTime).toString() + "\n#" + serviceRegainedEventId);
 
             int serviceId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_ID));
             TextView serviceIdView = (TextView) getActivity().findViewById(R.id.outage_service_id);
