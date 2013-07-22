@@ -19,6 +19,8 @@ import java.util.List;
 public class ServerCommunication {
     private static final String ENCODING = "UTF-8";
     private static final String BASE_PATH = "opennms/rest/";
+    private static final int READ_TIMEOUT_MS = 10000;
+    private static final int CONNECT_TIMEOUT_MS = 15000;
     private SharedPreferences settings;
     private OkHttpClient client;
     private Context appContext;
@@ -45,9 +47,11 @@ public class ServerCommunication {
 
     public String get(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
+        connection.setRequestMethod("GET");
+        connection.setReadTimeout(READ_TIMEOUT_MS);
+        connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         InputStream in = null;
         try {
-            connection.setRequestMethod("GET");
             in = connection.getInputStream();
             byte[] response = readFully(in);
             return new String(response, ENCODING);
@@ -58,9 +62,11 @@ public class ServerCommunication {
 
     public String put(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
+        connection.setRequestMethod("PUT");
+        connection.setReadTimeout(READ_TIMEOUT_MS);
+        connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         InputStream in = null;
         try {
-            connection.setRequestMethod("PUT");
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new IOException("Unexpected HTTP response: "
                         + connection.getResponseCode() + " " + connection.getResponseMessage());
