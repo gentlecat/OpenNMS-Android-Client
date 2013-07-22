@@ -47,7 +47,24 @@ public class ServerCommunication {
         HttpURLConnection connection = client.open(getURL(path));
         InputStream in = null;
         try {
-            // Read the response
+            connection.setRequestMethod("GET");
+            in = connection.getInputStream();
+            byte[] response = readFully(in);
+            return new String(response, ENCODING);
+        } finally {
+            if (in != null) in.close();
+        }
+    }
+
+    public String put(String path) throws IOException {
+        HttpURLConnection connection = client.open(getURL(path));
+        InputStream in = null;
+        try {
+            connection.setRequestMethod("PUT");
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new IOException("Unexpected HTTP response: "
+                        + connection.getResponseCode() + " " + connection.getResponseMessage());
+            }
             in = connection.getInputStream();
             byte[] response = readFully(in);
             return new String(response, ENCODING);
