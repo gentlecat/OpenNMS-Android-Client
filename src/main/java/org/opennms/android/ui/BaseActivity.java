@@ -54,7 +54,7 @@ public abstract class BaseActivity extends SherlockFragmentActivity {
         navigationToggle = new ActionBarDrawerToggle(
                 this,
                 navigationLayout,
-                R.drawable.ic_drawer,
+                R.drawable.ic_navigation_drawer,
                 R.string.drawer_open,
                 R.string.drawer_close
         ) {
