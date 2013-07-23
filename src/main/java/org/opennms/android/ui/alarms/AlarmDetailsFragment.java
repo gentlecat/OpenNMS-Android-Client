@@ -20,10 +20,6 @@ import org.opennms.android.Utils;
 import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.provider.Contract;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class AlarmDetailsFragment extends SherlockFragment {
 
     public static final String TAG = "AlarmDetailsFragment";
@@ -87,23 +83,28 @@ public class AlarmDetailsFragment extends SherlockFragment {
     }
 
     public void acknowledge(final long alarmId) {
-        // TODO: Hide menu item
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new ServerCommunication(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getActivity(), "Alarm #" + alarmId + " has been acknowledged.", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    // TODO: Refresh details view
-                } catch (Exception e) {
-                    Log.e(TAG, "Error occurred during acknowledgement process!", e);
+        if (Utils.isOnline(getActivity())) {
+            // TODO: Hide menu item
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        new ServerCommunication(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(getActivity(), "Alarm #" + alarmId + " has been acknowledged.", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        // TODO: Refresh details view
+                    } catch (Exception e) {
+                        // TODO: Show error message and show menu item
+                        Log.e(TAG, "Error occurred during acknowledgement process!", e);
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        } else {
+            Toast.makeText(getActivity(), "Cannot acknowledge. Device is offline.", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void updateContent() {

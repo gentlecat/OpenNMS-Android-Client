@@ -1,11 +1,9 @@
 package org.opennms.android.service;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
+import org.opennms.android.Utils;
 
 public abstract class SyncService extends IntentService {
 
@@ -19,7 +17,7 @@ public abstract class SyncService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.i(tag, "Synchronizing...");
-        if (isConnected()) {
+        if (Utils.isOnline(getApplicationContext())) {
             synchronize();
         } else {
             Log.w(tag, "No network connection");
@@ -27,11 +25,5 @@ public abstract class SyncService extends IntentService {
     }
 
     protected abstract void synchronize();
-
-    private boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
-    }
 
 }
