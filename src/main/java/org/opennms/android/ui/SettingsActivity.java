@@ -85,6 +85,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
         } else {
             findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
         }
+        findPreference("rest_url").setSummary(sharedPref.getString("rest_url", getResources().getString(R.string.default_rest_url)));
 
         // Notifications
         boolean notificationsOn = sharedPref.getBoolean("notifications_on",

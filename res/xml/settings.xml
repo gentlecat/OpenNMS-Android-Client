@@ -18,6 +18,12 @@
             android:defaultValue="@bool/default_https"
             android:key="https"
             android:title="@string/settings_https" />
+        <EditTextPreference
+            android:defaultValue="@string/default_rest_url"
+            android:dialogTitle="@string/settings_rest_url_title"
+            android:inputType="textUri"
+            android:key="rest_url"
+            android:title="@string/settings_rest_url" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_auth">

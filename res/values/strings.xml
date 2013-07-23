@@ -74,6 +74,8 @@
     <string name="settings_server">Server</string>
     <string name="settings_host">Host</string>
     <string name="settings_host_dialog_title">Set host</string>
+    <string name="settings_rest_url">REST URL</string>
+    <string name="settings_rest_url_title">Set REST URL</string>
     <string name="settings_port">Port</string>
     <string name="settings_port_dialog_title">Set port number</string>
     <string name="settings_https">HTTPS</string>

@@ -95,7 +95,8 @@ public class ServerCommunication {
     private URL getURL(String path) throws MalformedURLException {
         Boolean isHttps = settings.getBoolean("https", appContext.getResources().getBoolean(R.bool.default_https));
         String host = settings.getString("host", appContext.getResources().getString(R.string.default_host));
-        String base = String.format("http%s://%s:%d/" + BASE_PATH, (isHttps ? "s" : ""), host, getPort());
+        String restUrl = settings.getString("rest_url", appContext.getResources().getString(R.string.default_rest_url));
+        String base = String.format("http%s://%s:%d/" + restUrl, (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);
     }
 
