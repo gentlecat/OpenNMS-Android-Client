@@ -110,10 +110,11 @@
     <string name="search">Search</string>
 
     <string name="about">About</string>
-    <string name="about_info">
+    <string name="about_info"><![CDATA[
         OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
-        OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
-    </string>
+        <br/>OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
+        <br/><br/><a href="http://www.opennms.org/">http://www.opennms.org/</a>
+    ]]></string>
     <string name="version">Version:</string>
     <string name="unknown">Unknown</string>
 
