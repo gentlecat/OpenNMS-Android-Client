@@ -106,6 +106,7 @@
     <string name="drawer_close">Close navigation</string>
 
     <string name="refresh">Refresh</string>
+    <string name="refresh_failed_offline">Cannot refresh. Device is offline.</string>
     <string name="no_items">No items</string>
     <string name="no_details">Select item from the list\n to view details.</string>
 
