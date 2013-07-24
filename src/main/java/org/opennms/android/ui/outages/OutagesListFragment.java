@@ -24,6 +24,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.service.OutagesSyncService;
 
@@ -144,9 +145,13 @@ public class OutagesListFragment extends SherlockListFragment
     }
 
     private void refreshList() {
-        startRefreshAnimation();
-        Intent intent = new Intent(getActivity(), OutagesSyncService.class);
-        getActivity().startService(intent);
+        if (Utils.isOnline(getActivity())) {
+            startRefreshAnimation();
+            Intent intent = new Intent(getActivity(), OutagesSyncService.class);
+            getActivity().startService(intent);
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.refresh_failed_offline), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
