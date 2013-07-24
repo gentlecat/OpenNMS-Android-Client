@@ -25,6 +25,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
     public static final String TAG = "AlarmDetailsFragment";
     private long alarmId;
     private Cursor cursor;
+    private Menu menu;
 
     // Do not remove
     public AlarmDetailsFragment() {
@@ -62,6 +63,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.menu = menu;
         if (cursor.moveToFirst()) {
             String ackTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
             if (ackTime == null) {
@@ -84,7 +86,9 @@ public class AlarmDetailsFragment extends SherlockFragment {
 
     public void acknowledge(final long alarmId) {
         if (Utils.isOnline(getActivity())) {
-            // TODO: Hide menu item
+            final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+            if (ackMenuItem != null) ackMenuItem.setVisible(false);
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -95,9 +99,10 @@ public class AlarmDetailsFragment extends SherlockFragment {
                                 Toast.makeText(getActivity(), "Alarm #" + alarmId + " has been acknowledged.", Toast.LENGTH_LONG).show();
                             }
                         });
-                        // TODO: Refresh details view
+                        // TODO: Update info in DB and refresh details view
                     } catch (Exception e) {
-                        // TODO: Show error message and show menu item
+                        // TODO: Show error message
+                        if (ackMenuItem != null) ackMenuItem.setVisible(false);
                         Log.e(TAG, "Error occurred during acknowledgement process!", e);
                     }
                 }
