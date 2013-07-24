@@ -96,7 +96,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
                         new ServerCommunication(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(getActivity(), "Alarm #" + alarmId + " has been acknowledged.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), String.format(getString(R.string.alarm_ack_success), alarmId), Toast.LENGTH_LONG).show();
                             }
                         });
                         // TODO: Update info in DB and refresh details view
@@ -108,7 +108,7 @@ public class AlarmDetailsFragment extends SherlockFragment {
                 }
             }).start();
         } else {
-            Toast.makeText(getActivity(), "Cannot acknowledge. Device is offline.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline), Toast.LENGTH_LONG).show();
         }
     }
 
