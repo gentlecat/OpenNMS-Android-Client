@@ -68,35 +68,23 @@ public class AlarmsSyncService extends SyncService {
     }
 
     private void issueNewAlarmsNotification(int newAlarmsCount) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        // Constructs the Builder object.
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_notification)
-                .setContentTitle(getString(R.string.alarms_notification_title))
+                .setContentTitle(getString(R.string.new_alarms_notif_title))
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
 
-        if (newAlarmsCount == 1) builder.setContentText(getString(R.string.alarms_notification_text_singular));
-        else builder.setContentText(String.format(getString(R.string.alarms_notification_text_plural), newAlarmsCount));
+        if (newAlarmsCount == 1) builder.setContentText(getString(R.string.new_alarms_notif_text_singular));
+        else builder.setContentText(String.format(getString(R.string.new_alarms_notif_text_plural), newAlarmsCount));
 
-        // Clicking the notification itself displays MainActivity.
+        // Clicking the notification itself displays AlarmsActivity
         Intent resultIntent = new Intent(this, AlarmsActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        /*
-         * Because clicking the notification opens a new ("special") activity,
-         * there's no need to create an artificial back stack.
-         */
         PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
+                PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
 
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build());
     }
 

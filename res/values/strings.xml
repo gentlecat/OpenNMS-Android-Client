@@ -97,10 +97,13 @@
     <string name="welcome_message_pos_button">Change settings</string>
     <string name="welcome_message_neg_button">Use demo server</string>
 
-    <!-- Notification -->
-    <string name="alarms_notification_title">New alarms</string>
-    <string name="alarms_notification_text_singular">There is a new alarm!</string>
-    <string name="alarms_notification_text_plural">There are %d new alarms!</string>
+    <!-- Notifications -->
+    <string name="new_alarms_notif_title">New alarms</string>
+    <string name="new_alarms_notif_text_singular">There is a new alarm!</string>
+    <string name="new_alarms_notif_text_plural">There are %d new alarms!</string>
+    <string name="sync_failed_notif_title">Alarms sync failed</string>
+    <string name="sync_failed_notif_text">Device is not connected to network.</string>
+    <string name="sync_failed_notif_text_wifi">Device is not connected to Wi-Fi.</string>
 
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
