@@ -18,9 +18,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
@@ -34,7 +37,6 @@ public class AlarmsListFragment extends ListFragment
     private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
-    private MenuItem refreshItem;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
 
@@ -89,7 +91,6 @@ public class AlarmsListFragment extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        stopRefreshAnimation();
         adapter.swapCursor(cursor);
     }
 
@@ -112,12 +113,6 @@ public class AlarmsListFragment extends ListFragment
                 detailsContainer.addView(emptyView);
             }
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopRefreshAnimation();
     }
 
     @Override
@@ -157,7 +152,6 @@ public class AlarmsListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                refreshItem = item;
                 refreshList();
                 return true;
             default:
@@ -167,27 +161,10 @@ public class AlarmsListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            startRefreshAnimation();
             Intent intent = new Intent(getActivity(), AlarmsSyncService.class);
             getActivity().startService(intent);
         } else {
             Toast.makeText(getActivity(), getString(R.string.refresh_failed_offline), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void startRefreshAnimation() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
-        rotation.setRepeatCount(Animation.INFINITE);
-        iv.startAnimation(rotation);
-        refreshItem.setActionView(iv);
-    }
-
-    private void stopRefreshAnimation() {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
         }
     }
 

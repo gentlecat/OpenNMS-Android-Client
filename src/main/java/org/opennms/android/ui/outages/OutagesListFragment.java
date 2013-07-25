@@ -19,9 +19,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
@@ -35,7 +38,6 @@ public class OutagesListFragment extends ListFragment
     private static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
-    private MenuItem refreshItem;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
 
@@ -94,12 +96,6 @@ public class OutagesListFragment extends ListFragment
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        stopRefreshAnimation();
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         showDetails(position);
     }
@@ -136,7 +132,6 @@ public class OutagesListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                refreshItem = item;
                 refreshList();
                 return true;
             default:
@@ -146,7 +141,6 @@ public class OutagesListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            startRefreshAnimation();
             Intent intent = new Intent(getActivity(), OutagesSyncService.class);
             getActivity().startService(intent);
         } else {
@@ -172,29 +166,12 @@ public class OutagesListFragment extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        stopRefreshAnimation();
         adapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
-    }
-
-    private void startRefreshAnimation() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView iv = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
-        rotation.setRepeatCount(Animation.INFINITE);
-        iv.startAnimation(rotation);
-        refreshItem.setActionView(iv);
-    }
-
-    private void stopRefreshAnimation() {
-        if (refreshItem != null && refreshItem.getActionView() != null) {
-            refreshItem.getActionView().clearAnimation();
-            refreshItem.setActionView(null);
-        }
     }
 
 }
