@@ -6,6 +6,8 @@
 *.class
 
 # Generated files
+.gradle
+/build
 bin/
 gen/
 gen-external-apklibs/

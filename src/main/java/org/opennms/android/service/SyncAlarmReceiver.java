@@ -50,6 +50,7 @@ public class SyncAlarmReceiver extends BroadcastReceiver {
     }
 
     private void issueNotification(Context context, String title, String text) {
+        // TODO: Notify only once
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_stat_notification)
                 .setContentTitle(title)

@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="18" />
 
     <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +20,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/opennms_logo"
-        android:theme="@style/Theme.OpenNMS">
+        android:theme="@style/Theme.AppCompat.Light">
 
         <activity android:name=".ui.nodes.NodesActivity">
             <intent-filter>

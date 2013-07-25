@@ -3,18 +3,18 @@ package org.opennms.android.ui.events;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 
-public class EventDetailsFragment extends SherlockFragment {
+public class EventDetailsFragment extends Fragment {
     private static final String TAG = "EventDetailsFragment";
     private long eventId;
 

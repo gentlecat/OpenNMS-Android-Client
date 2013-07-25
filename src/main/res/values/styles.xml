@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.OpenNMS" parent="@style/Theme.Sherlock.Light">
-        <!-- -->
-    </style>
-
-
-    <!-- Notifications -->
-
     <style name="NotificationText">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>

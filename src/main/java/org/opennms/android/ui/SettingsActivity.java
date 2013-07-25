@@ -5,24 +5,25 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 
-public class SettingsActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
     SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(getResources().getString(R.string.settings));
-        actionBar.setDisplayHomeAsUpEnabled(true);
+      //  ActionBar actionBar = getSupportActionBar();
+      //  actionBar.setTitle(getResources().getString(R.string.settings));
+      //  actionBar.setDisplayHomeAsUpEnabled(true);
         addPreferencesFromResource(R.xml.settings);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     }
@@ -42,7 +43,7 @@ public class SettingsActivity extends SherlockPreferenceActivity implements OnSh
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.settings, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

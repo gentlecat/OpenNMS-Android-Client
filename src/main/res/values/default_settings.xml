@@ -2,14 +2,14 @@
 <resources>
 
     <!-- Server -->
-    <string name="default_host">demo.opennms.org</string>
+    <string name="default_host">192.168.1.200</string>
     <integer name="default_port">8980</integer>
     <bool name="default_https">false</bool>
     <string name="default_rest_url">opennms/rest/</string>
 
     <!-- Authentication -->
-    <string name="default_user">demo</string>
-    <string name="default_password">demo</string>
+    <string name="default_user">admin</string>
+    <string name="default_password">admin</string>
 
     <!-- Notifications -->
     <bool name="default_notifications">false</bool>

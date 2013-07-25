@@ -15,7 +15,8 @@ import android.widget.TextView;
 import org.opennms.android.R;
 
 public class AboutDialog extends DialogFragment {
-    public static final String TAG = "about";
+
+    public static final String TAG = "AboutDialog";
 
     public AboutDialog() {
     }

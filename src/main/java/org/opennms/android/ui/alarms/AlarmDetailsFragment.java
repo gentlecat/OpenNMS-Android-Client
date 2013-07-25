@@ -3,24 +3,24 @@ package org.opennms.android.ui.alarms;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.communication.ServerCommunication;
 import org.opennms.android.provider.Contract;
 
-public class AlarmDetailsFragment extends SherlockFragment {
+public class AlarmDetailsFragment extends Fragment {
 
     public static final String TAG = "AlarmDetailsFragment";
     private long alarmId;

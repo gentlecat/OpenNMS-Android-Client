@@ -18,7 +18,6 @@ import java.util.List;
 
 public class ServerCommunication {
     private static final String ENCODING = "UTF-8";
-    private static final String BASE_PATH = "opennms/rest/";
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
     private SharedPreferences settings;

@@ -1,12 +1,13 @@
 package org.opennms.android.ui;
 
 import android.os.Bundle;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
+
 import org.opennms.android.R;
 
-public abstract class DetailsActivity extends SherlockFragmentActivity {
+public abstract class DetailsActivity extends ActionBarActivity {
     protected ActionBar actionBar;
 
     @Override

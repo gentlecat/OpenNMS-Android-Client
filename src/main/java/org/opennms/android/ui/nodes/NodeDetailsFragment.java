@@ -3,17 +3,17 @@ package org.opennms.android.ui.nodes;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 
-public class NodeDetailsFragment extends SherlockFragment {
+public class NodeDetailsFragment extends Fragment {
     private static final String TAG = "NodeDetailsFragment";
     private long nodeId;
 
