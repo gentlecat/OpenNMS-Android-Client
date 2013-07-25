@@ -23,7 +23,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,6 +48,7 @@ public class NodesListFragment extends ListFragment
     private String currentFilter;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
+    private MenuItem refreshItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +145,7 @@ public class NodesListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
+                refreshItem = item;
                 refreshList();
                 return true;
             default:
@@ -152,6 +157,7 @@ public class NodesListFragment extends ListFragment
         if (Utils.isOnline(getActivity())) {
             Intent intent = new Intent(getActivity(), NodesSyncService.class);
             getActivity().startService(intent);
+            startRefreshAnimation();
         } else {
             Toast.makeText(getActivity(), getString(R.string.refresh_failed_offline), Toast.LENGTH_LONG).show();
         }
@@ -192,11 +198,31 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
+        stopRefreshAnimation();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
+    }
+
+    private void startRefreshAnimation() {
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView icon = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
+        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
+        rotation.setRepeatCount(Animation.INFINITE);
+        icon.startAnimation(rotation);
+        MenuItemCompat.setActionView(refreshItem, icon);
+    }
+
+    private void stopRefreshAnimation() {
+        if (refreshItem != null) {
+            View actionView = MenuItemCompat.getActionView(refreshItem);
+            if (actionView != null) {
+                actionView.clearAnimation();
+                MenuItemCompat.setActionView(refreshItem, null);
+            }
+        }
     }
 
 }
