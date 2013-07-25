@@ -7,7 +7,7 @@
     <!-- Nodes -->
     <string name="nodes">Nodes</string>
     <string name="nodes_list_empty">No nodes</string>
-    <string name="node_details">Details about node #</string>
+    <string name="node_details">Node #</string>
     <string name="node_details_id">ID</string>
     <string name="node_details_contact">System contact</string>
     <string name="node_details_creation_time">Creation time</string>
@@ -19,7 +19,7 @@
     <!-- Outages -->
     <string name="outages">Outages</string>
     <string name="outages_list_empty">No outages</string>
-    <string name="outage_details">Details about outage #</string>
+    <string name="outage_details">Outage #</string>
     <string name="outage_details_id">Outage #</string>
     <string name="outage_details_service_id">Service ID</string>
     <string name="outage_details_service_type">Service type</string>
@@ -31,7 +31,7 @@
     <!-- Alarms -->
     <string name="alarms">Alarms</string>
     <string name="alarms_list_empty">No alarms</string>
-    <string name="alarm_details">Details about alarm #</string>
+    <string name="alarm_details">Alarm #</string>
     <string name="alarm_details_id">Alarm #</string>
     <string name="alarm_details_acked">Acknowledged</string>
     <string name="alarm_details_not_acked">Not acknowledged</string>
@@ -55,7 +55,7 @@
     <!-- Events -->
     <string name="events">Events</string>
     <string name="events_list_empty">No events</string>
-    <string name="event_details">Details about event #</string>
+    <string name="event_details">Event #</string>
     <string name="event_details_id">Event #</string>
     <string name="event_details_service_type">Service type</string>
     <string name="event_details_node">Node</string>
