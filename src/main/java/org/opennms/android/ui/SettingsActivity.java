@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,11 +20,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  ActionBar actionBar = getSupportActionBar();
-      //  actionBar.setTitle(getResources().getString(R.string.settings));
-      //  actionBar.setDisplayHomeAsUpEnabled(true);
         addPreferencesFromResource(R.xml.settings);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        setTitle(R.string.settings);
     }
 
     @Override
@@ -51,7 +48,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_save_settings:
-            case android.R.id.home:
                 finish();
                 return true;
             default:
