@@ -16,12 +16,12 @@ dependencies {
     compile "com.android.support:support-v4:18.0.+"
     compile "com.android.support:appcompat-v7:18.0.+"
 
-    compile "com.squareup.okhttp:okhttp:1.1.1"
+    compile "com.squareup.okhttp:okhttp:1.1.+"
 }
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "17.0"
+    buildToolsVersion "18.0"
 
     defaultConfig {
         minSdkVersion 8
