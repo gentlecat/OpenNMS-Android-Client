@@ -12,7 +12,7 @@ public final class Contract {
     public static final String PATH_EVENTS = Tables.EVENTS;
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://org.opennms.android.provider.AppContentProvider");
 
-    public Contract() {
+    private Contract() {
     }
 
     public static interface Tables {
