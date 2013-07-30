@@ -303,7 +303,7 @@ public class AppContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = db.delete(Tables.EVENTS, BaseColumns._ID + "=" + eventId, null);
                 } else {
-                    rowsAffected = db.delete(Tables.NODES, selection + " AND " + BaseColumns._ID + "=" + eventId, selectionArgs);
+                    rowsAffected = db.delete(Tables.EVENTS, selection + " AND " + BaseColumns._ID + "=" + eventId, selectionArgs);
                 }
                 break;
             case OUTAGES:
