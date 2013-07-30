@@ -64,9 +64,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         super.onStop();
         Context context = getApplicationContext();
         if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
-            SyncUtils.enableNotifications(context);
+            SyncUtils.enablePeriodicSync(context);
         } else {
-            SyncUtils.disableNotifications(context);
+            SyncUtils.disablePeriodicSync(context);
         }
     }
 

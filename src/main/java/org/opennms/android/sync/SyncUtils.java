@@ -39,7 +39,7 @@ public class SyncUtils {
         ContentResolver.requestSync(AccountService.getAccount(), Contract.CONTENT_AUTHORITY, bundle);
     }
 
-    public static void enableNotifications(Context context) {
+    public static void enablePeriodicSync(Context context) {
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = AccountService.getAccount();
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
@@ -62,7 +62,7 @@ public class SyncUtils {
         ContentResolver.addPeriodicSync(account, CONTENT_AUTHORITY, bundle, refreshRate * 60);
     }
 
-    public static void disableNotifications(Context context) {
+    public static void disablePeriodicSync(Context context) {
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = AccountService.getAccount();
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);

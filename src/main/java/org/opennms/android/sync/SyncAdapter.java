@@ -125,7 +125,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
     }
 
-    private void syncAlarms(  boolean isManual) {
+    private void syncAlarms(boolean isManual) {
         Log.d(TAG, "Synchronizing alarms...");
 
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
