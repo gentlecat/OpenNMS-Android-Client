@@ -290,36 +290,36 @@ public class AppContentProvider extends ContentProvider {
                 }
                 break;
             case ALARMS:
-                rowsAffected = db.delete(Tables.NODES, selection, selectionArgs);
+                rowsAffected = db.delete(Tables.ALARMS, selection, selectionArgs);
                 break;
             case ALARMS_ID:
                 String alarmId = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsAffected = db.delete(Tables.NODES, BaseColumns._ID + "=" + alarmId, null);
+                    rowsAffected = db.delete(Tables.ALARMS, BaseColumns._ID + "=" + alarmId, null);
                 } else {
-                    rowsAffected = db.delete(Tables.NODES, selection + " AND " + BaseColumns._ID + "=" + alarmId, selectionArgs);
+                    rowsAffected = db.delete(Tables.ALARMS, selection + " AND " + BaseColumns._ID + "=" + alarmId, selectionArgs);
                 }
                 break;
             case EVENTS:
-                rowsAffected = db.delete(Tables.NODES, selection, selectionArgs);
+                rowsAffected = db.delete(Tables.EVENTS, selection, selectionArgs);
                 break;
             case EVENTS_ID:
                 String eventId = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsAffected = db.delete(Tables.NODES, BaseColumns._ID + "=" + eventId, null);
+                    rowsAffected = db.delete(Tables.EVENTS, BaseColumns._ID + "=" + eventId, null);
                 } else {
                     rowsAffected = db.delete(Tables.NODES, selection + " AND " + BaseColumns._ID + "=" + eventId, selectionArgs);
                 }
                 break;
             case OUTAGES:
-                rowsAffected = db.delete(Tables.NODES, selection, selectionArgs);
+                rowsAffected = db.delete(Tables.OUTAGES, selection, selectionArgs);
                 break;
             case OUTAGES_ID:
                 String outageId = uri.getLastPathSegment();
                 if (TextUtils.isEmpty(selection)) {
-                    rowsAffected = db.delete(Tables.NODES, BaseColumns._ID + "=" + outageId, null);
+                    rowsAffected = db.delete(Tables.OUTAGES, BaseColumns._ID + "=" + outageId, null);
                 } else {
-                    rowsAffected = db.delete(Tables.NODES, selection + " AND " + BaseColumns._ID + "=" + outageId, selectionArgs);
+                    rowsAffected = db.delete(Tables.OUTAGES, selection + " AND " + BaseColumns._ID + "=" + outageId, selectionArgs);
                 }
                 break;
             default:
