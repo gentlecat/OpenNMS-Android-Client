@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
+import org.opennms.android.sync.SyncUtils;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
@@ -64,9 +64,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         super.onStop();
         Context context = getApplicationContext();
         if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
-            Utils.enableNotifications(context);
+            SyncUtils.enableNotifications(context);
         } else {
-            Utils.disableNotifications(context);
+            SyncUtils.disableNotifications(context);
         }
     }
 

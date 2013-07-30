@@ -11,9 +11,13 @@
     <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Sync -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <!-- Notifications -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="false"
@@ -41,30 +45,30 @@
 
         <activity android:name=".ui.SettingsActivity" />
 
-        <service
-            android:exported="false"
-            android:name=".service.AlarmsSyncService" />
-        <service
-            android:exported="false"
-            android:name=".service.EventsSyncService" />
-        <service
-            android:exported="false"
-            android:name=".service.NodesSyncService" />
-        <service
-            android:exported="false"
-            android:name=".service.OutagesSyncService" />
-
-        <receiver android:name=".service.SyncAlarmReceiver" />
-        <receiver android:name=".BootAlarmReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
         <provider
-            android:authorities="org.opennms.android.provider.AppContentProvider"
+            android:authorities="org.opennms.android.sync.SyncAdapter"
             android:exported="false"
             android:name=".provider.AppContentProvider" />
+
+        <service
+            android:exported="true"
+            android:name=".sync.SyncService"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+        <service android:name=".sync.AccountService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
 
     </application>
 

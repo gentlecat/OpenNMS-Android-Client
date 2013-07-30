@@ -1,8 +1,11 @@
 package org.opennms.android.ui.nodes;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,10 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,7 +36,9 @@ import org.opennms.android.Loaders;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
-import org.opennms.android.service.NodesSyncService;
+import org.opennms.android.sync.AccountService;
+import org.opennms.android.sync.SyncAdapter;
+import org.opennms.android.sync.SyncUtils;
 
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -48,7 +50,26 @@ public class NodesListFragment extends ListFragment
     private String currentFilter;
     private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
-    private MenuItem refreshItem;
+    private Object syncObserverHandle;
+    private Menu optionsMenu;
+    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
+        @Override
+        public void onStatusChanged(int which) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Account account = AccountService.getAccount();
+                    if (account == null) {
+                        setRefreshActionButtonState(false);
+                        return;
+                    }
+                    boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
+                    boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
+                    setRefreshActionButtonState(syncActive || syncPending);
+                }
+            });
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,9 +156,12 @@ public class NodesListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.nodes, menu);
 
+        optionsMenu = menu;
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -145,7 +169,6 @@ public class NodesListFragment extends ListFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                refreshItem = item;
                 refreshList();
                 return true;
             default:
@@ -154,13 +177,10 @@ public class NodesListFragment extends ListFragment
     }
 
     private void refreshList() {
-        if (Utils.isOnline(getActivity())) {
-            Intent intent = new Intent(getActivity(), NodesSyncService.class);
-            getActivity().startService(intent);
-            startRefreshAnimation();
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.refresh_failed_offline), Toast.LENGTH_LONG).show();
-        }
+        if (Utils.isOnline(getActivity())) SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_NODES);
+        else Toast.makeText(getActivity(),
+                getString(R.string.refresh_failed_offline),
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -198,7 +218,6 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
-        stopRefreshAnimation();
     }
 
     @Override
@@ -206,20 +225,32 @@ public class NodesListFragment extends ListFragment
         adapter.swapCursor(null);
     }
 
-    private void startRefreshAnimation() {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ImageView icon = (ImageView) inflater.inflate(R.layout.refresh_action_view, null);
-        Animation rotation = AnimationUtils.loadAnimation(getActivity(), R.anim.refresh);
-        rotation.setRepeatCount(Animation.INFINITE);
-        icon.startAnimation(rotation);
-        MenuItemCompat.setActionView(refreshItem, icon);
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSyncStatusObserver.onStatusChanged(0);
+
+        // Watch for sync state changes
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 
-    private void stopRefreshAnimation() {
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (syncObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(syncObserverHandle);
+            syncObserverHandle = null;
+        }
+    }
+
+    public void setRefreshActionButtonState(boolean refreshing) {
+        if (optionsMenu == null) return;
+        final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_refresh);
         if (refreshItem != null) {
-            View actionView = MenuItemCompat.getActionView(refreshItem);
-            if (actionView != null) {
-                actionView.clearAnimation();
+            if (refreshing) {
+                MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
+            } else {
                 MenuItemCompat.setActionView(refreshItem, null);
             }
         }

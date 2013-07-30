@@ -10,7 +10,12 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
-import org.opennms.android.provider.Contract.*;
+
+import org.opennms.android.provider.Contract.Alarms;
+import org.opennms.android.provider.Contract.Events;
+import org.opennms.android.provider.Contract.Nodes;
+import org.opennms.android.provider.Contract.Outages;
+import org.opennms.android.provider.Contract.Tables;
 
 public class AppContentProvider extends ContentProvider {
 
@@ -28,7 +33,7 @@ public class AppContentProvider extends ContentProvider {
 
     private static UriMatcher createUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = "org.opennms.android.provider.AppContentProvider";
+        final String authority = Contract.CONTENT_AUTHORITY;
 
         // Nodes
         matcher.addURI(authority, Contract.PATH_NODES, NODES);

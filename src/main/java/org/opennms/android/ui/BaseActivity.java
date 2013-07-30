@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import org.opennms.android.R;
+import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.dialogs.AboutDialog;
 import org.opennms.android.ui.dialogs.WelcomeDialog;
 
@@ -35,6 +36,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        SyncUtils.createSyncAccount(this);
 
         final CharSequence drawerTitle = title = getTitle();
         navigationLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -6,14 +6,12 @@ import android.provider.BaseColumns;
 
 public final class Contract {
 
+    public static final String CONTENT_AUTHORITY = "org.opennms.android.sync.SyncAdapter";
     public static final String PATH_NODES = Tables.NODES;
     public static final String PATH_ALARMS = Tables.ALARMS;
     public static final String PATH_OUTAGES = Tables.OUTAGES;
     public static final String PATH_EVENTS = Tables.EVENTS;
-    private static final Uri BASE_CONTENT_URI = Uri.parse("content://org.opennms.android.provider.AppContentProvider");
-
-    private Contract() {
-    }
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static interface Tables {
         public static final String NODES = "nodes";

@@ -3,8 +3,10 @@ package org.opennms.android.communication;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import com.squareup.okhttp.OkAuthenticator;
 import com.squareup.okhttp.OkHttpClient;
+
 import org.opennms.android.R;
 
 import java.io.ByteArrayOutputStream;

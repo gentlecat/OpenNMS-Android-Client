@@ -4,18 +4,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import org.opennms.android.sync.SyncAdapter;
-
 /**
- * Define a Service that returns an IBinder for the
- * sync adapter class, allowing the sync adapter framework to call
- * onPerformSync().
+ * Service that returns an IBinder for the sync adapter class,
+ * allowing the sync adapter framework to call onPerformSync().
  */
 public class SyncService extends Service {
-    // Storage for an instance of the sync adapter
-    private static SyncAdapter sSyncAdapter = null;
+
     // Object to use as a thread-safe lock
-    private static final Object sSyncAdapterLock = new Object();
+    private static final Object syncAdapterLock = new Object();
+    // Storage for an instance of the sync adapter
+    private static SyncAdapter syncAdapter = null;
+
     /*
      * Instantiate the sync adapter object.
      */
@@ -26,16 +25,16 @@ public class SyncService extends Service {
          * Set the sync adapter as syncable
          * Disallow parallel syncs
          */
-        synchronized (sSyncAdapterLock) {
-            if (sSyncAdapter == null) {
-                sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+        synchronized (syncAdapterLock) {
+            if (syncAdapter == null) {
+                syncAdapter = new SyncAdapter(getApplicationContext(), true);
             }
         }
     }
+
     /**
      * Return an object that allows the system to invoke
      * the sync adapter.
-     *
      */
     @Override
     public IBinder onBind(Intent intent) {
@@ -45,6 +44,7 @@ public class SyncService extends Service {
          * in the base class code when the SyncAdapter
          * constructors call super()
          */
-        return sSyncAdapter.getSyncAdapterBinder();
+        return syncAdapter.getSyncAdapterBinder();
     }
+
 }
