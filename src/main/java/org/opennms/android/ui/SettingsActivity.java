@@ -1,6 +1,5 @@
 package org.opennms.android.ui;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.opennms.android.R;
+import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -62,12 +62,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     @Override
     protected void onStop() {
         super.onStop();
-        Context context = getApplicationContext();
-        if (sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications))) {
-            SyncUtils.enablePeriodicSync(context);
-        } else {
-            SyncUtils.disablePeriodicSync(context);
-        }
+        boolean sync = sharedPref.getBoolean("notifications_on",
+                getResources().getBoolean(R.bool.default_notifications));
+        String syncRate = sharedPref.getString("sync_rate",
+                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        int frequency = Integer.parseInt(syncRate) * 60;
+        SyncUtils.setSyncPeriodically(sync, AccountService.getAccount(), frequency);
     }
 
     private void updateSummaries() {
