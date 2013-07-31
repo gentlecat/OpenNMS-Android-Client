@@ -67,7 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         String syncRate = sharedPref.getString("sync_rate",
                 String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int frequency = Integer.parseInt(syncRate) * 60;
-        SyncUtils.setSyncPeriodically(sync, AccountService.getAccount(), frequency);
+        SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
     }
 
     private void updateSummaries() {

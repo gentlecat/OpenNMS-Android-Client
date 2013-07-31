@@ -36,7 +36,7 @@ public class SyncUtils {
         ContentResolver.requestSync(AccountService.getAccount(), Contract.CONTENT_AUTHORITY, bundle);
     }
 
-    public static void setSyncPeriodically(boolean sync, Account account, long frequencySec) {
+    public static void setSyncAlarmsPeriodically(boolean sync, Account account, long frequencySec) {
         if (sync) {
             Bundle bundle = new Bundle();
             bundle.putInt(SyncAdapter.SYNC_TYPE_EXTRA_KEY, SyncAdapter.SYNC_TYPE_ALARMS);
