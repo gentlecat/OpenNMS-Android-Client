@@ -154,9 +154,9 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.nodes, menu);
-
         optionsMenu = menu;
+        inflater.inflate(R.menu.list, menu);
+        inflater.inflate(R.menu.nodes, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);

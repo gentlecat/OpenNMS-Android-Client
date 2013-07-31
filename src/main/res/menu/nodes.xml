@@ -2,15 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:onms="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="5"
-        onms:showAsAction="always|withText"
-        android:title="@string/refresh" />
-    <item
         android:id="@+id/action_search"
-        android:title="@string/search"
         android:icon="@drawable/ic_action_search"
-        onms:showAsAction="ifRoom|collapseActionView"
-        onms:actionViewClass="android.support.v7.widget.SearchView" />
+        android:title="@string/search"
+        onms:actionViewClass="android.support.v7.widget.SearchView"
+        onms:showAsAction="ifRoom|collapseActionView" />
 </menu>

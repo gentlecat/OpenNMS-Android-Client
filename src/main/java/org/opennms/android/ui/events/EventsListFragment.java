@@ -170,8 +170,8 @@ public class EventsListFragment extends ListFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.list, menu);
         optionsMenu = menu;
+        inflater.inflate(R.menu.list, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

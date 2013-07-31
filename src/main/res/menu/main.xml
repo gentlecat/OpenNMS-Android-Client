@@ -5,12 +5,12 @@
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_action_settings"
         android:orderInCategory="8"
-        onms:showAsAction="never"
-        android:title="@string/settings" />
+        android:title="@string/settings"
+        onms:showAsAction="never" />
     <item
         android:id="@+id/menu_about"
         android:icon="@drawable/ic_action_about"
         android:orderInCategory="9"
-        onms:showAsAction="never"
-        android:title="@string/about" />
+        android:title="@string/about"
+        onms:showAsAction="never" />
 </menu>
