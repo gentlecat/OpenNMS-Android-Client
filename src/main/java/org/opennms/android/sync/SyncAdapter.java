@@ -76,7 +76,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             String authority,
             ContentProviderClient provider,
             SyncResult syncResult) {
-        Log.d(TAG, "Performing sync...");
         int syncType = extras.getInt(SYNC_TYPE_EXTRA_KEY);
         switch (syncType) {
             case SYNC_TYPE_NODES:
@@ -109,6 +108,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         contentResolver.delete(Contract.Nodes.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = NodesParser.parse(result);
         contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        Log.d(TAG, "Node sync complete.");
     }
 
     private void syncEvents() {
@@ -123,6 +123,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         contentResolver.delete(Contract.Events.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = EventsParser.parse(result);
         contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        Log.d(TAG, "Event sync complete.");
     }
 
     private void syncAlarms(boolean isManual) {
@@ -158,8 +159,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(TAG, "Error occurred during alarm synchronization process", e);
             return;
         }
+        contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = AlarmsParser.parse(result);
-        contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null); // Deleting old data
         contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
 
 
@@ -189,6 +190,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             boolean notificationsOn = sharedPref.getBoolean("notifications_on", context.getResources().getBoolean(R.bool.default_notifications));
             if (newAlarmsCount > 0 && notificationsOn)
                 issueNewAlarmsNotification(context, newAlarmsCount);
+
+            Log.d(TAG, "Alarm sync complete.");
         }
     }
 
@@ -204,6 +207,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         contentResolver.delete(Contract.Outages.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = OutagesParser.parse(result);
         contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        Log.d(TAG, "Outage sync complete.");
     }
 
     private void issueNewAlarmsNotification(Context context, int newAlarmsCount) {
