@@ -2,16 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="#fff"
+    android:orientation="vertical">
 
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fff"
-        android:divider="#ccc"
+        android:divider="#bbb"
         android:dividerHeight="1px"
         android:footerDividersEnabled="true"
-        android:gravity="center" />
+        android:gravity="center"
+        android:paddingTop="8dp" />
 
 </LinearLayout>
