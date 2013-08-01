@@ -9,7 +9,7 @@
         android:layout_height="48dp"
         android:gravity="center_vertical"
         android:paddingLeft="16dp"
-        android:textColor="#555"
+        android:textColor="#111"
         android:textSize="20sp" />
 
 </FrameLayout>

@@ -12,7 +12,6 @@
         android:divider="#bbb"
         android:dividerHeight="1px"
         android:footerDividersEnabled="true"
-        android:gravity="center"
-        android:paddingTop="8dp" />
+        android:gravity="center" />
 
 </LinearLayout>
