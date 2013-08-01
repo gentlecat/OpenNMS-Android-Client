@@ -75,10 +75,6 @@ public class Client {
         connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         InputStream in = null;
         try {
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Unexpected HTTP response: " + connection
-                        .getResponseCode() + " " + connection.getResponseMessage());
-            }
             in = connection.getInputStream();
             byte[] response = readFully(in);
             return new Response(connection.getResponseCode(), new String(response, ENCODING));
@@ -111,7 +107,7 @@ public class Client {
         String restUrl = settings.getString("rest_url", appContext.getResources()
                 .getString(R.string.default_rest_url));
         String base = String.format("http%s://%s:%d/" + restUrl,
-                                    (isHttps ? "s" : ""), host, getPort());
+                (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);
     }
 

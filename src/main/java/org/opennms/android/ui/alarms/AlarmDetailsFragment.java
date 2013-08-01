@@ -98,7 +98,7 @@ public class AlarmDetailsFragment extends Fragment {
             new AcknowledgementTask().execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline),
-                           Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -144,8 +144,8 @@ public class AlarmDetailsFragment extends Fragment {
             if (ackTime != null) {
                 ackStatus.setText(getString(R.string.alarm_details_acked));
                 TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
-                ackMessage.setText(Utils.parseDate(ackTime).toString() + " " + getString(
-                        R.string.alarm_details_acked_by) + " " + ackUser);
+                ackMessage.setText(Utils.parseDate(ackTime).toString() + " "
+                        + getString(R.string.alarm_details_acked_by) + " " + ackUser);
             } else {
                 ackStatus.setText(getString(R.string.alarm_details_not_acked));
             }
@@ -199,9 +199,10 @@ public class AlarmDetailsFragment extends Fragment {
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
 
+        final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+
         @Override
         protected void onPreExecute() {
-            final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
             if (ackMenuItem != null) {
                 ackMenuItem.setVisible(false);
             }
@@ -219,17 +220,18 @@ public class AlarmDetailsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Response response) {
-            Toast.makeText(getActivity(),
-                           String.format(getString(R.string.alarm_ack_success), alarmId),
-                           Toast.LENGTH_LONG).show();
-            // TODO: Update info in DB and refresh details view
-            if (response.getCode() != HttpURLConnection.HTTP_OK) {
-                Log.e(TAG, "Error occurred during acknowledgement process ("
-                           + response.getCode() + ")!");
-                // TODO: Show error message
+            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+                Toast.makeText(getActivity(),
+                        String.format(getString(R.string.alarm_ack_success), alarmId),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                // TODO: Update info in DB and refresh details view
+                Toast.makeText(getActivity(),
+                        "Error occurred during acknowledgement process!",
+                        Toast.LENGTH_LONG).show();
                 final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
                 if (ackMenuItem != null) {
-                    ackMenuItem.setVisible(false);
+                    ackMenuItem.setVisible(true);
                 }
             }
         }
