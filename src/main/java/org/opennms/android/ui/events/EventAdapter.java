@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.opennms.android.R;
 import org.opennms.android.provider.Contract;
 
@@ -46,7 +47,8 @@ public class EventAdapter extends CursorAdapter {
             viewHolder = new ViewHolder();
             viewHolder.id = (TextView) convertView.findViewById(R.id.event_list_item_id);
             viewHolder.logMessage = (TextView) convertView.findViewById(R.id.event_list_item_log);
-            viewHolder.severityIndicator = (ImageView) convertView.findViewById(R.id.event_list_item_severity);
+            viewHolder.severityIndicator = (ImageView) convertView
+                    .findViewById(R.id.event_list_item_severity);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -58,7 +60,8 @@ public class EventAdapter extends CursorAdapter {
         String log = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));
         viewHolder.logMessage.setText(Html.fromHtml(log));
 
-        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Events.SEVERITY));
+        String severity = mCursor.getString(
+                mCursor.getColumnIndexOrThrow(Contract.Events.SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {
@@ -82,6 +85,7 @@ public class EventAdapter extends CursorAdapter {
     }
 
     static class ViewHolder {
+
         TextView id;
         TextView logMessage;
         ImageView severityIndicator;

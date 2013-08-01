@@ -2,6 +2,7 @@ package org.opennms.android.ui.alarms;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+
 import org.opennms.android.R;
 import org.opennms.android.ui.DetailsActivity;
 

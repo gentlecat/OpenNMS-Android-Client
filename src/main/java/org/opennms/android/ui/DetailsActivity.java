@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import org.opennms.android.R;
 
 public abstract class DetailsActivity extends ActionBarActivity {
+
     protected ActionBar actionBar;
 
     @Override

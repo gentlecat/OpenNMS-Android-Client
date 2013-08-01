@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
- * Service that returns an IBinder for the sync adapter class,
- * allowing the sync adapter framework to call onPerformSync().
+ * Service that returns an IBinder for the sync adapter class, allowing the sync adapter framework
+ * to call onPerformSync().
  */
 public class SyncService extends Service {
 
@@ -33,8 +33,7 @@ public class SyncService extends Service {
     }
 
     /**
-     * Return an object that allows the system to invoke
-     * the sync adapter.
+     * Return an object that allows the system to invoke the sync adapter.
      */
     @Override
     public IBinder onBind(Intent intent) {

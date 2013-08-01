@@ -2,6 +2,7 @@ package org.opennms.android.parsing;
 
 import android.content.ContentValues;
 import android.util.Log;
+
 import org.opennms.android.provider.Contract;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,36 +26,57 @@ public class EventsParser extends Parser {
                     values.put(Contract.Events._ID, id.getNodeValue());
 
                     Node description = getXmlNodeForExpression("description", currentNode);
-                    if (description != null) values.put(Contract.Events.DESCRIPTION, description.getTextContent());
+                    if (description != null) {
+                        values.put(Contract.Events.DESCRIPTION, description.getTextContent());
+                    }
 
                     Node logMessage = getXmlNodeForExpression("logMessage", currentNode);
-                    if (logMessage != null) values.put(Contract.Events.LOG_MESSAGE, logMessage.getTextContent());
+                    if (logMessage != null) {
+                        values.put(Contract.Events.LOG_MESSAGE, logMessage.getTextContent());
+                    }
 
                     Node severity = getXmlNodeForExpression("@severity", currentNode);
-                    if (severity != null) values.put(Contract.Events.SEVERITY, severity.getNodeValue());
+                    if (severity != null) {
+                        values.put(Contract.Events.SEVERITY, severity.getNodeValue());
+                    }
 
                     Node host = getXmlNodeForExpression("host", currentNode);
-                    if (host != null) values.put(Contract.Events.HOST, host.getTextContent());
+                    if (host != null) {
+                        values.put(Contract.Events.HOST, host.getTextContent());
+                    }
 
                     Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
-                    if (ipAddress != null) values.put(Contract.Events.IP_ADDRESS, ipAddress.getTextContent());
+                    if (ipAddress != null) {
+                        values.put(Contract.Events.IP_ADDRESS, ipAddress.getTextContent());
+                    }
 
                     Node nodeId = getXmlNodeForExpression("nodeId", currentNode);
-                    if (nodeId != null) values.put(Contract.Events.NODE_ID, Integer.parseInt(nodeId.getTextContent()));
+                    if (nodeId != null) {
+                        values.put(Contract.Events.NODE_ID,
+                                   Integer.parseInt(nodeId.getTextContent()));
+                    }
 
                     Node nodeLabel = getXmlNodeForExpression("nodeLabel", currentNode);
-                    if (nodeLabel != null) values.put(Contract.Events.NODE_LABEL, nodeLabel.getTextContent());
+                    if (nodeLabel != null) {
+                        values.put(Contract.Events.NODE_LABEL, nodeLabel.getTextContent());
+                    }
 
                     Node createTime = getXmlNodeForExpression("createTime", currentNode);
-                    if (createTime != null) values.put(Contract.Events.CREATE_TIME, createTime.getTextContent());
+                    if (createTime != null) {
+                        values.put(Contract.Events.CREATE_TIME, createTime.getTextContent());
+                    }
 
                     Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", currentNode);
-                    if (serviceTypeId != null)
-                        values.put(Contract.Events.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
+                    if (serviceTypeId != null) {
+                        values.put(Contract.Events.SERVICE_TYPE_ID,
+                                   Integer.parseInt(serviceTypeId.getTextContent()));
+                    }
 
                     Node serviceTypeName = getXmlNodeForExpression("serviceType/name", currentNode);
-                    if (serviceTypeName != null)
-                        values.put(Contract.Events.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
+                    if (serviceTypeName != null) {
+                        values.put(Contract.Events.SERVICE_TYPE_NAME,
+                                   serviceTypeName.getTextContent());
+                    }
 
                     valuesArray.add(values);
                 }

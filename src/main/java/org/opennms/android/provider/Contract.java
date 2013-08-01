@@ -14,6 +14,7 @@ public final class Contract {
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static interface Tables {
+
         public static final String NODES = "nodes";
         public static final String ALARMS = "alarms";
         public static final String OUTAGES = "outages";
@@ -21,6 +22,7 @@ public final class Contract {
     }
 
     interface NodeColumns {
+
         String TYPE = "type";
         String NAME = "name";
         String CREATED_TIME = "created_time";
@@ -31,6 +33,7 @@ public final class Contract {
     }
 
     interface AlarmColumns {
+
         String SEVERITY = "severity";
         String DESCRIPTION = "description";
         String LOG_MESSAGE = "log_message";
@@ -50,6 +53,7 @@ public final class Contract {
     }
 
     interface OutageColumns {
+
         String IP_ADDRESS = "ip_address";
         // Service
         String SERVICE_ID = "service_id";
@@ -65,6 +69,7 @@ public final class Contract {
     }
 
     interface EventColumns {
+
         String SEVERITY = "severity";
         String LOG_MESSAGE = "log_message";
         String DESCRIPTION = "description";
@@ -80,27 +85,43 @@ public final class Contract {
     }
 
     public static class Nodes implements NodeColumns, BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_NODES).build();
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.node";
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.node";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_NODES).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.node";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.node";
     }
 
     public static class Alarms implements AlarmColumns, BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_ALARMS).build();
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.alarm";
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.alarm";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_ALARMS).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.alarm";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.alarm";
     }
 
     public static class Outages implements OutageColumns, BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_OUTAGES).build();
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.outage";
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.outage";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_OUTAGES).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.outage";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.outage";
     }
 
     public static class Events implements EventColumns, BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENTS).build();
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.event";
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.event";
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENTS).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.opennms.event";
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.opennms.event";
     }
 
 }

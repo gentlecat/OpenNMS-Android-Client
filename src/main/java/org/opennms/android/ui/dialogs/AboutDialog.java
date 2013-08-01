@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
+
 import org.opennms.android.R;
 
 public class AboutDialog extends DialogFragment {
@@ -32,7 +33,8 @@ public class AboutDialog extends DialogFragment {
         TextView versionTextView = (TextView) view.findViewById(R.id.about_version);
         String version = getResources().getString(R.string.version) + " ";
         try {
-            version += getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+            version += getActivity().getPackageManager()
+                    .getPackageInfo(getActivity().getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
             version += getResources().getString(R.string.unknown);
         }

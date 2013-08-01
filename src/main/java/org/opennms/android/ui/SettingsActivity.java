@@ -13,7 +13,8 @@ import org.opennms.android.R;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 
-public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class SettingsActivity extends PreferenceActivity
+        implements OnSharedPreferenceChangeListener {
 
     SharedPreferences sharedPref;
 
@@ -28,14 +29,16 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     @Override
     protected void onResume() {
         super.onResume();
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
         updateSummaries();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -62,9 +65,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     @Override
     protected void onStop() {
         super.onStop();
-        boolean sync = sharedPref.getBoolean("notifications_on",
-                getResources().getBoolean(R.bool.default_notifications));
-        String syncRate = sharedPref.getString("sync_rate",
+        boolean sync = sharedPref.getBoolean(
+                "notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        String syncRate = sharedPref.getString(
+                "sync_rate",
                 String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int frequency = Integer.parseInt(syncRate) * 60;
         SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
@@ -72,35 +76,48 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
     private void updateSummaries() {
         // Authentication
-        findPreference("user").setSummary(sharedPref.getString("user", getResources().getString(R.string.default_user)));
+        findPreference("user").setSummary(
+                sharedPref.getString("user", getResources().getString(R.string.default_user)));
 
         // Server
-        findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
+        findPreference("host").setSummary(
+                sharedPref.getString("host", getResources().getString(R.string.default_host)));
+        findPreference("port").setSummary(sharedPref.getString(
+                "port", Integer.toString(getResources().getInteger(R.integer.default_port))));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
+            findPreference("https")
+                    .setSummary(getResources().getString(R.string.settings_https_on));
         } else {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
+            findPreference("https")
+                    .setSummary(getResources().getString(R.string.settings_https_off));
         }
-        findPreference("rest_url").setSummary(sharedPref.getString("rest_url", getResources().getString(R.string.default_rest_url)));
+        findPreference("rest_url").setSummary(sharedPref.getString("rest_url", getResources()
+                .getString(R.string.default_rest_url)));
 
         // Notifications
-        boolean notificationsOn = sharedPref.getBoolean("notifications_on",
-                getResources().getBoolean(R.bool.default_notifications));
+        boolean notificationsOn = sharedPref.getBoolean(
+                "notifications_on", getResources().getBoolean(R.bool.default_notifications));
         setNotificationPrefsEnabled(notificationsOn);
         if (notificationsOn) {
-            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_true));
+            findPreference("notifications_on").setSummary(
+                    getResources().getString(R.string.settings_notifications_enabled_true));
         } else {
-            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_false));
+            findPreference("notifications_on").setSummary(
+                    getResources().getString(R.string.settings_notifications_enabled_false));
         }
 
-        String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
-        ListPreference minimalSeverityPreference = (ListPreference) findPreference("minimal_severity");
+        String
+                minimalSeverity =
+                sharedPref.getString("minimal_severity",
+                                     getString(R.string.default_minimal_severity));
+        ListPreference minimalSeverityPreference =
+                (ListPreference) findPreference("minimal_severity");
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
         String syncRate = sharedPref.getString("sync_rate",
-                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+                                               String.valueOf(getResources().getInteger(
+                                                       R.integer.default_sync_rate_minutes)));
         int refreshRateVal = Integer.parseInt(syncRate);
         String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {

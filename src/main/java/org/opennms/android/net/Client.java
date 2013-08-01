@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 
 public class Client {
+
     private static final String ENCODING = "UTF-8";
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
@@ -31,16 +32,20 @@ public class Client {
         this.appContext = appContext;
         settings = PreferenceManager.getDefaultSharedPreferences(appContext);
 
-        final String user = settings.getString("user", appContext.getResources().getString(R.string.default_user));
-        final String password = settings.getString("password", appContext.getResources().getString(R.string.default_password));
+        final String user = settings.getString("user", appContext
+                .getResources().getString(R.string.default_user));
+        final String password = settings.getString("password", appContext
+                .getResources().getString(R.string.default_password));
         client.setAuthenticator(new OkAuthenticator() {
             @Override
-            public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges) throws IOException {
+            public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges)
+                    throws IOException {
                 return Credential.basic(user, password);
             }
 
             @Override
-            public Credential authenticateProxy(Proxy proxy, URL url, List<Challenge> challenges) throws IOException {
+            public Credential authenticateProxy(Proxy proxy, URL url, List<Challenge> challenges)
+                    throws IOException {
                 return Credential.basic(user, password);
             }
         });
@@ -57,7 +62,9 @@ public class Client {
             byte[] response = readFully(in);
             return new Response(connection.getResponseCode(), new String(response, ENCODING));
         } finally {
-            if (in != null) in.close();
+            if (in != null) {
+                in.close();
+            }
         }
     }
 
@@ -69,14 +76,16 @@ public class Client {
         InputStream in = null;
         try {
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new IOException("Unexpected HTTP response: "
-                        + connection.getResponseCode() + " " + connection.getResponseMessage());
+                throw new IOException("Unexpected HTTP response: " + connection
+                        .getResponseCode() + " " + connection.getResponseMessage());
             }
             in = connection.getInputStream();
             byte[] response = readFully(in);
             return new Response(connection.getResponseCode(), new String(response, ENCODING));
         } finally {
-            if (in != null) in.close();
+            if (in != null) {
+                in.close();
+            }
         }
     }
 
@@ -90,16 +99,20 @@ public class Client {
     }
 
     private int getPort() {
-        return Integer.parseInt(settings.getString("port", Integer.toString(appContext.getResources().getInteger(R.integer.default_port))));
+        return Integer.parseInt(settings.getString("port", Integer
+                .toString(appContext.getResources().getInteger(R.integer.default_port))));
     }
 
     private URL getURL(String path) throws MalformedURLException {
-        Boolean isHttps = settings.getBoolean("https", appContext.getResources().getBoolean(R.bool.default_https));
-        String host = settings.getString("host", appContext.getResources().getString(R.string.default_host));
-        String restUrl = settings.getString("rest_url", appContext.getResources().getString(R.string.default_rest_url));
-        String base = String.format("http%s://%s:%d/" + restUrl, (isHttps ? "s" : ""), host, getPort());
+        Boolean isHttps = settings.getBoolean("https", appContext.getResources()
+                .getBoolean(R.bool.default_https));
+        String host = settings.getString("host", appContext.getResources()
+                .getString(R.string.default_host));
+        String restUrl = settings.getString("rest_url", appContext.getResources()
+                .getString(R.string.default_rest_url));
+        String base = String.format("http%s://%s:%d/" + restUrl,
+                                    (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);
     }
-
 
 }

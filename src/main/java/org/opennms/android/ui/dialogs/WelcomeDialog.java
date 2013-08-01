@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.ViewGroup.LayoutParams;
+
 import org.opennms.android.R;
 import org.opennms.android.ui.SettingsActivity;
 
@@ -25,7 +26,8 @@ public class WelcomeDialog extends DialogFragment {
                         getResources().getString(R.string.welcome_message_pos_button),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+                                Intent settingsIntent = new Intent(getActivity(),
+                                                                   SettingsActivity.class);
                                 startActivity(settingsIntent);
                             }
                         })

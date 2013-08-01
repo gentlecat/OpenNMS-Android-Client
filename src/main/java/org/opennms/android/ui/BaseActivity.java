@@ -82,8 +82,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         if (savedInstanceState != null) {
             title = savedInstanceState.getCharSequence(STATE_TITLE);
-            if (savedInstanceState.getBoolean(STATE_IS_NAV_OPEN)) actionBar.setTitle(drawerTitle);
-            else actionBar.setTitle(title);
+            if (savedInstanceState.getBoolean(STATE_IS_NAV_OPEN)) {
+                actionBar.setTitle(drawerTitle);
+            } else {
+                actionBar.setTitle(title);
+            }
         }
     }
 
@@ -104,8 +107,11 @@ public abstract class BaseActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (navigationLayout.isDrawerOpen(navDrawer)) closeDrawer();
-                else openDrawer();
+                if (navigationLayout.isDrawerOpen(navDrawer)) {
+                    closeDrawer();
+                } else {
+                    openDrawer();
+                }
                 return true;
             case R.id.menu_settings:
                 Intent settingsIntent = new Intent(getApplicationContext(), SettingsActivity.class);

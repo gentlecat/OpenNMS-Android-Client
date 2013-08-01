@@ -24,7 +24,8 @@ public class SyncUtils {
     public static void createSyncAccount(Context context) {
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = AccountService.getAccount();
-        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+        AccountManager accountManager = (AccountManager) context
+                .getSystemService(Context.ACCOUNT_SERVICE);
         if (accountManager.addAccountExplicitly(account, null, null)) {
             // Inform the system that this account supports sync
             ContentResolver.setIsSyncable(account, CONTENT_AUTHORITY, 1);
@@ -36,7 +37,8 @@ public class SyncUtils {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putInt(SyncAdapter.SYNC_TYPE_EXTRA_KEY, syncType);
-        ContentResolver.requestSync(AccountService.getAccount(), Contract.CONTENT_AUTHORITY, bundle);
+        ContentResolver.requestSync(AccountService.getAccount(),
+                                    Contract.CONTENT_AUTHORITY, bundle);
     }
 
     public static void setSyncAlarmsPeriodically(boolean sync, Account account, long frequencySec) {

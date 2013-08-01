@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import org.opennms.android.R;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 import org.opennms.android.ui.events.EventsActivity;
@@ -28,7 +29,8 @@ public class MenuFragment extends ListFragment {
     private Activity activity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.nav_drawer_layout, container, false);
     }
 
@@ -65,27 +67,35 @@ public class MenuFragment extends ListFragment {
         switch (adapter.getItem(position).id) {
             case MENU_ITEM_NODES:
                 intent = new Intent(activity, NodesActivity.class);
-                if (activity instanceof NodesActivity) finish = false;
+                if (activity instanceof NodesActivity) {
+                    finish = false;
+                }
                 break;
             case MENU_ITEM_OUTAGES:
                 intent = new Intent(activity, OutagesActivity.class);
-                if (activity instanceof OutagesActivity) finish = false;
+                if (activity instanceof OutagesActivity) {
+                    finish = false;
+                }
                 break;
             case MENU_ITEM_ALARMS:
                 intent = new Intent(activity, AlarmsActivity.class);
-                if (activity instanceof AlarmsActivity) finish = false;
+                if (activity instanceof AlarmsActivity) {
+                    finish = false;
+                }
                 break;
             case MENU_ITEM_EVENTS:
                 intent = new Intent(activity, EventsActivity.class);
-                if (activity instanceof EventsActivity) finish = false;
+                if (activity instanceof EventsActivity) {
+                    finish = false;
+                }
                 break;
             default:
                 return;
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        Intent.FLAG_ACTIVITY_NEW_TASK |
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                        Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
 
         if (finish) {
@@ -116,7 +126,8 @@ public class MenuFragment extends ListFragment {
             MenuItem item = getItem(position);
             ViewHolder holder;
             if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.nav_drawer_list_item, parent, false);
+                convertView = LayoutInflater.from(
+                        getContext()).inflate(R.layout.nav_drawer_list_item, parent, false);
                 holder = new ViewHolder();
                 holder.attach(convertView);
                 convertView.setTag(holder);

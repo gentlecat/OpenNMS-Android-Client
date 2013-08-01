@@ -63,8 +63,10 @@ public class NodesListFragment extends ListFragment
                         setRefreshActionButtonState(false);
                         return;
                     }
-                    boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
+                    boolean syncActive = ContentResolver
+                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
+                    boolean syncPending = ContentResolver
+                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
                     setRefreshActionButtonState(syncActive || syncPending);
                 }
             });
@@ -78,7 +80,8 @@ public class NodesListFragment extends ListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_layout, container, false);
     }
 
@@ -86,7 +89,8 @@ public class NodesListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        detailsContainer = (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer =
+                (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -118,8 +122,10 @@ public class NodesListFragment extends ListFragment
                 showDetails(activeNodeId);
             } else {
                 detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                RelativeLayout emptyView = (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                RelativeLayout emptyView =
+                        (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
                 detailsContainer.addView(emptyView);
             }
         }
@@ -177,17 +183,24 @@ public class NodesListFragment extends ListFragment
     }
 
     private void refreshList() {
-        if (Utils.isOnline(getActivity())) SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_NODES);
-        else Toast.makeText(getActivity(),
-                getString(R.string.refresh_failed_offline),
-                Toast.LENGTH_LONG).show();
+        if (Utils.isOnline(getActivity())) {
+            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_NODES);
+        } else {
+            Toast.makeText(getActivity(),
+                           getString(R.string.refresh_failed_offline),
+                           Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
         String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        if (currentFilter == null && newFilter == null) return true;
-        if (currentFilter != null && currentFilter.equals(newFilter)) return true;
+        if (currentFilter == null && newFilter == null) {
+            return true;
+        }
+        if (currentFilter != null && currentFilter.equals(newFilter)) {
+            return true;
+        }
         currentFilter = newFilter;
         getActivity().getSupportLoaderManager().restartLoader(0, null, this);
         return true;
@@ -212,7 +225,8 @@ public class NodesListFragment extends ListFragment
                 Contract.Nodes._ID,
                 Contract.Nodes.NAME
         };
-        return new CursorLoader(getActivity(), baseUri, projection, null, null, Contract.Nodes.NAME);
+        return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                                Contract.Nodes.NAME);
     }
 
     @Override
@@ -231,7 +245,8 @@ public class NodesListFragment extends ListFragment
         mSyncStatusObserver.onStatusChanged(0);
 
         // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
+                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 
@@ -245,11 +260,14 @@ public class NodesListFragment extends ListFragment
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
-        if (optionsMenu == null) return;
+        if (optionsMenu == null) {
+            return;
+        }
         final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_refresh);
         if (refreshItem != null) {
             if (refreshing) {
-                MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
+                MenuItemCompat.setActionView(
+                        refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
             }

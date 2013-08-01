@@ -26,7 +26,8 @@ public class Utils {
     }
 
     public static boolean isOnline(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }

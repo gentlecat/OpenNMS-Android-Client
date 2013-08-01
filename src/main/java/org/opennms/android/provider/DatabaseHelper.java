@@ -3,17 +3,23 @@ package org.opennms.android.provider;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import org.opennms.android.provider.Contract.*;
+
+import org.opennms.android.provider.Contract.Alarms;
+import org.opennms.android.provider.Contract.Events;
+import org.opennms.android.provider.Contract.Nodes;
+import org.opennms.android.provider.Contract.Outages;
+import org.opennms.android.provider.Contract.Tables;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "OpenNMS.db";
-    /*
+    /**
      * SQL
      */
-    private static final String SQL_CREATE_TABLE_NODES = "CREATE TABLE IF NOT EXISTS " + Tables.NODES
+    private static final String SQL_CREATE_TABLE_NODES =
+            "CREATE TABLE IF NOT EXISTS " + Tables.NODES
             + " ("
             + Nodes._ID + " INTEGER PRIMARY KEY, "
             + Nodes.TYPE + " TEXT, "
@@ -25,7 +31,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Nodes.LOCATION + " TEXT"
             + ");";
     private static final String SQL_DROP_TABLE_NODES = "DROP TABLE IF EXISTS " + Tables.NODES;
-    private static final String SQL_CREATE_TABLE_OUTAGES = "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
+    private static final String SQL_CREATE_TABLE_OUTAGES =
+            "CREATE TABLE IF NOT EXISTS " + Tables.OUTAGES
             + " ("
             + Outages._ID + " INTEGER PRIMARY KEY, "
             + Outages.IP_ADDRESS + " TEXT, "
@@ -39,7 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Outages.SERVICE_REGAINED_EVENT_ID + " INTEGER"
             + ");";
     private static final String SQL_DROP_TABLE_OUTAGES = "DROP TABLE IF EXISTS " + Tables.OUTAGES;
-    private static final String SQL_CREATE_TABLE_EVENTS = "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
+    private static final String SQL_CREATE_TABLE_EVENTS =
+            "CREATE TABLE IF NOT EXISTS " + Tables.EVENTS
             + " ("
             + Events._ID + " INTEGER PRIMARY KEY, "
             + Events.SEVERITY + " TEXT, "
@@ -54,7 +62,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Events.CREATE_TIME + " TEXT"
             + ");";
     private static final String SQL_DROP_TABLE_EVENTS = "DROP TABLE IF EXISTS " + Tables.EVENTS;
-    private static final String SQL_CREATE_TABLE_ALARMS = "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
+    private static final String SQL_CREATE_TABLE_ALARMS =
+            "CREATE TABLE IF NOT EXISTS " + Tables.ALARMS
             + " ("
             + Alarms._ID + " INTEGER PRIMARY KEY, "
             + Alarms.SEVERITY + " TEXT, "

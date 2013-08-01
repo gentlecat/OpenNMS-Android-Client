@@ -1,6 +1,7 @@
 package org.opennms.android.ui.events;
 
 import android.os.Bundle;
+
 import org.opennms.android.R;
 import org.opennms.android.ui.BaseActivity;
 

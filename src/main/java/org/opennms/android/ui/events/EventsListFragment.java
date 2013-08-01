@@ -58,8 +58,10 @@ public class EventsListFragment extends ListFragment
                         setRefreshActionButtonState(false);
                         return;
                     }
-                    boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
+                    boolean syncActive = ContentResolver
+                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
+                    boolean syncPending = ContentResolver
+                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
                     setRefreshActionButtonState(syncActive || syncPending);
                 }
             });
@@ -73,7 +75,8 @@ public class EventsListFragment extends ListFragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_layout, container, false);
     }
 
@@ -81,7 +84,8 @@ public class EventsListFragment extends ListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        detailsContainer = (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
+        detailsContainer =
+                (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -89,7 +93,8 @@ public class EventsListFragment extends ListFragment
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
-        adapter = new EventAdapter(getActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        adapter = new EventAdapter(getActivity(), null,
+                                   CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
@@ -134,8 +139,10 @@ public class EventsListFragment extends ListFragment
                 showDetails(activeEventId);
             } else {
                 detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                RelativeLayout emptyView = (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                RelativeLayout emptyView = (RelativeLayout) inflater
+                        .inflate(R.layout.empty_details, null);
                 detailsContainer.addView(emptyView);
             }
         }
@@ -187,10 +194,13 @@ public class EventsListFragment extends ListFragment
     }
 
     private void refreshList() {
-        if (Utils.isOnline(getActivity())) SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_EVENTS);
-        else Toast.makeText(getActivity(),
-                getString(R.string.refresh_failed_offline),
-                Toast.LENGTH_LONG).show();
+        if (Utils.isOnline(getActivity())) {
+            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_EVENTS);
+        } else {
+            Toast.makeText(getActivity(),
+                           getString(R.string.refresh_failed_offline),
+                           Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -199,7 +209,8 @@ public class EventsListFragment extends ListFragment
         mSyncStatusObserver.onStatusChanged(0);
 
         // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
+                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 
@@ -213,11 +224,14 @@ public class EventsListFragment extends ListFragment
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
-        if (optionsMenu == null) return;
+        if (optionsMenu == null) {
+            return;
+        }
         final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_refresh);
         if (refreshItem != null) {
             if (refreshing) {
-                MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
+                MenuItemCompat.setActionView(
+                        refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
             }

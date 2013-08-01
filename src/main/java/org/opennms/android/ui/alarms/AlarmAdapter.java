@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.opennms.android.R;
 import org.opennms.android.provider.Contract;
 
@@ -46,7 +47,8 @@ public class AlarmAdapter extends CursorAdapter {
             viewHolder = new ViewHolder();
             viewHolder.id = (TextView) convertView.findViewById(R.id.alarm_list_item_id);
             viewHolder.description = (TextView) convertView.findViewById(R.id.alarm_list_item_desc);
-            viewHolder.severityIndicator = (ImageView) convertView.findViewById(R.id.alarm_list_item_severity);
+            viewHolder.severityIndicator = (ImageView) convertView
+                    .findViewById(R.id.alarm_list_item_severity);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -55,10 +57,12 @@ public class AlarmAdapter extends CursorAdapter {
         int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Alarms._ID));
         viewHolder.id.setText(String.valueOf(id));
 
-        String description = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
+        String description = mCursor.getString(
+                mCursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
         viewHolder.description.setText(Html.fromHtml(description));
 
-        String severity = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
+        String severity = mCursor.getString(
+                mCursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
         Resources res = context.getResources();
         int severityColor;
         if (severity.equals("CLEARED")) {
@@ -82,6 +86,7 @@ public class AlarmAdapter extends CursorAdapter {
     }
 
     static class ViewHolder {
+
         TextView id;
         TextView description;
         ImageView severityIndicator;

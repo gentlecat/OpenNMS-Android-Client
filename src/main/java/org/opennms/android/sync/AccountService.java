@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class AccountService extends Service {
+
     public static final String ACCOUNT_NAME = "Synchronization";
     private static final String TAG = "AccountService";
     private static final String ACCOUNT_TYPE = "org.opennms.android.sync.SyncAdapter";
@@ -51,6 +52,7 @@ public class AccountService extends Service {
     }
 
     public class Authenticator extends AbstractAccountAuthenticator {
+
         public Authenticator(Context context) {
             super(context);
         }

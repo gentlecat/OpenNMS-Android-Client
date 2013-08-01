@@ -31,10 +31,11 @@ import org.opennms.android.ui.alarms.AlarmsActivity;
 import java.util.ArrayList;
 
 /**
- * Handle the transfer of data between a server and an
- * app, using the Android sync adapter framework.
+ * Handle the transfer of data between a server and an app, using the Android sync adapter
+ * framework.
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
+
     public static final String TAG = "SyncAdapter";
     public static final String SYNC_TYPE_EXTRA_KEY = "sync_type";
     public static final int SYNC_TYPE_NODES = 1;
@@ -58,9 +59,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Set up the sync adapter. This form of the
-     * constructor maintains compatibility with Android 3.0
-     * and later platform versions
+     * Set up the sync adapter. This form of the constructor maintains compatibility with Android
+     * 3.0 and later platform versions
      */
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
@@ -107,7 +107,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         contentResolver.delete(Contract.Nodes.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = NodesParser.parse(result);
-        contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI,
+                                   values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Node sync complete.");
     }
 
@@ -122,29 +123,37 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         contentResolver.delete(Contract.Events.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = EventsParser.parse(result);
-        contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        contentResolver.bulkInsert(Contract.Events.CONTENT_URI,
+                                   values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Event sync complete.");
     }
 
     private void syncAlarms(boolean isManual) {
         Log.d(TAG, "Synchronizing alarms...");
 
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager
+                connManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         // TODO: Figure out if this action is required everywhere
         if (networkInfo == null || !networkInfo.isConnected()) {
-            if (!isManual) issueWarningNotification(context,
-                    context.getString(R.string.sync_failed_notif_title),
-                    context.getString(R.string.sync_failed_notif_text));
+            if (!isManual) {
+                issueWarningNotification(
+                        context,
+                        context.getString(R.string.sync_failed_notif_title),
+                        context.getString(R.string.sync_failed_notif_text));
+            }
             return;
         }
 
         if (!isManual) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            if (sharedPref.getBoolean("wifi_only", context.getResources().getBoolean(R.bool.wifi_only))) {
+            if (sharedPref.getBoolean("wifi_only",
+                                      context.getResources().getBoolean(R.bool.wifi_only))) {
                 NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
                 if (!wifi.isConnected()) {
-                    issueWarningNotification(context,
+                    issueWarningNotification(
+                            context,
                             context.getString(R.string.sync_failed_notif_title),
                             context.getString(R.string.sync_failed_notif_text_wifi));
                     return;
@@ -161,14 +170,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = AlarmsParser.parse(result);
-        contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
-
+        contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
+                                   values.toArray(new ContentValues[values.size()]));
 
         if (!isManual) {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
             int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
-            String minimalSeverity = sharedPref.getString("minimal_severity", context.getString(R.string.default_minimal_severity));
-            String[] severityValues = context.getResources().getStringArray(R.array.severity_values);
+            String minimalSeverity =
+                    sharedPref.getString("minimal_severity",
+                                         context.getString(R.string.default_minimal_severity));
+            String[] severityValues =
+                    context.getResources().getStringArray(R.array.severity_values);
             int newAlarmsCount = 0, maxId = 0;
             for (ContentValues currentValues : values) {
                 int id = currentValues.getAsInteger(Contract.Alarms._ID);
@@ -179,17 +191,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                             newAlarmsCount++;
                             break;
                         }
-                        if (curSeverityVal.equals(minimalSeverity)) break;
+                        if (curSeverityVal.equals(minimalSeverity)) {
+                            break;
+                        }
                     }
                 }
-                if (id > maxId) maxId = id;
+                if (id > maxId) {
+                    maxId = id;
+                }
             }
 
-            if (latestShownAlarmId != maxId)
+            if (latestShownAlarmId != maxId) {
                 sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
-            boolean notificationsOn = sharedPref.getBoolean("notifications_on", context.getResources().getBoolean(R.bool.default_notifications));
-            if (newAlarmsCount > 0 && notificationsOn)
+            }
+            boolean notificationsOn =
+                    sharedPref.getBoolean("notifications_on", context.getResources()
+                            .getBoolean(R.bool.default_notifications));
+            if (newAlarmsCount > 0 && notificationsOn) {
                 issueNewAlarmsNotification(context, newAlarmsCount);
+            }
 
             Log.d(TAG, "Alarm sync complete.");
         }
@@ -206,7 +226,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         }
         contentResolver.delete(Contract.Outages.CONTENT_URI, null, null);
         ArrayList<ContentValues> values = OutagesParser.parse(result);
-        contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values.toArray(new ContentValues[values.size()]));
+        contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
+                                   values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Outage sync complete.");
     }
 
@@ -217,21 +238,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
 
-        if (newAlarmsCount == 1)
+        if (newAlarmsCount == 1) {
             builder.setContentText(context.getString(R.string.new_alarms_notif_text_singular));
-        else
+        } else {
             builder.setContentText(String.format(
                     context.getString(R.string.new_alarms_notif_text_plural),
                     newAlarmsCount));
+        }
 
         // Clicking the notification itself displays AlarmsActivity
         Intent resultIntent = new Intent(context, AlarmsActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent
+                .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build());
     }
 
@@ -247,11 +270,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         // Clicking the notification itself displays AlarmsActivity
         Intent resultIntent = new Intent(context, AlarmsActivity.class);
         resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent resultPendingIntent = PendingIntent
+                .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(resultPendingIntent);
 
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(WARNING_NOTIFICATION_ID, builder.build());
     }
 

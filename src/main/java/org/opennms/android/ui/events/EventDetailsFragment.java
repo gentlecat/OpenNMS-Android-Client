@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 
 public class EventDetailsFragment extends Fragment {
+
     private static final String TAG = "EventDetailsFragment";
     private long eventId;
 
@@ -27,7 +29,8 @@ public class EventDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.event_details, container, false);
     }
 
@@ -42,7 +45,8 @@ public class EventDetailsFragment extends Fragment {
                 Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            LinearLayout detailsLayout = (LinearLayout) getActivity().findViewById(R.id.event_details);
+            LinearLayout detailsLayout =
+                    (LinearLayout) getActivity().findViewById(R.id.event_details);
 
             // Event ID
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID));
@@ -50,10 +54,12 @@ public class EventDetailsFragment extends Fragment {
             idView.setText(getString(R.string.event_details_id) + id);
 
             // Severity
-            String severity = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SEVERITY));
+            String severity =
+                    cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SEVERITY));
             TextView severityView = (TextView) getActivity().findViewById(R.id.event_severity);
             severityView.setText(String.valueOf(severity));
-            LinearLayout severityRow = (LinearLayout) getActivity().findViewById(R.id.event_severity_row);
+            LinearLayout severityRow =
+                    (LinearLayout) getActivity().findViewById(R.id.event_severity_row);
             if (severity.equals("CLEARED")) {
                 severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
             } else if (severity.equals("MINOR")) {
@@ -71,17 +77,20 @@ public class EventDetailsFragment extends Fragment {
             }
 
             // Creation time
-            String createTimeString = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
+            String createTimeString = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
             TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
             timeTextView.setText(Utils.parseDate(createTimeString).toString());
 
             // Log message
-            String logMessage = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));
+            String logMessage = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));
             TextView logMessageView = (TextView) getActivity().findViewById(R.id.event_log_message);
             logMessageView.setText(Html.fromHtml(logMessage));
 
             // Description
-            String description = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.DESCRIPTION));
+            String description = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.DESCRIPTION));
             TextView descriptionView = (TextView) getActivity().findViewById(R.id.event_desc);
             descriptionView.setText(Html.fromHtml(description));
 
@@ -97,7 +106,8 @@ public class EventDetailsFragment extends Fragment {
             }
 
             // IP address
-            String ipAddress = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.IP_ADDRESS));
+            String ipAddress = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.IP_ADDRESS));
             TextView ipAddressView = (TextView) getActivity().findViewById(R.id.event_ip_address);
             if (ipAddress != null) {
                 ipAddressView.setText(ipAddress);
@@ -109,19 +119,24 @@ public class EventDetailsFragment extends Fragment {
 
             // Node
             int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID));
-            String nodeLabel = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.NODE_LABEL));
+            String nodeLabel = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.NODE_LABEL));
             TextView nodeView = (TextView) getActivity().findViewById(R.id.event_node);
             nodeView.setText(nodeLabel + " (#" + nodeId + ")");
 
             // Service type
-            int serviceTypeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_ID));
-            String serviceTypeName = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_NAME));
-            TextView serviceTypeView = (TextView) getActivity().findViewById(R.id.event_service_type);
+            int serviceTypeId = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_ID));
+            String serviceTypeName = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Events.SERVICE_TYPE_NAME));
+            TextView serviceTypeView =
+                    (TextView) getActivity().findViewById(R.id.event_service_type);
             if (serviceTypeName != null) {
                 serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
             } else {
                 detailsLayout.removeView(serviceTypeView);
-                TextView title = (TextView) getActivity().findViewById(R.id.event_service_type_title);
+                TextView title =
+                        (TextView) getActivity().findViewById(R.id.event_service_type_title);
                 detailsLayout.removeView(title);
             }
         }
