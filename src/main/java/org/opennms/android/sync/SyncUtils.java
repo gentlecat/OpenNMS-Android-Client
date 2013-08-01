@@ -25,7 +25,10 @@ public class SyncUtils {
         // Create account, if it's missing. (Either first run, or user has deleted account.)
         Account account = AccountService.getAccount();
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
-        accountManager.addAccountExplicitly(account, null, null);
+        if (accountManager.addAccountExplicitly(account, null, null)) {
+            // Inform the system that this account supports sync
+            ContentResolver.setIsSyncable(account, CONTENT_AUTHORITY, 1);
+        }
     }
 
     public static void triggerRefresh(int syncType) {
@@ -41,15 +44,12 @@ public class SyncUtils {
             Bundle bundle = new Bundle();
             bundle.putInt(SyncAdapter.SYNC_TYPE_EXTRA_KEY, SyncAdapter.SYNC_TYPE_ALARMS);
 
-            // Inform the system that this account supports sync
-            ContentResolver.setIsSyncable(account, CONTENT_AUTHORITY, 1);
             // Inform the system that this account is eligible for auto sync when the network is up
             ContentResolver.setSyncAutomatically(account, CONTENT_AUTHORITY, true);
             // Recommend a schedule for automatic synchronization. The system may modify this based
             // on other scheduled syncs and network utilization.
             ContentResolver.addPeriodicSync(account, CONTENT_AUTHORITY, bundle, frequencySec);
         } else {
-            ContentResolver.setIsSyncable(account, CONTENT_AUTHORITY, 0);
             ContentResolver.setSyncAutomatically(account, CONTENT_AUTHORITY, false);
             ContentResolver.removePeriodicSync(account, CONTENT_AUTHORITY, new Bundle());
         }
