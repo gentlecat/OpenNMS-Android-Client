@@ -2,6 +2,7 @@ package org.opennms.android.ui.alarms;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -15,10 +16,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.communication.ServerCommunication;
+import org.opennms.android.net.Client;
+import org.opennms.android.net.Response;
 import org.opennms.android.provider.Contract;
+
+import java.net.HttpURLConnection;
 
 public class AlarmDetailsFragment extends Fragment {
 
@@ -67,7 +72,8 @@ public class AlarmDetailsFragment extends Fragment {
         if (cursor.moveToFirst()) {
             String ackTime = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
             if (ackTime == null) {
-                if (menu.findItem(R.id.menu_acknowledge_alarm) == null) inflater.inflate(R.menu.alarm, menu);
+                if (menu.findItem(R.id.menu_acknowledge_alarm) == null)
+                    inflater.inflate(R.menu.alarm, menu);
             }
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -77,36 +83,16 @@ public class AlarmDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_acknowledge_alarm:
-                acknowledge(alarmId);
+                acknowledge();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void acknowledge(final long alarmId) {
+    public void acknowledge() {
         if (Utils.isOnline(getActivity())) {
-            final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
-            if (ackMenuItem != null) ackMenuItem.setVisible(false);
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        new ServerCommunication(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Toast.makeText(getActivity(), String.format(getString(R.string.alarm_ack_success), alarmId), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        // TODO: Update info in DB and refresh details view
-                    } catch (Exception e) {
-                        // TODO: Show error message
-                        if (ackMenuItem != null) ackMenuItem.setVisible(false);
-                        Log.e(TAG, "Error occurred during acknowledgement process!", e);
-                    }
-                }
-            }).start();
+            new AcknowledgementTask().execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline), Toast.LENGTH_LONG).show();
         }
@@ -189,6 +175,38 @@ public class AlarmDetailsFragment extends Fragment {
             TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
             lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + Utils.parseDate(lastEventTimeString).toString());
         }
+    }
+
+    private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
+
+        @Override
+        protected void onPreExecute() {
+            final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+            if (ackMenuItem != null) ackMenuItem.setVisible(false);
+        }
+
+        @Override
+        protected Response doInBackground(Void... voids) {
+            try {
+                return new Client(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred during acknowledgement process!", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Response response) {
+            Toast.makeText(getActivity(), String.format(getString(R.string.alarm_ack_success), alarmId), Toast.LENGTH_LONG).show();
+            // TODO: Update info in DB and refresh details view
+            if (response.getCode() != HttpURLConnection.HTTP_OK) {
+                Log.e(TAG, "Error occurred during acknowledgement process (" + response.getCode() + ")!");
+                // TODO: Show error message
+                final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+                if (ackMenuItem != null) ackMenuItem.setVisible(false);
+            }
+        }
+
     }
 
 }

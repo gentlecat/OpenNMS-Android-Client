@@ -1,4 +1,4 @@
-package org.opennms.android.communication;
+package org.opennms.android.net;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +18,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
 
-public class ServerCommunication {
+public class Client {
     private static final String ENCODING = "UTF-8";
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
@@ -26,7 +26,7 @@ public class ServerCommunication {
     private OkHttpClient client;
     private Context appContext;
 
-    public ServerCommunication(Context appContext) {
+    public Client(Context appContext) {
         client = new OkHttpClient();
         this.appContext = appContext;
         settings = PreferenceManager.getDefaultSharedPreferences(appContext);
@@ -46,7 +46,7 @@ public class ServerCommunication {
         });
     }
 
-    public String get(String path) throws IOException {
+    public Response get(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
         connection.setRequestMethod("GET");
         connection.setReadTimeout(READ_TIMEOUT_MS);
@@ -55,13 +55,13 @@ public class ServerCommunication {
         try {
             in = connection.getInputStream();
             byte[] response = readFully(in);
-            return new String(response, ENCODING);
+            return new Response(connection.getResponseCode(), new String(response, ENCODING));
         } finally {
             if (in != null) in.close();
         }
     }
 
-    public String put(String path) throws IOException {
+    public Response put(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
         connection.setRequestMethod("PUT");
         connection.setReadTimeout(READ_TIMEOUT_MS);
@@ -74,7 +74,7 @@ public class ServerCommunication {
             }
             in = connection.getInputStream();
             byte[] response = readFully(in);
-            return new String(response, ENCODING);
+            return new Response(connection.getResponseCode(), new String(response, ENCODING));
         } finally {
             if (in != null) in.close();
         }

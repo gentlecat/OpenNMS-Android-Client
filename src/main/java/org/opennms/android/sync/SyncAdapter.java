@@ -20,7 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.opennms.android.R;
-import org.opennms.android.communication.ServerCommunication;
+import org.opennms.android.net.Client;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.parsing.NodesParser;
@@ -44,7 +44,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int ALARM_NOTIFICATION_ID = 1;
     private static final int WARNING_NOTIFICATION_ID = 2;
     private ContentResolver contentResolver;
-    private ServerCommunication serverCommunication;
+    private Client serverCommunication;
     private Context context;
 
     /**
@@ -54,7 +54,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         this.context = context;
         contentResolver = context.getContentResolver();
-        serverCommunication = new ServerCommunication(context);
+        serverCommunication = new Client(context);
     }
 
     /**
@@ -66,7 +66,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize, allowParallelSyncs);
         this.context = context;
         contentResolver = context.getContentResolver();
-        serverCommunication = new ServerCommunication(context);
+        serverCommunication = new Client(context);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Synchronizing nodes...");
         String result;
         try {
-            result = serverCommunication.get("nodes/?limit=0");
+            result = serverCommunication.get("nodes/?limit=0").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during node synchronization process", e);
             return;
@@ -115,7 +115,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Synchronizing events...");
         String result;
         try {
-            result = serverCommunication.get("events?orderBy=id&order=desc&limit=25");
+            result = serverCommunication.get("events?orderBy=id&order=desc&limit=25").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during event synchronization process", e);
             return;
@@ -154,7 +154,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String result;
         try {
-            result = serverCommunication.get("alarms?orderBy=id&order=desc&limit=0");
+            result = serverCommunication.get("alarms?orderBy=id&order=desc&limit=0").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during alarm synchronization process", e);
             return;
@@ -199,7 +199,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Synchronizing outages...");
         String result;
         try {
-            result = serverCommunication.get("outages?orderBy=id&order=desc&limit=25");
+            result = serverCommunication.get("outages?orderBy=id&order=desc&limit=25").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during outage synchronization process", e);
             return;
