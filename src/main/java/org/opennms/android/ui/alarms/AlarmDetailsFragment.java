@@ -73,13 +73,14 @@ public class AlarmDetailsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.menu = menu;
+        inflater.inflate(R.menu.alarm, menu);
         if (cursor.moveToFirst()) {
             String ackTime = cursor.getString(
                     cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
             if (ackTime == null) {
-                if (menu.findItem(R.id.menu_acknowledge_alarm) == null) {
-                    inflater.inflate(R.menu.alarm, menu);
-                }
+                menu.findItem(R.id.menu_unack_alarm).setVisible(false);
+            } else {
+                menu.findItem(R.id.menu_ack_alarm).setVisible(false);
             }
         }
         super.onCreateOptionsMenu(menu, inflater);
@@ -88,8 +89,11 @@ public class AlarmDetailsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_acknowledge_alarm:
+            case R.id.menu_ack_alarm:
                 acknowledge();
+                return true;
+            case R.id.menu_unack_alarm:
+                unacknowledge();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -101,6 +105,15 @@ public class AlarmDetailsFragment extends Fragment {
             new AcknowledgementTask().execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline),
+                           Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void unacknowledge() {
+        if (Utils.isOnline(getActivity())) {
+            new UnacknowledgementTask().execute();
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.alarm_unack_fail_offline),
                            Toast.LENGTH_LONG).show();
         }
     }
@@ -144,14 +157,15 @@ public class AlarmDetailsFragment extends Fragment {
             String ackUser =
                     cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_USER));
             TextView ackStatus = (TextView) getActivity().findViewById(R.id.alarm_ack_status);
+            TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
             if (ackTime != null) {
                 ackStatus.setText(getString(R.string.alarm_details_acked));
-                TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
                 ackMessage.setText(Utils.parseDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
                                    + " " + getString(R.string.alarm_details_acked_by) + " "
                                    + ackUser);
             } else {
                 ackStatus.setText(getString(R.string.alarm_details_not_acked));
+                ackMessage.setText("");
             }
 
             // Description
@@ -203,7 +217,7 @@ public class AlarmDetailsFragment extends Fragment {
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
 
-        final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+        final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
 
         @Override
         protected void onPreExecute() {
@@ -240,11 +254,67 @@ public class AlarmDetailsFragment extends Fragment {
                         Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
                         null, null, null, null);
                 updateContent();
+
+                menu.findItem(R.id.menu_unack_alarm).setVisible(true);
             } else {
                 Toast.makeText(getActivity(),
                                "Error occurred during acknowledgement process!",
                                Toast.LENGTH_LONG).show();
-                final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
+                final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
+                if (ackMenuItem != null) {
+                    ackMenuItem.setVisible(true);
+                }
+            }
+        }
+
+    }
+
+    private class UnacknowledgementTask extends AsyncTask<Void, Void, Response> {
+
+        final MenuItem unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
+
+        @Override
+        protected void onPreExecute() {
+            if (unackMenuItem != null) {
+                unackMenuItem.setVisible(false);
+            }
+        }
+
+        @Override
+        protected Response doInBackground(Void... voids) {
+            try {
+                return new Client(getActivity()).put(String.format("alarms/%d?ack=false", alarmId));
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred during unacknowledgement process!", e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Response response) {
+            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+                Toast.makeText(getActivity(),
+                               String.format(getString(R.string.alarm_unack_success), alarmId),
+                               Toast.LENGTH_LONG).show();
+
+                // Updating database
+                ContentValues[] values = new ContentValues[1];
+                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
+
+                // Updating details view
+                cursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                        null, null, null, null);
+                updateContent();
+
+                menu.findItem(R.id.menu_ack_alarm).setVisible(true);
+            } else {
+                Toast.makeText(getActivity(),
+                               "Error occurred during unacknowledgement process!",
+                               Toast.LENGTH_LONG).show();
+                final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
                 if (ackMenuItem != null) {
                     ackMenuItem.setVisible(true);
                 }

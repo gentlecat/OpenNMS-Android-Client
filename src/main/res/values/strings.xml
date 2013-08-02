@@ -49,8 +49,11 @@
     <string name="alarm_severity_normal">Normal</string>
     <string name="alarm_severity_cleared">Cleared</string>
     <string name="acknowledge">Acknowledge</string>
+    <string name="unacknowledge">Unacknowledge</string>
     <string name="alarm_ack_success">Alarm #%d has been acknowledged.</string>
     <string name="alarm_ack_fail_offline">Cannot acknowledge. Device is offline.</string>
+    <string name="alarm_unack_success">Alarm #%d has been unacknowledged.</string>
+    <string name="alarm_unack_fail_offline">Cannot unacknowledge. Device is offline.</string>
 
     <!-- Events -->
     <string name="events">Events</string>
