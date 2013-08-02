@@ -13,16 +13,14 @@ public class Utils {
 
     private static final String TAG = "Utils";
 
-    public static Date parseDate(String input) {
-        // Example: "2013-07-22T04:03:04-04:00"
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        Date date = new Date();
+    public static String parseDate(String input, String pattern) {
         try {
-            date = format.parse(input);
+            SimpleDateFormat format = new SimpleDateFormat(pattern);
+            return format.parse(input).toString();
         } catch (ParseException e) {
             Log.e(TAG, "Date parsing error", e);
+            return input;
         }
-        return date;
     }
 
     public static boolean isOnline(Context context) {

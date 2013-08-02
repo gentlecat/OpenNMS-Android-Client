@@ -80,7 +80,7 @@ public class EventDetailsFragment extends Fragment {
             String createTimeString = cursor.getString(
                     cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
             TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
-            timeTextView.setText(Utils.parseDate(createTimeString).toString());
+            timeTextView.setText(Utils.parseDate(createTimeString, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
 
             // Log message
             String logMessage = cursor.getString(

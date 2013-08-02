@@ -147,8 +147,9 @@ public class AlarmDetailsFragment extends Fragment {
             if (ackTime != null) {
                 ackStatus.setText(getString(R.string.alarm_details_acked));
                 TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
-                ackMessage.setText(Utils.parseDate(ackTime).toString() + " "
-                                   + getString(R.string.alarm_details_acked_by) + " " + ackUser);
+                ackMessage.setText(Utils.parseDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
+                                   + " " + getString(R.string.alarm_details_acked_by) + " "
+                                   + ackUser);
             } else {
                 ackStatus.setText(getString(R.string.alarm_details_not_acked));
             }
@@ -195,8 +196,8 @@ public class AlarmDetailsFragment extends Fragment {
             String lastEventSeverity = cursor.getString(
                     cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
             TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
-            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + Utils
-                    .parseDate(lastEventTimeString).toString());
+            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
+                              + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
         }
     }
 
