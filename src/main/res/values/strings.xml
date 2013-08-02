@@ -98,9 +98,10 @@
     <string name="settings_sync_rate_minutes_plural">minutes</string>
 
     <!-- "Welcome" dialog -->
-    <string name="welcome_message">Do you want to use demo server or change settings to use your server?</string>
-    <string name="welcome_message_pos_button">Change settings</string>
-    <string name="welcome_message_neg_button">Use demo server</string>
+    <string name="welcome_message">Do you want to configure connection to your OpenNMS server or
+        try demo?</string>
+    <string name="welcome_message_pos_button">Configure connection</string>
+    <string name="welcome_message_neg_button">Try demo</string>
 
     <!-- Notifications -->
     <string name="new_alarms_notif_title">New alarms</string>
