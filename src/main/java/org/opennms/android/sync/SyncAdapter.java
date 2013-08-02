@@ -169,7 +169,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
         contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = AlarmsParser.parse(result);
+        ArrayList<ContentValues> values = AlarmsParser.parseMultiple(result);
         contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
                                    values.toArray(new ContentValues[values.size()]));
 

@@ -21,6 +21,12 @@ public abstract class Parser {
         return (NodeList) xPath.evaluate(expression, inputSource, XPathConstants.NODESET);
     }
 
+    public static Node getXmlNodeForExpression(String expression, String xml)
+            throws XPathExpressionException {
+        InputSource inputSource = new InputSource(new StringReader(xml));
+        return (Node) xPath.evaluate(expression, inputSource, XPathConstants.NODE);
+    }
+
     public static Node getXmlNodeForExpression(String expression, Node widgetNode)
             throws XPathExpressionException {
         return (Node) xPath.evaluate(expression, widgetNode, XPathConstants.NODE);

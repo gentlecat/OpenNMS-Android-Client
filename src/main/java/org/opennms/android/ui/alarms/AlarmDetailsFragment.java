@@ -1,5 +1,7 @@
 package org.opennms.android.ui.alarms;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,6 +23,7 @@ import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
+import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
 
 import java.net.HttpURLConnection;
@@ -98,7 +101,7 @@ public class AlarmDetailsFragment extends Fragment {
             new AcknowledgementTask().execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline),
-                    Toast.LENGTH_LONG).show();
+                           Toast.LENGTH_LONG).show();
         }
     }
 
@@ -145,7 +148,7 @@ public class AlarmDetailsFragment extends Fragment {
                 ackStatus.setText(getString(R.string.alarm_details_acked));
                 TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
                 ackMessage.setText(Utils.parseDate(ackTime).toString() + " "
-                        + getString(R.string.alarm_details_acked_by) + " " + ackUser);
+                                   + getString(R.string.alarm_details_acked_by) + " " + ackUser);
             } else {
                 ackStatus.setText(getString(R.string.alarm_details_not_acked));
             }
@@ -222,13 +225,24 @@ public class AlarmDetailsFragment extends Fragment {
         protected void onPostExecute(Response response) {
             if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                 Toast.makeText(getActivity(),
-                        String.format(getString(R.string.alarm_ack_success), alarmId),
-                        Toast.LENGTH_LONG).show();
+                               String.format(getString(R.string.alarm_ack_success), alarmId),
+                               Toast.LENGTH_LONG).show();
+
+                // Updating database
+                ContentValues[] values = new ContentValues[1];
+                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
+
+                // Updating details view
+                cursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                        null, null, null, null);
+                updateContent();
             } else {
-                // TODO: Update info in DB and refresh details view
                 Toast.makeText(getActivity(),
-                        "Error occurred during acknowledgement process!",
-                        Toast.LENGTH_LONG).show();
+                               "Error occurred during acknowledgement process!",
+                               Toast.LENGTH_LONG).show();
                 final MenuItem ackMenuItem = menu.findItem(R.id.menu_acknowledge_alarm);
                 if (ackMenuItem != null) {
                     ackMenuItem.setVisible(true);
