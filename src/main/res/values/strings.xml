@@ -30,6 +30,8 @@
 
     <!-- Alarms -->
     <string name="alarms">Alarms</string>
+    <string name="outstanding_alarms">Outstanding alarms</string>
+    <string name="acked_alarms">Acknowledged alarms</string>
     <string name="alarms_list_empty">No alarms</string>
     <string name="alarm_details">Alarm #</string>
     <string name="alarm_details_id">Alarm #</string>
@@ -98,8 +100,9 @@
     <string name="settings_sync_rate_minutes_plural">minutes</string>
 
     <!-- "Welcome" dialog -->
-    <string name="welcome_message">Do you want to configure connection to your OpenNMS server or
-        try demo?</string>
+    <string name="welcome_message">You can configure connection to your OpenNMS server or
+        try demo.</string>
+    <string name="welcome">Welcome!</string>
     <string name="welcome_message_pos_button">Configure connection</string>
     <string name="welcome_message_neg_button">Try demo</string>
 

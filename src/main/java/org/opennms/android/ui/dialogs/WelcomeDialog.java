@@ -21,6 +21,7 @@ public class WelcomeDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.welcome)
                 .setMessage(getResources().getString(R.string.welcome_message))
                 .setPositiveButton(
                         getResources().getString(R.string.welcome_message_pos_button),
