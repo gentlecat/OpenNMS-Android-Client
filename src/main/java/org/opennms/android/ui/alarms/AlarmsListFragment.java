@@ -44,7 +44,6 @@ public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
     public static final String EXTRA_ALARM_ID = "alarm";
-    private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_TIME + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
     private AlarmAdapter adapter;
@@ -163,17 +162,12 @@ public class AlarmsListFragment extends ListFragment
     public void onStart() {
         super.onStart();
         if (isDualPane) {
-            long activeAlarmId = sharedPref.getLong(STATE_ACTIVE_ALARM_ID, -1);
-            if (activeAlarmId != -1) {
-                showDetails(activeAlarmId);
-            } else {
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                RelativeLayout emptyView = (RelativeLayout) inflater
-                        .inflate(R.layout.empty_details, null);
-                detailsContainer.addView(emptyView);
-            }
+            detailsContainer.removeAllViews();
+            LayoutInflater inflater = (LayoutInflater) getActivity()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            RelativeLayout emptyView = (RelativeLayout) inflater
+                    .inflate(R.layout.empty_details, null);
+            detailsContainer.addView(emptyView);
         }
     }
 
@@ -185,7 +179,6 @@ public class AlarmsListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
-        sharedPref.edit().putLong(STATE_ACTIVE_ALARM_ID, id).commit();
         showDetails(id);
     }
 
