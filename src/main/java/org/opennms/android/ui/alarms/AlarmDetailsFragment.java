@@ -217,7 +217,7 @@ public class AlarmDetailsFragment extends Fragment {
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
 
-        final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
+        private final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
 
         @Override
         protected void onPreExecute() {
@@ -271,7 +271,7 @@ public class AlarmDetailsFragment extends Fragment {
 
     private class UnacknowledgementTask extends AsyncTask<Void, Void, Response> {
 
-        final MenuItem unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
+        private final MenuItem unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
 
         @Override
         protected void onPreExecute() {

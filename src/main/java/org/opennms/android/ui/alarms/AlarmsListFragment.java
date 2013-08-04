@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -48,7 +51,6 @@ public class AlarmsListFragment extends ListFragment
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
-    private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
     private Object syncObserverHandle;
     private Menu optionsMenu;
@@ -73,6 +75,16 @@ public class AlarmsListFragment extends ListFragment
         }
     };
     private String cursorSelection = null;
+    private Fragment activeDetailsFragment;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.remove(activeDetailsFragment);
+            fragmentTransaction.commit();
+            showEmptyDetails();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +105,6 @@ public class AlarmsListFragment extends ListFragment
         detailsContainer = (FrameLayout) getActivity()
                 .findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (isDualPane) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -151,6 +162,11 @@ public class AlarmsListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
+
+        if (isDualPane && !cursor.moveToFirst() && activeDetailsFragment != null) {
+            detailsContainer.removeAllViews();
+            handler.sendEmptyMessage(0);
+        }
     }
 
     @Override
@@ -162,13 +178,17 @@ public class AlarmsListFragment extends ListFragment
     public void onStart() {
         super.onStart();
         if (isDualPane) {
-            detailsContainer.removeAllViews();
-            LayoutInflater inflater = (LayoutInflater) getActivity()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            RelativeLayout emptyView = (RelativeLayout) inflater
-                    .inflate(R.layout.empty_details, null);
-            detailsContainer.addView(emptyView);
+            showEmptyDetails();
         }
+    }
+
+    private void showEmptyDetails() {
+        detailsContainer.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout emptyView = (RelativeLayout) inflater
+                .inflate(R.layout.empty_details, null);
+        detailsContainer.addView(emptyView);
     }
 
     @Override
@@ -185,9 +205,9 @@ public class AlarmsListFragment extends ListFragment
     private void showDetails(long id) {
         if (isDualPane) {
             detailsContainer.removeAllViews();
-            AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(id);
+            activeDetailsFragment = new AlarmDetailsFragment(id);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.replace(R.id.details_fragment_container, activeDetailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
