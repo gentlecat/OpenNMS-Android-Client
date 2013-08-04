@@ -49,6 +49,7 @@ public class AlarmsListFragment extends ListFragment
     public static final String EXTRA_ALARM_ID = "alarm";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_TIME + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
+    private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -85,6 +86,7 @@ public class AlarmsListFragment extends ListFragment
             showEmptyDetails();
         }
     };
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class AlarmsListFragment extends ListFragment
         detailsContainer = (FrameLayout) getActivity()
                 .findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (isDualPane) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -178,7 +181,12 @@ public class AlarmsListFragment extends ListFragment
     public void onStart() {
         super.onStart();
         if (isDualPane) {
-            showEmptyDetails();
+            long activeAlarmId = sharedPref.getLong(STATE_ACTIVE_ALARM_ID, -1);
+            if (activeAlarmId != -1) {
+                showDetails(activeAlarmId);
+            } else {
+                showEmptyDetails();
+            }
         }
     }
 
@@ -199,6 +207,7 @@ public class AlarmsListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_ALARM_ID, id).commit();
         showDetails(id);
     }
 
