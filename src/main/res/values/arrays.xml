@@ -24,4 +24,9 @@
         <item>CLEARED</item>
     </array>
 
+    <string-array name="alarms_action_list">
+        <item>@string/outstanding_alarms</item>
+        <item>@string/acked_alarms</item>
+    </string-array>
+
 </resources>

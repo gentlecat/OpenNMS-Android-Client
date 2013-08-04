@@ -16,15 +16,19 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +41,12 @@ import org.opennms.android.sync.SyncAdapter;
 import org.opennms.android.sync.SyncUtils;
 
 public class AlarmsListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
     public static final String EXTRA_ALARM_ID = "alarm";
     private static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
+    private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_TIME + " IS NULL";
+    private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private SharedPreferences sharedPref;
@@ -67,6 +73,7 @@ public class AlarmsListFragment extends ListFragment
             });
         }
     };
+    private String cursorSelection = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,7 +107,29 @@ public class AlarmsListFragment extends ListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.alarms_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(Loaders.ALARMS, null, this);
+        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        SpinnerAdapter mSpinnerAdapter =
+                ArrayAdapter.createFromResource(getActivity(), R.array.alarms_action_list,
+                                                android.R.layout.simple_spinner_dropdown_item);
+        actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        switch (itemPosition) {
+            case 0:
+                cursorSelection = SELECTION_OUTSTANDING;
+                getActivity().getSupportLoaderManager().restartLoader(Loaders.ALARMS, null, this);
+                return true;
+            case 1:
+                cursorSelection = SELECTION_ACKED;
+                getActivity().getSupportLoaderManager().restartLoader(Loaders.ALARMS, null, this);
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -114,7 +143,7 @@ public class AlarmsListFragment extends ListFragment
                 getActivity(),
                 Contract.Alarms.CONTENT_URI,
                 projection,
-                null,
+                cursorSelection,
                 null,
                 Contract.Alarms._ID + " DESC"
         );
