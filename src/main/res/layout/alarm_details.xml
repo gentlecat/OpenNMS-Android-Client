@@ -39,13 +39,12 @@
 
         <TextView
             android:id="@+id/alarm_ack_status"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:paddingTop="@dimen/details_section_padding_top" />
 
         <TextView
             android:id="@+id/alarm_ack_message"
@@ -56,14 +55,13 @@
 
         <TextView
             android:id="@+id/alarm_log_message_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_message"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/alarm_details_message" />
 
         <TextView
             android:id="@+id/alarm_log_message"
@@ -74,14 +72,13 @@
 
         <TextView
             android:id="@+id/alarm_node_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_node"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/alarm_details_node" />
 
         <TextView
             android:id="@+id/alarm_node"
@@ -92,14 +89,13 @@
 
         <TextView
             android:id="@+id/alarm_service_type_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_service_type"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/alarm_details_service_type" />
 
         <TextView
             android:id="@+id/alarm_service_type"
@@ -110,14 +106,13 @@
 
         <TextView
             android:id="@+id/alarm_last_event_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_last_event"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/alarm_details_last_event" />
 
         <TextView
             android:id="@+id/alarm_last_event"
@@ -128,14 +123,13 @@
 
         <TextView
             android:id="@+id/alarm_description_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/details_layout_padding"
             android:paddingRight="@dimen/details_layout_padding"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_desc"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/alarm_details_desc" />
 
         <TextView
             android:id="@+id/alarm_description"

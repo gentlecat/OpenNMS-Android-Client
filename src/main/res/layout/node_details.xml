@@ -34,12 +34,11 @@
 
         <TextView
             android:id="@+id/node_type_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_type"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_type" />
 
         <TextView
             android:id="@+id/node_type"
@@ -48,12 +47,11 @@
 
         <TextView
             android:id="@+id/node_creation_time_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_creation_time"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_creation_time" />
 
         <TextView
             android:id="@+id/node_creation_time"
@@ -62,12 +60,11 @@
 
         <TextView
             android:id="@+id/node_contact_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_contact"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_contact" />
 
         <TextView
             android:id="@+id/node_contact"
@@ -76,12 +73,11 @@
 
         <TextView
             android:id="@+id/node_label_source_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_label_source"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_label_source" />
 
         <TextView
             android:id="@+id/node_label_source"
@@ -90,12 +86,11 @@
 
         <TextView
             android:id="@+id/node_location_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_location"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_location" />
 
         <TextView
             android:id="@+id/node_location"
@@ -104,12 +99,11 @@
 
         <TextView
             android:id="@+id/node_description_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_description"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/node_details_description" />
 
         <TextView
             android:id="@+id/node_description"

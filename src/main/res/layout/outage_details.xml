@@ -20,12 +20,11 @@
 
         <TextView
             android:id="@+id/outage_ip_address_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_ip_address"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_ip_address" />
 
         <TextView
             android:id="@+id/outage_ip_address"
@@ -34,12 +33,11 @@
 
         <TextView
             android:id="@+id/outage_ip_interface_id_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_ip_interface_id"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_ip_interface_id" />
 
         <TextView
             android:id="@+id/outage_ip_interface_id"
@@ -48,12 +46,11 @@
 
         <TextView
             android:id="@+id/outage_service_id_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_service_id"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_service_id" />
 
         <TextView
             android:id="@+id/outage_service_id"
@@ -62,12 +59,11 @@
 
         <TextView
             android:id="@+id/outage_service_type_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_service_type"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_service_type" />
 
         <TextView
             android:id="@+id/outage_service_type"
@@ -76,12 +72,11 @@
 
         <TextView
             android:id="@+id/outage_lost_service_event_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_lost_event"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_lost_event" />
 
         <TextView
             android:id="@+id/outage_lost_service_event"
@@ -90,12 +85,11 @@
 
         <TextView
             android:id="@+id/outage_regained_service_event_title"
+            style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/outage_details_regained_event"
-            android:textAllCaps="true"
-            android:textStyle="bold" />
+            android:text="@string/outage_details_regained_event" />
 
         <TextView
             android:id="@+id/outage_regained_service_event"
