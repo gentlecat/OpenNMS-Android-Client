@@ -52,7 +52,9 @@ public class AlarmDetailsFragment extends Fragment {
 
     @Override
     public void onStop() {
-        cursor.close();
+        if (cursor != null) {
+            cursor.close();
+        }
         super.onStop();
     }
 
@@ -261,9 +263,10 @@ public class AlarmDetailsFragment extends Fragment {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 updateContent();
-
-                menuInflater.inflate(R.menu.alarm, menu);
-                updateMenu();
+                if (menuInflater != null) {
+                    menuInflater.inflate(R.menu.alarm, menu);
+                    updateMenu();
+                }
             } else {
                 showErrorMessage();
             }
