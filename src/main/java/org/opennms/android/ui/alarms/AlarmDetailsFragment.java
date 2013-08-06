@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,13 +31,15 @@ import org.opennms.android.provider.Contract;
 
 import java.net.HttpURLConnection;
 
-public class AlarmDetailsFragment extends Fragment {
+public class AlarmDetailsFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "AlarmDetailsFragment";
+    private static final int LOADER_ID = 0x1;
     private MenuInflater menuInflater;
     private long alarmId;
-    private Cursor cursor;
     private Menu menu;
+    private LoaderManager loaderManager;
 
     // Do not remove
     public AlarmDetailsFragment() {
@@ -45,17 +50,71 @@ public class AlarmDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+    public Loader<Cursor> onCreateLoader(int id, Bundle data) {
+        return new CursorLoader(getActivity(),
+                                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
+                                                     String.valueOf(alarmId)),
+                                null, null, null, null);
+    }
+
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 
     @Override
-    public void onStop() {
-        if (cursor != null) {
-            cursor.close();
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (!isAdded()) {
+            return;
         }
-        super.onStop();
+
+        if (cursor != null && cursor.moveToFirst()) {
+            updateContent(cursor);
+            if (menuInflater != null) {
+                menuInflater.inflate(R.menu.alarm, menu);
+                String ackTime = cursor.getString(
+                        cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+                updateMenu(ackTime == null);
+            }
+        } else {
+            Response response;
+            try {
+                response = new Client(getActivity()).get("alarms/" + alarmId);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred while loading info about alarm from server", e);
+                showErrorMessage();
+                return;
+            }
+
+            if (response.getMessage() != null || response.getCode() == HttpURLConnection.HTTP_OK) {
+                ContentValues[] values = new ContentValues[1];
+                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
+
+                cursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                        null, null, null, null);
+                updateContent(cursor);
+
+                if (menuInflater != null) {
+                    menuInflater.inflate(R.menu.alarm, menu);
+                }
+                String ackTime = cursor.getString(
+                        cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+                updateMenu(ackTime == null);
+            } else {
+                showErrorMessage();
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        loaderManager = getLoaderManager();
+        loaderManager.restartLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -71,7 +130,6 @@ public class AlarmDetailsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        new LoaderTask().execute();
     }
 
     @Override
@@ -97,7 +155,7 @@ public class AlarmDetailsFragment extends Fragment {
 
     public void acknowledge() {
         if (Utils.isOnline(getActivity())) {
-            new AcknowledgementTask().execute();
+            new AcknowledgementTask(this).execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline),
                            Toast.LENGTH_LONG).show();
@@ -106,15 +164,17 @@ public class AlarmDetailsFragment extends Fragment {
 
     public void unacknowledge() {
         if (Utils.isOnline(getActivity())) {
-            new UnacknowledgementTask().execute();
+            new UnacknowledgementTask(this).execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_unack_fail_offline),
                            Toast.LENGTH_LONG).show();
         }
     }
 
-    public void updateContent() {
-        cursor.moveToFirst();
+    public void updateContent(Cursor cursor) {
+        if (!cursor.moveToFirst()) {
+            return;
+        }
 
         LinearLayout detailsLayout =
                 (LinearLayout) getActivity().findViewById(R.id.alarm_details);
@@ -210,73 +270,19 @@ public class AlarmDetailsFragment extends Fragment {
                           + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
     }
 
-    private void updateMenu() {
-        if (cursor.moveToFirst() && menu != null) {
-            String ackTime = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-            if (ackTime == null) {
-                menu.findItem(R.id.menu_unack_alarm).setVisible(false);
-                menu.findItem(R.id.menu_ack_alarm).setVisible(true);
-            } else {
-                menu.findItem(R.id.menu_unack_alarm).setVisible(true);
-                menu.findItem(R.id.menu_ack_alarm).setVisible(false);
-            }
-        }
-    }
-
-    private class LoaderTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            cursor = getActivity().getContentResolver().query(
-                    Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                    null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                return true;
-            } else {
-                Response response;
-                try {
-                    response = new Client(getActivity()).get("alarms/" + alarmId);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error occurred while loading info about alarm from server", e);
-                    return false;
-                }
-
-                if (response.getMessage() == null
-                    || response.getCode() != HttpURLConnection.HTTP_OK) {
-                    return false;
-                }
-
-                ContentValues[] values = new ContentValues[1];
-                values[0] = AlarmsParser.parseSingle(response.getMessage());
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
-
-                cursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                        null, null, null, null);
-                return true;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                updateContent();
-                if (menuInflater != null) {
-                    menuInflater.inflate(R.menu.alarm, menu);
-                    updateMenu();
-                }
-            } else {
-                showErrorMessage();
-            }
-        }
-
+    private void updateMenu(boolean acked) {
+        menu.findItem(R.id.menu_unack_alarm).setVisible(!acked);
+        menu.findItem(R.id.menu_ack_alarm).setVisible(acked);
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
 
         private final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
+        private AlarmDetailsFragment fragment;
+
+        public AcknowledgementTask(AlarmDetailsFragment fragment) {
+            this.fragment = fragment;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -309,16 +315,13 @@ public class AlarmDetailsFragment extends Fragment {
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
 
                 // Updating details view
-                cursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                        null, null, null, null);
-                updateContent();
+                loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
                                "Error occurred during acknowledgement process!",
                                Toast.LENGTH_LONG).show();
+                updateMenu(false);
             }
-            updateMenu();
         }
 
     }
@@ -326,6 +329,11 @@ public class AlarmDetailsFragment extends Fragment {
     private class UnacknowledgementTask extends AsyncTask<Void, Void, Response> {
 
         private final MenuItem unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
+        private AlarmDetailsFragment fragment;
+
+        public UnacknowledgementTask(AlarmDetailsFragment fragment) {
+            this.fragment = fragment;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -358,18 +366,14 @@ public class AlarmDetailsFragment extends Fragment {
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
 
                 // Updating details view
-                cursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                        null, null, null, null);
-                updateContent();
+                loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
                                "Error occurred during unacknowledgement process!",
                                Toast.LENGTH_LONG).show();
+                updateMenu(true);
             }
-            updateMenu();
         }
-
     }
 
 }
