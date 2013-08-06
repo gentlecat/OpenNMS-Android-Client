@@ -57,7 +57,6 @@ public class AlarmDetailsFragment extends Fragment
                                 null, null, null, null);
     }
 
-
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
@@ -74,7 +73,7 @@ public class AlarmDetailsFragment extends Fragment
                 menuInflater.inflate(R.menu.alarm, menu);
                 String ackTime = cursor.getString(
                         cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-                updateMenu(ackTime == null);
+                updateMenu(ackTime != null);
             }
         } else {
             Response response;
@@ -102,7 +101,7 @@ public class AlarmDetailsFragment extends Fragment
                 }
                 String ackTime = cursor.getString(
                         cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-                updateMenu(ackTime == null);
+                updateMenu(ackTime != null);
             } else {
                 showErrorMessage();
             }
@@ -271,8 +270,8 @@ public class AlarmDetailsFragment extends Fragment
     }
 
     private void updateMenu(boolean acked) {
-        menu.findItem(R.id.menu_unack_alarm).setVisible(!acked);
-        menu.findItem(R.id.menu_ack_alarm).setVisible(acked);
+        menu.findItem(R.id.menu_unack_alarm).setVisible(acked);
+        menu.findItem(R.id.menu_ack_alarm).setVisible(!acked);
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
