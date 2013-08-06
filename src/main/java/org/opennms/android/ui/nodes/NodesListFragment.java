@@ -4,12 +4,10 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -44,11 +42,9 @@ public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String EXTRA_NODE_ID = "node";
-    private static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
-    private SharedPreferences sharedPref;
     private FrameLayout detailsContainer;
     private Object syncObserverHandle;
     private Menu optionsMenu;
@@ -92,7 +88,6 @@ public class NodesListFragment extends ListFragment
         detailsContainer =
                 (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (isDualPane) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -117,17 +112,12 @@ public class NodesListFragment extends ListFragment
     public void onStart() {
         super.onStart();
         if (isDualPane) {
-            long activeNodeId = sharedPref.getLong(STATE_ACTIVE_NODE_ID, -1);
-            if (activeNodeId != -1) {
-                showDetails(activeNodeId);
-            } else {
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                RelativeLayout emptyView =
-                        (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
-                detailsContainer.addView(emptyView);
-            }
+            detailsContainer.removeAllViews();
+            LayoutInflater inflater = (LayoutInflater) getActivity()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            RelativeLayout emptyView =
+                    (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
+            detailsContainer.addView(emptyView);
         }
     }
 
@@ -139,7 +129,6 @@ public class NodesListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
-        sharedPref.edit().putLong(STATE_ACTIVE_NODE_ID, id).commit();
         showDetails(id);
     }
 
