@@ -46,9 +46,6 @@ public class AlarmDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        cursor = getActivity().getContentResolver().query(
-                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                null, null, null, null);
         setHasOptionsMenu(true);
     }
 
@@ -64,25 +61,20 @@ public class AlarmDetailsFragment extends Fragment {
         return inflater.inflate(R.layout.alarm_details, container, false);
     }
 
+    private void showErrorMessage() {
+        // TODO: Implement
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        updateContent();
+        new LoaderTask().execute();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.menu = menu;
         inflater.inflate(R.menu.alarm, menu);
-        if (cursor.moveToFirst()) {
-            String ackTime = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-            if (ackTime == null) {
-                menu.findItem(R.id.menu_unack_alarm).setVisible(false);
-            } else {
-                menu.findItem(R.id.menu_ack_alarm).setVisible(false);
-            }
-        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -119,100 +111,165 @@ public class AlarmDetailsFragment extends Fragment {
     }
 
     public void updateContent() {
-        if (cursor.moveToFirst()) {
-            LinearLayout detailsLayout =
-                    (LinearLayout) getActivity().findViewById(R.id.alarm_details);
+        cursor.moveToFirst();
 
-            // Alarm ID
-            int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
-            TextView idView = (TextView) getActivity().findViewById(R.id.alarm_id);
-            idView.setText(getString(R.string.alarm_details_id) + id);
+        LinearLayout detailsLayout =
+                (LinearLayout) getActivity().findViewById(R.id.alarm_details);
 
-            // Severity
-            String severity =
-                    cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
-            TextView severityView = (TextView) getActivity().findViewById(R.id.alarm_severity);
-            severityView.setText(String.valueOf(severity));
-            LinearLayout severityRow =
-                    (LinearLayout) getActivity().findViewById(R.id.alarm_severity_row);
-            if (severity.equals("CLEARED")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
-            } else if (severity.equals("MINOR")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
-            } else if (severity.equals("NORMAL")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_normal));
-            } else if (severity.equals("INDETERMINATE")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
-            } else if (severity.equals("WARNING")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_warning));
-            } else if (severity.equals("MAJOR")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_major));
-            } else if (severity.equals("CRITICAL")) {
-                severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
-            }
+        // Alarm ID
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
+        TextView idView = (TextView) getActivity().findViewById(R.id.alarm_id);
+        idView.setText(getString(R.string.alarm_details_id) + id);
 
-            // Acknowledgement info
-            String ackTime =
-                    cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-            String ackUser =
-                    cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_USER));
-            TextView ackStatus = (TextView) getActivity().findViewById(R.id.alarm_ack_status);
-            TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
-            if (ackTime != null) {
-                ackStatus.setText(getString(R.string.alarm_details_acked));
-                ackMessage.setText(Utils.parseDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
-                                   + " " + getString(R.string.alarm_details_acked_by) + " "
-                                   + ackUser);
-            } else {
-                ackStatus.setText(getString(R.string.alarm_details_not_acked));
-                ackMessage.setText("");
-            }
-
-            // Description
-            String desc = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
-            TextView descView = (TextView) getActivity().findViewById(R.id.alarm_description);
-            descView.setText(Html.fromHtml(desc));
-
-            // Log message
-            String logMessage = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
-            TextView logMessageView = (TextView) getActivity().findViewById(R.id.alarm_log_message);
-            logMessageView.setText(logMessage);
-
-            // Node
-            int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
-            String nodeLabel = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL));
-            TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
-            node.setText(nodeLabel + " (#" + nodeId + ")");
-
-            // Service type
-            int serviceTypeId = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID));
-            String serviceTypeName = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME));
-            TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
-            if (serviceTypeName != null) {
-                serviceType.setText(serviceTypeName + " (#" + serviceTypeId + ")");
-            } else {
-                detailsLayout.removeView(serviceType);
-                TextView title =
-                        (TextView) getActivity().findViewById(R.id.alarm_service_type_title);
-                detailsLayout.removeView(title);
-            }
-
-            // Last event
-            String lastEventTimeString = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
-            int lastEventId = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID));
-            String lastEventSeverity = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
-            TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
-            lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
-                              + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+        // Severity
+        String severity =
+                cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
+        TextView severityView = (TextView) getActivity().findViewById(R.id.alarm_severity);
+        severityView.setText(String.valueOf(severity));
+        LinearLayout severityRow =
+                (LinearLayout) getActivity().findViewById(R.id.alarm_severity_row);
+        if (severity.equals("CLEARED")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_cleared));
+        } else if (severity.equals("MINOR")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
+        } else if (severity.equals("NORMAL")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_normal));
+        } else if (severity.equals("INDETERMINATE")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_minor));
+        } else if (severity.equals("WARNING")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_warning));
+        } else if (severity.equals("MAJOR")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_major));
+        } else if (severity.equals("CRITICAL")) {
+            severityRow.setBackgroundColor(getResources().getColor(R.color.severity_critical));
         }
+
+        // Acknowledgement info
+        String ackTime =
+                cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+        String ackUser =
+                cursor.getString(cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_USER));
+        TextView ackStatus = (TextView) getActivity().findViewById(R.id.alarm_ack_status);
+        TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
+        if (ackTime != null) {
+            ackStatus.setText(getString(R.string.alarm_details_acked));
+            ackMessage.setText(Utils.parseDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
+                               + " " + getString(R.string.alarm_details_acked_by) + " "
+                               + ackUser);
+        } else {
+            ackStatus.setText(getString(R.string.alarm_details_not_acked));
+            ackMessage.setText("");
+        }
+
+        // Description
+        String desc = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.DESCRIPTION));
+        TextView descView = (TextView) getActivity().findViewById(R.id.alarm_description);
+        descView.setText(Html.fromHtml(desc));
+
+        // Log message
+        String logMessage = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
+        TextView logMessageView = (TextView) getActivity().findViewById(R.id.alarm_log_message);
+        logMessageView.setText(logMessage);
+
+        // Node
+        int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
+        String nodeLabel = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL));
+        TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
+        node.setText(nodeLabel + " (#" + nodeId + ")");
+
+        // Service type
+        int serviceTypeId = cursor.getInt(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_ID));
+        String serviceTypeName = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.SERVICE_TYPE_NAME));
+        TextView serviceType = (TextView) getActivity().findViewById(R.id.alarm_service_type);
+        if (serviceTypeName != null) {
+            serviceType.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+        } else {
+            detailsLayout.removeView(serviceType);
+            TextView title =
+                    (TextView) getActivity().findViewById(R.id.alarm_service_type_title);
+            detailsLayout.removeView(title);
+        }
+
+        // Last event
+        String lastEventTimeString = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
+        int lastEventId = cursor.getInt(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID));
+        String lastEventSeverity = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
+        TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
+        lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
+                          + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+    }
+
+    private void updateMenu() {
+        if (cursor.moveToFirst() && menu != null) {
+            String ackTime = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
+            if (ackTime == null) {
+                menu.findItem(R.id.menu_unack_alarm).setVisible(false);
+                menu.findItem(R.id.menu_ack_alarm).setVisible(true);
+            } else {
+                menu.findItem(R.id.menu_unack_alarm).setVisible(true);
+                menu.findItem(R.id.menu_ack_alarm).setVisible(false);
+            }
+        }
+    }
+
+    private class LoaderTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            cursor = getActivity().getContentResolver().query(
+                    Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                    null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return true;
+            } else {
+                Response response;
+                try {
+                    response = new Client(getActivity()).get(String.format("alarms/%d", alarmId));
+                } catch (Exception e) {
+                    Log.e(TAG, "Error occurred while loading info about alarm from server", e);
+                    return false;
+                }
+
+                if (response.getMessage() == null
+                    || response.getCode() != HttpURLConnection.HTTP_OK) {
+                    return false;
+                }
+
+                ContentValues[] values = new ContentValues[1];
+                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
+
+                cursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
+                        null, null, null, null);
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                updateContent();
+                updateMenu();
+            } else {
+                showErrorMessage();
+            }
+        }
+
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
@@ -254,17 +311,12 @@ public class AlarmDetailsFragment extends Fragment {
                         Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
                         null, null, null, null);
                 updateContent();
-
-                menu.findItem(R.id.menu_unack_alarm).setVisible(true);
             } else {
                 Toast.makeText(getActivity(),
                                "Error occurred during acknowledgement process!",
                                Toast.LENGTH_LONG).show();
-                final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
-                if (ackMenuItem != null) {
-                    ackMenuItem.setVisible(true);
-                }
             }
+            updateMenu();
         }
 
     }
@@ -308,17 +360,12 @@ public class AlarmDetailsFragment extends Fragment {
                         Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
                         null, null, null, null);
                 updateContent();
-
-                menu.findItem(R.id.menu_ack_alarm).setVisible(true);
             } else {
                 Toast.makeText(getActivity(),
                                "Error occurred during unacknowledgement process!",
                                Toast.LENGTH_LONG).show();
-                final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
-                if (ackMenuItem != null) {
-                    ackMenuItem.setVisible(true);
-                }
             }
+            updateMenu();
         }
 
     }
