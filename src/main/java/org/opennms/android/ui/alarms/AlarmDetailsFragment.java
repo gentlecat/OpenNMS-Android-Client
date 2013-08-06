@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 public class AlarmDetailsFragment extends Fragment {
 
     public static final String TAG = "AlarmDetailsFragment";
+    private MenuInflater menuInflater;
     private long alarmId;
     private Cursor cursor;
     private Menu menu;
@@ -74,7 +75,7 @@ public class AlarmDetailsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.menu = menu;
-        inflater.inflate(R.menu.alarm, menu);
+        menuInflater = inflater;
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -224,10 +225,6 @@ public class AlarmDetailsFragment extends Fragment {
     private class LoaderTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
         protected Boolean doInBackground(Void... voids) {
             cursor = getActivity().getContentResolver().query(
                     Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
@@ -237,7 +234,7 @@ public class AlarmDetailsFragment extends Fragment {
             } else {
                 Response response;
                 try {
-                    response = new Client(getActivity()).get(String.format("alarms/%d", alarmId));
+                    response = new Client(getActivity()).get("alarms/" + alarmId);
                 } catch (Exception e) {
                     Log.e(TAG, "Error occurred while loading info about alarm from server", e);
                     return false;
@@ -264,6 +261,8 @@ public class AlarmDetailsFragment extends Fragment {
         protected void onPostExecute(Boolean success) {
             if (success) {
                 updateContent();
+
+                menuInflater.inflate(R.menu.alarm, menu);
                 updateMenu();
             } else {
                 showErrorMessage();
