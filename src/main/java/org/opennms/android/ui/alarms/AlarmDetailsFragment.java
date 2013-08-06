@@ -67,15 +67,11 @@ public class AlarmDetailsFragment extends Fragment
             return;
         }
 
+        /** Checking if data has been loaded from the DB */
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
-            if (menuInflater != null) {
-                menuInflater.inflate(R.menu.alarm, menu);
-                String ackTime = cursor.getString(
-                        cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-                updateMenu(ackTime != null);
-            }
         } else {
+            /** If not, trying to get information from the server */
             Response response;
             try {
                 response = new Client(getActivity()).get("alarms/" + alarmId);
@@ -85,6 +81,7 @@ public class AlarmDetailsFragment extends Fragment
                 return;
             }
 
+            /** If information is available, updating DB */
             if (response.getMessage() != null || response.getCode() == HttpURLConnection.HTTP_OK) {
                 ContentValues[] values = new ContentValues[1];
                 values[0] = AlarmsParser.parseSingle(response.getMessage());
@@ -95,13 +92,6 @@ public class AlarmDetailsFragment extends Fragment
                         Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
                         null, null, null, null);
                 updateContent(cursor);
-
-                if (menuInflater != null) {
-                    menuInflater.inflate(R.menu.alarm, menu);
-                }
-                String ackTime = cursor.getString(
-                        cursor.getColumnIndexOrThrow(Contract.Alarms.ACK_TIME));
-                updateMenu(ackTime != null);
             } else {
                 showErrorMessage();
             }
@@ -267,9 +257,14 @@ public class AlarmDetailsFragment extends Fragment
         TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
         lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
                           + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+
+        updateMenu(ackTime != null);
     }
 
     private void updateMenu(boolean acked) {
+        if (menuInflater != null) {
+            menuInflater.inflate(R.menu.alarm, menu);
+        }
         menu.findItem(R.id.menu_unack_alarm).setVisible(acked);
         menu.findItem(R.id.menu_ack_alarm).setVisible(!acked);
     }
