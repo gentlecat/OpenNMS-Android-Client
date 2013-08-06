@@ -36,12 +36,13 @@ public class AlarmDetailsFragment extends Fragment
 
     public static final String TAG = "AlarmDetailsFragment";
     private static final int LOADER_ID = 0x1;
-    private MenuInflater menuInflater;
     private long alarmId;
-    private Menu menu;
     private LoaderManager loaderManager;
+    private Menu menu;
+    private MenuItem ackMenuItem;
+    private MenuItem unackMenuItem;
 
-    // Do not remove
+    // Do not remove!
     public AlarmDetailsFragment() {
     }
 
@@ -101,7 +102,9 @@ public class AlarmDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
+
         loaderManager = getLoaderManager();
         loaderManager.restartLoader(LOADER_ID, null, this);
     }
@@ -117,15 +120,21 @@ public class AlarmDetailsFragment extends Fragment
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.menu = menu;
-        menuInflater = inflater;
+        inflater.inflate(R.menu.alarm, menu);
+        ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
+        unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void updateMenu(boolean acked) {
+        if (ackMenuItem != null) {
+            ackMenuItem.setVisible(acked);
+        }
+        if (unackMenuItem != null) {
+            unackMenuItem.setVisible(!acked);
+        }
     }
 
     @Override
@@ -259,14 +268,6 @@ public class AlarmDetailsFragment extends Fragment
                           + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
 
         updateMenu(ackTime != null);
-    }
-
-    private void updateMenu(boolean acked) {
-        if (menuInflater != null) {
-            menuInflater.inflate(R.menu.alarm, menu);
-        }
-        menu.findItem(R.id.menu_unack_alarm).setVisible(acked);
-        menu.findItem(R.id.menu_ack_alarm).setVisible(!acked);
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
