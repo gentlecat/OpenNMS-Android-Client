@@ -130,10 +130,10 @@ public class AlarmDetailsFragment extends Fragment
 
     private void updateMenu(boolean acked) {
         if (ackMenuItem != null) {
-            ackMenuItem.setVisible(acked);
+            ackMenuItem.setVisible(!acked);
         }
         if (unackMenuItem != null) {
-            unackMenuItem.setVisible(!acked);
+            unackMenuItem.setVisible(acked);
         }
     }
 
