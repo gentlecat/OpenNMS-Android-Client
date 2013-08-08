@@ -106,18 +106,16 @@ public class SettingsActivity extends PreferenceActivity
                     getResources().getString(R.string.settings_notifications_enabled_false));
         }
 
-        String
-                minimalSeverity =
-                sharedPref.getString("minimal_severity",
-                                     getString(R.string.default_minimal_severity));
+        String minimalSeverity = sharedPref.getString("minimal_severity",
+                                                      getString(R.string.default_minimal_severity));
         ListPreference minimalSeverityPreference =
                 (ListPreference) findPreference("minimal_severity");
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String syncRate = sharedPref.getString("sync_rate",
-                                               String.valueOf(getResources().getInteger(
-                                                       R.integer.default_sync_rate_minutes)));
+        String syncRate = sharedPref
+                .getString("sync_rate", String.valueOf(getResources().getInteger(
+                        R.integer.default_sync_rate_minutes)));
         int refreshRateVal = Integer.parseInt(syncRate);
         String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {

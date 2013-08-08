@@ -9,7 +9,7 @@
     <string name="nodes_list_empty">No nodes</string>
     <string name="node_details">Node #</string>
     <string name="node_details_id">ID</string>
-    <string name="node_details_contact">System contact</string>
+    <string name="node_details_contact">Contact</string>
     <string name="node_details_creation_time">Creation time</string>
     <string name="node_details_label_source">Label source</string>
     <string name="node_details_description">Description</string>
@@ -36,7 +36,7 @@
     <string name="alarm_details">Alarm #</string>
     <string name="alarm_details_id">Alarm #</string>
     <string name="alarm_details_acked">Acknowledged</string>
-    <string name="alarm_details_not_acked">Not acknowledged</string>
+    <string name="alarm_details_not_acked">Outstanding</string>
     <string name="alarm_details_acked_by">by</string>
     <string name="alarm_details_node">Node</string>
     <string name="alarm_details_service_type">Service type</string>
