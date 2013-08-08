@@ -42,7 +42,7 @@ public class NodesParser extends Parser {
 
                     Node sysContact = getXmlNodeForExpression("sysContact", currentNode);
                     if (sysContact != null) {
-                        values.put(Contract.Nodes.SYS_CONTACT, sysContact.getTextContent());
+                        values.put(Contract.Nodes.CONTACT, sysContact.getTextContent());
                     }
 
                     Node labelSource = getXmlNodeForExpression("labelSource", currentNode);
@@ -58,6 +58,11 @@ public class NodesParser extends Parser {
                     Node sysLocation = getXmlNodeForExpression("sysLocation", currentNode);
                     if (sysLocation != null) {
                         values.put(Contract.Nodes.LOCATION, sysLocation.getTextContent());
+                    }
+
+                    Node sysObjectId = getXmlNodeForExpression("sysObjectId", currentNode);
+                    if (sysObjectId != null) {
+                        values.put(Contract.Nodes.SYS_OBJECT_ID, sysObjectId.getTextContent());
                     }
 
                     valuesArray.add(values);

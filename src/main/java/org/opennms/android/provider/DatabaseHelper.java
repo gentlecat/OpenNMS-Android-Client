@@ -26,8 +26,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Nodes.NAME + " TEXT, "
             + Nodes.CREATED_TIME + " TEXT, "
             + Nodes.LABEL_SOURCE + " TEXT, "
-            + Nodes.SYS_CONTACT + " TEXT, "
+            + Nodes.CONTACT + " TEXT, "
             + Nodes.DESCRIPTION + " TEXT, "
+            + Nodes.SYS_OBJECT_ID + " TEXT, "
             + Nodes.LOCATION + " TEXT"
             + ");";
     private static final String SQL_DROP_TABLE_NODES = "DROP TABLE IF EXISTS " + Tables.NODES;

@@ -27,9 +27,10 @@ public final class Contract {
         String NAME = "name";
         String CREATED_TIME = "created_time";
         String LABEL_SOURCE = "label_source";
-        String SYS_CONTACT = "sys_contact";
         String DESCRIPTION = "description";
         String LOCATION = "location";
+        String CONTACT = "contact";
+        String SYS_OBJECT_ID = "sys_object_id";
     }
 
     interface AlarmColumns {

@@ -56,7 +56,7 @@ public class NodeDetailsFragment extends Fragment {
             idView.setText(String.valueOf(id));
 
             String sysContact = cursor.getString(
-                    cursor.getColumnIndexOrThrow(Contract.Nodes.SYS_CONTACT));
+                    cursor.getColumnIndexOrThrow(Contract.Nodes.CONTACT));
             TextView sysContactView = (TextView) getActivity().findViewById(R.id.node_contact);
             if (sysContact != null) {
                 sysContactView.setText(sysContact);
@@ -113,6 +113,19 @@ public class NodeDetailsFragment extends Fragment {
             } else {
                 detailsLayout.removeView(locationView);
                 TextView title = (TextView) getActivity().findViewById(R.id.node_location_title);
+                detailsLayout.removeView(title);
+            }
+
+            String sysObjectId = cursor.getString(
+                    cursor.getColumnIndexOrThrow(Contract.Nodes.SYS_OBJECT_ID));
+            TextView sysObjectIdView =
+                    (TextView) getActivity().findViewById(R.id.node_sys_object_id);
+            if (sysObjectId != null) {
+                sysObjectIdView.setText(sysObjectId);
+            } else {
+                detailsLayout.removeView(sysObjectIdView);
+                TextView title = (TextView) getActivity()
+                        .findViewById(R.id.node_sys_object_id_title);
                 detailsLayout.removeView(title);
             }
         }

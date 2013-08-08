@@ -15,6 +15,7 @@
     <string name="node_details_description">Description</string>
     <string name="node_details_location">Location</string>
     <string name="node_details_type">Type</string>
+    <string name="node_sys_object_id">sysObjectId</string>
 
     <!-- Outages -->
     <string name="outages">Outages</string>
