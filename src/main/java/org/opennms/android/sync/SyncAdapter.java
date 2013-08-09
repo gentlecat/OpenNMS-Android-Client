@@ -106,7 +106,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
         contentResolver.delete(Contract.Nodes.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = NodesParser.parse(result);
+        ArrayList<ContentValues> values = NodesParser.parseMultiple(result);
         contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI,
                                    values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Node sync complete.");
