@@ -76,30 +76,10 @@ public class AlarmDetailsFragment extends Fragment
             updateContent(cursor);
         } else {
             /** If not, trying to get information from the server */
-            Response response;
-            try {
-                response = new Client(getActivity()).get("alarms/" + alarmId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about alarm from server", e);
-                showErrorMessage();
-                return;
-            }
-
-            /** If information is available, updating DB */
-            if (response.getMessage() != null || response.getCode() == HttpURLConnection.HTTP_OK) {
-                ContentValues[] values = new ContentValues[1];
-                values[0] = AlarmsParser.parseSingle(response.getMessage());
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
-
-                cursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                        null, null, null, null);
-                updateContent(cursor);
-            } else {
-                showErrorMessage();
-            }
+            new GetDetailsFromServer().execute();
         }
+
+        cursor.close();
     }
 
     @Override
@@ -297,6 +277,43 @@ public class AlarmDetailsFragment extends Fragment
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
         intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
         startActivity(intent);
+    }
+
+    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
+
+        protected Response doInBackground(Void... voids) {
+            try {
+                return new Client(getActivity()).get("alarms/" + alarmId);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred while loading info about alarm from server", e);
+                showErrorMessage();
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Response response) {
+            /** If information is available, updating DB */
+            if (response != null) {
+                if (response.getMessage() != null
+                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+                    ContentValues[] values = new ContentValues[1];
+                    values[0] = AlarmsParser.parseSingle(response.getMessage());
+                    ContentResolver contentResolver = getActivity().getContentResolver();
+                    contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
+
+                    Cursor newCursor = getActivity().getContentResolver().query(
+                            Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
+                                                 String.valueOf(alarmId)),
+                            null, null, null, null);
+                    updateContent(newCursor);
+                    newCursor.close();
+                } else {
+                    showErrorMessage();
+                }
+            } else {
+                showErrorMessage();
+            }
+        }
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
