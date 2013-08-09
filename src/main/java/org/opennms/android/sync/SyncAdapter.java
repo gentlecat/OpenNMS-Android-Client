@@ -122,7 +122,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
         contentResolver.delete(Contract.Events.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = EventsParser.parse(result);
+        ArrayList<ContentValues> values = EventsParser.parseMultiple(result);
         contentResolver.bulkInsert(Contract.Events.CONTENT_URI,
                                    values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Event sync complete.");
@@ -131,8 +131,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private void syncAlarms(boolean isManual) {
         Log.d(TAG, "Synchronizing alarms...");
 
-        ConnectivityManager
-                connManager =
+        ConnectivityManager connManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         // TODO: Figure out if this action is required everywhere
