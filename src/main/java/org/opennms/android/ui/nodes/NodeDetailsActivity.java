@@ -8,12 +8,13 @@ import org.opennms.android.ui.DetailsActivity;
 
 public class NodeDetailsActivity extends DetailsActivity {
 
+    public static final String EXTRA_NODE_ID = "node";
     private long nodeId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        nodeId = getIntent().getLongExtra(NodesListFragment.EXTRA_NODE_ID, -1);
+        nodeId = getIntent().getLongExtra(EXTRA_NODE_ID, -1);
         actionBar.setTitle(getResources().getString(R.string.node_details) + nodeId);
     }
 

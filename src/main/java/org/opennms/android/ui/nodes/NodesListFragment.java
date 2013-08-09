@@ -41,7 +41,6 @@ import org.opennms.android.sync.SyncUtils;
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_NODE_ID = "node";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
@@ -142,7 +141,7 @@ public class NodesListFragment extends ListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_NODE_ID, id);
+            detailsIntent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, id);
             startActivity(detailsIntent);
         }
     }

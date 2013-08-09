@@ -44,7 +44,6 @@ import org.opennms.android.sync.SyncUtils;
 public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
-    public static final String EXTRA_ALARM_ID = "alarm";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_TIME + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
     private AlarmAdapter adapter;
@@ -210,7 +209,7 @@ public class AlarmsListFragment extends ListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_ALARM_ID, id);
+            detailsIntent.putExtra(AlarmDetailsActivity.EXTRA_ALARM_ID, id);
             startActivity(detailsIntent);
         }
     }

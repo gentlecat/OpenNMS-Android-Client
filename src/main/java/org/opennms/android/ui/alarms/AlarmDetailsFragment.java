@@ -2,6 +2,7 @@ package org.opennms.android.ui.alarms;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,6 +29,8 @@ import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
+import org.opennms.android.ui.events.EventDetailsActivity;
+import org.opennms.android.ui.nodes.NodeDetailsActivity;
 
 import java.net.HttpURLConnection;
 
@@ -235,11 +238,17 @@ public class AlarmDetailsFragment extends Fragment
         logMessageView.setText(logMessage);
 
         // Node
-        int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
+        final int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
         String nodeLabel = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_LABEL));
         TextView node = (TextView) getActivity().findViewById(R.id.alarm_node);
         node.setText(nodeLabel + " (#" + nodeId + ")");
+        node.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNodeDetails(nodeId);
+            }
+        });
 
         // Service type
         int serviceTypeId = cursor.getInt(
@@ -259,15 +268,35 @@ public class AlarmDetailsFragment extends Fragment
         // Last event
         String lastEventTimeString = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_TIME));
-        int lastEventId = cursor.getInt(
+        final int lastEventId = cursor.getInt(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_ID));
         String lastEventSeverity = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
         TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
         lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
                           + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+        lastEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEventDetails(lastEventId);
+            }
+        });
 
         updateMenu(ackTime != null);
+    }
+
+    private void showNodeDetails(long nodeId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), NodeDetailsActivity.class);
+        intent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, nodeId);
+        startActivity(intent);
+    }
+
+    private void showEventDetails(long eventId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
+        startActivity(intent);
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {

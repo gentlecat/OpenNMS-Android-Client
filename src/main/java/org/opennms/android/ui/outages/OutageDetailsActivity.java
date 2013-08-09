@@ -8,12 +8,13 @@ import org.opennms.android.ui.DetailsActivity;
 
 public class OutageDetailsActivity extends DetailsActivity {
 
+    public static final String EXTRA_OUTAGE_ID = "outage";
     private long outageId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        outageId = getIntent().getLongExtra(OutagesListFragment.EXTRA_OUTAGE_ID, -1);
+        outageId = getIntent().getLongExtra(EXTRA_OUTAGE_ID, -1);
         actionBar.setTitle(getResources().getString(R.string.outage_details) + outageId);
     }
 
@@ -25,5 +26,4 @@ public class OutageDetailsActivity extends DetailsActivity {
         fragmentTransaction.replace(R.id.details_activity_fragment_container, fragment);
         fragmentTransaction.commit();
     }
-
 }

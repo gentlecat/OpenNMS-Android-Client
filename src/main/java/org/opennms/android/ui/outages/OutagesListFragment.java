@@ -38,7 +38,6 @@ import org.opennms.android.sync.SyncUtils;
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_OUTAGE_ID = "outage";
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -138,7 +137,7 @@ public class OutagesListFragment extends ListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_OUTAGE_ID, id);
+            detailsIntent.putExtra(OutageDetailsActivity.EXTRA_OUTAGE_ID, id);
             startActivity(detailsIntent);
         }
     }

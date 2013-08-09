@@ -37,7 +37,6 @@ import org.opennms.android.sync.SyncUtils;
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String EXTRA_EVENT_ID = "event";
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -159,7 +158,7 @@ public class EventsListFragment extends ListFragment
             fragmentTransaction.commit();
         } else {
             Intent detailsIntent = new Intent(getActivity(), EventDetailsActivity.class);
-            detailsIntent.putExtra(EXTRA_EVENT_ID, id);
+            detailsIntent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, id);
             startActivity(detailsIntent);
         }
     }
