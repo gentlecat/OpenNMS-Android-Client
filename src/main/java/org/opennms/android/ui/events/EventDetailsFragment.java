@@ -2,6 +2,7 @@ package org.opennms.android.ui.events;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
@@ -87,13 +89,20 @@ public class EventDetailsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.event_details, container, false);
+        return inflater.inflate(R.layout.details_loading, container, false);
     }
 
     public void updateContent(Cursor cursor) {
         if (!cursor.moveToFirst()) {
             return;
         }
+
+        RelativeLayout detailsContainer =
+                (RelativeLayout) getActivity().findViewById(R.id.details_container);
+        detailsContainer.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.event_details, detailsContainer);
 
         LinearLayout detailsLayout =
                 (LinearLayout) getActivity().findViewById(R.id.event_details);

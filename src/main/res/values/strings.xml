@@ -122,6 +122,7 @@
     <string name="refresh_failed_offline">Cannot refresh. Device is offline.</string>
     <string name="no_items">No items</string>
     <string name="no_details">Select item from the list\n to view details.</string>
+    <string name="loading_details">Loading details...</string>
 
     <string name="search">Search</string>
 
