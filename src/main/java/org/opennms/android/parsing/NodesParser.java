@@ -32,7 +32,7 @@ public class NodesParser extends Parser {
 
     public static ContentValues parseSingle(String xml) {
         try {
-            Node node = getXmlNodeForExpression("/event", xml);
+            Node node = getXmlNodeForExpression("/node", xml);
             if (node != null) {
                 return getContentValues(node);
             }
