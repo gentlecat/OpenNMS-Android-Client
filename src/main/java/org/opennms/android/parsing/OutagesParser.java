@@ -9,84 +9,19 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
+import javax.xml.xpath.XPathExpressionException;
+
 public class OutagesParser extends Parser {
 
     private static final String TAG = "OutagesParser";
 
-    public static ArrayList<ContentValues> parse(String xml) {
+    public static ArrayList<ContentValues> parseMultiple(String xml) {
         ArrayList<ContentValues> valuesArray = new ArrayList<ContentValues>();
         try {
             NodeList nodes = getXmlNodeListForExpression("/outages/outage", xml);
             if (nodes != null) {
                 for (int i = 0; i < nodes.getLength(); i++) {
-                    ContentValues values = new ContentValues();
-                    Node currentNode = nodes.item(i);
-
-                    Node id = getXmlNodeForExpression("@id", currentNode);
-                    values.put(Contract.Outages._ID, id.getNodeValue());
-
-                    Node ipAddress = getXmlNodeForExpression("ipAddress", currentNode);
-                    if (ipAddress != null) {
-                        values.put(Contract.Outages.IP_ADDRESS, ipAddress.getTextContent());
-                    }
-
-                    Node serviceId = getXmlNodeForExpression("monitoredService/@id", currentNode);
-                    if (serviceId != null) {
-                        values.put(Contract.Outages.SERVICE_ID,
-                                   Integer.parseInt(serviceId.getTextContent()));
-                    }
-
-                    Node ipInterfaceId =
-                            getXmlNodeForExpression("monitoredService/ipInterfaceId", currentNode);
-                    if (ipInterfaceId != null) {
-                        values.put(Contract.Outages.IP_INTERFACE_ID,
-                                   Integer.parseInt(ipInterfaceId.getTextContent()));
-                    }
-
-                    Node serviceTypeId =
-                            getXmlNodeForExpression("monitoredService/serviceType/@id",
-                                                    currentNode);
-                    if (serviceTypeId != null) {
-                        values.put(Contract.Outages.SERVICE_TYPE_ID,
-                                   Integer.parseInt(serviceTypeId.getTextContent()));
-                    }
-
-                    Node serviceTypeName =
-                            getXmlNodeForExpression("monitoredService/serviceType/name",
-                                                    currentNode);
-                    if (serviceTypeName != null) {
-                        values.put(Contract.Outages.SERVICE_TYPE_NAME,
-                                   serviceTypeName.getTextContent());
-                    }
-
-                    Node lostServiceTime = getXmlNodeForExpression("ifLostService", currentNode);
-                    if (lostServiceTime != null) {
-                        values.put(Contract.Outages.SERVICE_LOST_TIME,
-                                   lostServiceTime.getTextContent());
-                    }
-
-                    Node serviceLostEventId =
-                            getXmlNodeForExpression("serviceLostEvent/@id", currentNode);
-                    if (serviceLostEventId != null) {
-                        values.put(Contract.Outages.SERVICE_LOST_EVENT_ID,
-                                   Integer.parseInt(serviceLostEventId.getTextContent()));
-                    }
-
-                    Node regainedServiceTime =
-                            getXmlNodeForExpression("ifRegainedService", currentNode);
-                    if (regainedServiceTime != null) {
-                        values.put(Contract.Outages.SERVICE_REGAINED_TIME,
-                                   regainedServiceTime.getTextContent());
-                    }
-
-                    Node serviceRegainedEventId =
-                            getXmlNodeForExpression("serviceRegainedEvent/@id", currentNode);
-                    if (serviceRegainedEventId != null) {
-                        values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID,
-                                   Integer.parseInt(serviceRegainedEventId.getTextContent()));
-                    }
-
-                    valuesArray.add(values);
+                    valuesArray.add(getContentValues(nodes.item(i)));
                 }
             }
         } catch (Exception e) {
@@ -95,4 +30,76 @@ public class OutagesParser extends Parser {
         return valuesArray;
     }
 
+    public static ContentValues parseSingle(String xml) {
+        try {
+            Node node = getXmlNodeForExpression("/outage", xml);
+            if (node != null) {
+                return getContentValues(node);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private static ContentValues getContentValues(Node node)
+            throws XPathExpressionException {
+        ContentValues values = new ContentValues();
+
+        Node id = getXmlNodeForExpression("@id", node);
+        values.put(Contract.Outages._ID, id.getNodeValue());
+
+        Node ipAddress = getXmlNodeForExpression("ipAddress", node);
+        if (ipAddress != null) {
+            values.put(Contract.Outages.IP_ADDRESS, ipAddress.getTextContent());
+        }
+
+        Node serviceId = getXmlNodeForExpression("monitoredService/@id", node);
+        if (serviceId != null) {
+            values.put(Contract.Outages.SERVICE_ID, Integer.parseInt(serviceId.getTextContent()));
+        }
+
+        Node ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", node);
+        if (ipInterfaceId != null) {
+            values.put(Contract.Outages.IP_INTERFACE_ID,
+                       Integer.parseInt(ipInterfaceId.getTextContent()));
+        }
+
+        Node serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", node);
+        if (serviceTypeId != null) {
+            values.put(Contract.Outages.SERVICE_TYPE_ID,
+                       Integer.parseInt(serviceTypeId.getTextContent()));
+        }
+
+        Node serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", node);
+        if (serviceTypeName != null) {
+            values.put(Contract.Outages.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
+        }
+
+        Node lostServiceTime = getXmlNodeForExpression("ifLostService", node);
+        if (lostServiceTime != null) {
+            values.put(Contract.Outages.SERVICE_LOST_TIME, lostServiceTime.getTextContent());
+        }
+
+        Node serviceLostEventId =
+                getXmlNodeForExpression("serviceLostEvent/@id", node);
+        if (serviceLostEventId != null) {
+            values.put(Contract.Outages.SERVICE_LOST_EVENT_ID,
+                       Integer.parseInt(serviceLostEventId.getTextContent()));
+        }
+
+        Node regainedServiceTime = getXmlNodeForExpression("ifRegainedService", node);
+        if (regainedServiceTime != null) {
+            values.put(Contract.Outages.SERVICE_REGAINED_TIME,
+                       regainedServiceTime.getTextContent());
+        }
+
+        Node serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", node);
+        if (serviceRegainedEventId != null) {
+            values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID,
+                       Integer.parseInt(serviceRegainedEventId.getTextContent()));
+        }
+
+        return values;
+    }
 }

@@ -224,7 +224,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             return;
         }
         contentResolver.delete(Contract.Outages.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = OutagesParser.parse(result);
+        ArrayList<ContentValues> values = OutagesParser.parseMultiple(result);
         contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
                                    values.toArray(new ContentValues[values.size()]));
         Log.d(TAG, "Outage sync complete.");
