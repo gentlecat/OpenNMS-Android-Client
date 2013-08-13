@@ -123,6 +123,7 @@
     <string name="no_items">No items</string>
     <string name="no_details">Select item from the list\n to view details.</string>
     <string name="loading_details">Loading details...</string>
+    <string name="details_error">Error occurred during details loading process.</string>
 
     <string name="search">Search</string>
 

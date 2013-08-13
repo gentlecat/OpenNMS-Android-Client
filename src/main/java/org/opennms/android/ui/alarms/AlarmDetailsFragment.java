@@ -101,7 +101,16 @@ public class AlarmDetailsFragment extends Fragment
     }
 
     private void showErrorMessage() {
-        // TODO: Implement
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                RelativeLayout detailsContainer =
+                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
+                detailsContainer.removeAllViews();
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                inflater.inflate(R.layout.details_error, detailsContainer);
+            }
+        });
     }
 
     @Override
