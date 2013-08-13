@@ -15,7 +15,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -41,7 +40,7 @@ import org.opennms.android.sync.SyncUtils;
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private SimpleCursorAdapter adapter;
+    private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
     private FrameLayout detailsContainer;
@@ -92,13 +91,8 @@ public class NodesListFragment extends ListFragment
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 
-        adapter = new SimpleCursorAdapter(
-                getActivity(),
-                R.layout.node_list_item,
-                null,
-                new String[]{Contract.Nodes.NAME, Contract.Nodes._ID},
-                new int[]{R.id.node_list_item_1, R.id.node_list_item_2},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        adapter = new NodeAdapter(getActivity(), null,
+                                  CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);

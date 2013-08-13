@@ -10,7 +10,7 @@
     android:paddingTop="4dp">
 
     <TextView
-        android:id="@+id/node_list_item_1"
+        android:id="@+id/node_list_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
@@ -19,7 +19,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/node_list_item_2"
+        android:id="@+id/node_list_item_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
