@@ -84,10 +84,6 @@ public class OutagesListFragment extends ListFragment
                 (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
-        if (isDualPane) {
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        }
-
         adapter = new SimpleCursorAdapter(
                 getActivity(),
                 android.R.layout.simple_list_item_2,

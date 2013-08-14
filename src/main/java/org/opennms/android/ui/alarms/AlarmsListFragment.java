@@ -103,10 +103,6 @@ public class AlarmsListFragment extends ListFragment
                 .findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
-        if (isDualPane) {
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        }
-
         adapter = new AlarmAdapter(getActivity(), null,
                                    CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
@@ -121,7 +117,6 @@ public class AlarmsListFragment extends ListFragment
                 ArrayAdapter.createFromResource(getActivity(), R.array.alarms_action_list,
                                                 android.R.layout.simple_spinner_dropdown_item);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
-
     }
 
     @Override

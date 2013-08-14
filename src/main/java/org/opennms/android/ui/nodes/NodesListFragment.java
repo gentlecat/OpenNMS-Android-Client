@@ -87,10 +87,6 @@ public class NodesListFragment extends ListFragment
                 (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
-        if (isDualPane) {
-            getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        }
-
         adapter = new NodeAdapter(getActivity(), null,
                                   CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
