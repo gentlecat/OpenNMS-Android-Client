@@ -3,7 +3,10 @@ package org.opennms.android.ui.nodes;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
+import org.opennms.android.provider.DatabaseHelper;
 
 import java.net.HttpURLConnection;
 
@@ -65,6 +69,7 @@ public class NodeDetailsFragment extends Fragment
         /** Checking if data has been loaded from the DB */
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
+            new AlarmsLoader().execute();
         } else {
             /** If not, trying to get information from the server */
             new GetDetailsFromServer().execute();
@@ -231,6 +236,77 @@ public class NodeDetailsFragment extends Fragment
                 }
             } else {
                 showErrorMessage();
+            }
+        }
+    }
+
+    private class AlarmsLoader extends AsyncTask<Void, Void, Cursor> {
+
+        protected Cursor doInBackground(Void... voids) {
+            SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+            queryBuilder.setTables(Contract.Tables.ALARMS);
+            queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId);
+            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
+            String[] projection = {
+                    Contract.Alarms._ID,
+                    Contract.Alarms.LOG_MESSAGE,
+                    Contract.Alarms.SEVERITY
+            };
+            return queryBuilder.query(db, projection, null, null, null, null, null);
+        }
+
+        protected void onPostExecute(Cursor cursor) {
+            TextView alarmsPlaceholder =
+                    (TextView) getActivity().findViewById(R.id.node_alarms_placeholder);
+            if (!cursor.moveToFirst()) {
+                alarmsPlaceholder.setText(getString(R.string.no_alarms));
+            } else {
+                LinearLayout detailsLayout = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details);
+                detailsLayout.removeView(alarmsPlaceholder);
+
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                LinearLayout container = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details_alarms_container);
+
+                for (boolean b = cursor.moveToFirst(); b; b = cursor.moveToNext()) {
+                    View item = inflater.inflate(R.layout.node_details_alarm, null);
+
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
+                    TextView idText = (TextView) item.findViewById(R.id.node_details_alarm_id);
+                    idText.setText("#" + id);
+
+                    String severity = cursor.getString(
+                            cursor.getColumnIndexOrThrow(Contract.Alarms.SEVERITY));
+                    Resources res = getActivity().getResources();
+                    int severityColor;
+                    if (severity.equals("CLEARED")) {
+                        severityColor = res.getColor(R.color.severity_cleared);
+                    } else if (severity.equals("MINOR")) {
+                        severityColor = res.getColor(R.color.severity_minor);
+                    } else if (severity.equals("NORMAL")) {
+                        severityColor = res.getColor(R.color.severity_normal);
+                    } else if (severity.equals("INDETERMINATE")) {
+                        severityColor = res.getColor(R.color.severity_minor);
+                    } else if (severity.equals("WARNING")) {
+                        severityColor = res.getColor(R.color.severity_warning);
+                    } else if (severity.equals("MAJOR")) {
+                        severityColor = res.getColor(R.color.severity_major);
+                    } else {
+                        severityColor = res.getColor(R.color.severity_critical);
+                    }
+                    idText.setBackgroundColor(severityColor);
+
+                    String message = cursor
+                            .getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
+                    TextView messageText =
+                            (TextView) item.findViewById(R.id.node_details_alarm_message);
+                    messageText.setText(message);
+
+                    container.addView(item);
+                }
             }
         }
     }

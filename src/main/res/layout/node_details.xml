@@ -123,6 +123,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <TextView
+            style="@style/DetailsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/details_section_padding_top"
+            android:text="@string/alarms" />
+
+        <TextView
+            android:id="@+id/node_alarms_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_alarms"  />
+
+    <LinearLayout
+        android:id="@+id/node_details_alarms_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

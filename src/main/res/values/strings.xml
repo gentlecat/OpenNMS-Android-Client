@@ -16,6 +16,8 @@
     <string name="node_details_location">Location</string>
     <string name="node_details_type">Type</string>
     <string name="node_sys_object_id">sysObjectId</string>
+    <string name="loading_alarms">Loading alarms...</string>
+    <string name="no_alarms">No alarms.</string>
 
     <!-- Outages -->
     <string name="outages">Outages</string>
