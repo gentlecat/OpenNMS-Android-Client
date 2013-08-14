@@ -43,7 +43,7 @@ public class NodeAdapter extends CursorAdapter {
 
         final ViewHolder viewHolder;
 
-        if (convertView == null) {
+        if (convertView == null || convertView.getTag() == null) {
             convertView = newView(mContext, mCursor, parent);
             viewHolder = new ViewHolder();
             viewHolder.id = (TextView) convertView.findViewById(R.id.node_list_item_id);
