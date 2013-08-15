@@ -18,6 +18,8 @@
     <string name="node_sys_object_id">sysObjectId</string>
     <string name="loading_alarms">Loading alarms...</string>
     <string name="no_alarms">No alarms.</string>
+    <string name="loading_events">Loading events...</string>
+    <string name="no_events">No events.</string>
 
     <!-- Outages -->
     <string name="outages">Outages</string>

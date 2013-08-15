@@ -134,14 +134,32 @@
             android:id="@+id/node_alarms_placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/loading_alarms"  />
+            android:text="@string/loading_alarms" />
 
-    <LinearLayout
-        android:id="@+id/node_details_alarms_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/node_details_alarms_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+
+        <TextView
+            style="@style/DetailsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/details_section_padding_top"
+            android:text="@string/events" />
+
+        <TextView
+            android:id="@+id/node_events_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_events" />
+
+        <LinearLayout
+            android:id="@+id/node_details_events_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
 
     </LinearLayout>
 

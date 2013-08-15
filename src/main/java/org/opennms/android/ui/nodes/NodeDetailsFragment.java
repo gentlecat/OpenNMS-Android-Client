@@ -70,6 +70,7 @@ public class NodeDetailsFragment extends Fragment
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
             new AlarmsLoader().execute();
+            new EventsLoader().execute();
         } else {
             /** If not, trying to get information from the server */
             new GetDetailsFromServer().execute();
@@ -303,6 +304,77 @@ public class NodeDetailsFragment extends Fragment
                             .getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
                     TextView messageText =
                             (TextView) item.findViewById(R.id.node_details_alarm_message);
+                    messageText.setText(message);
+
+                    container.addView(item);
+                }
+            }
+        }
+    }
+
+    private class EventsLoader extends AsyncTask<Void, Void, Cursor> {
+
+        protected Cursor doInBackground(Void... voids) {
+            SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+            queryBuilder.setTables(Contract.Tables.EVENTS);
+            queryBuilder.appendWhere(Contract.Events.NODE_ID + "=" + nodeId);
+            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
+            String[] projection = {
+                    Contract.Events._ID,
+                    Contract.Events.LOG_MESSAGE,
+                    Contract.Events.SEVERITY
+            };
+            return queryBuilder.query(db, projection, null, null, null, null, null);
+        }
+
+        protected void onPostExecute(Cursor cursor) {
+            TextView alarmsPlaceholder =
+                    (TextView) getActivity().findViewById(R.id.node_events_placeholder);
+            if (!cursor.moveToFirst()) {
+                alarmsPlaceholder.setText(getString(R.string.no_events));
+            } else {
+                LinearLayout detailsLayout = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details);
+                detailsLayout.removeView(alarmsPlaceholder);
+
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                LinearLayout container = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details_events_container);
+
+                for (boolean b = cursor.moveToFirst(); b; b = cursor.moveToNext()) {
+                    View item = inflater.inflate(R.layout.node_details_event, null);
+
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID));
+                    TextView idText = (TextView) item.findViewById(R.id.node_details_event_id);
+                    idText.setText("#" + id);
+
+                    String severity = cursor.getString(
+                            cursor.getColumnIndexOrThrow(Contract.Events.SEVERITY));
+                    Resources res = getActivity().getResources();
+                    int severityColor;
+                    if (severity.equals("CLEARED")) {
+                        severityColor = res.getColor(R.color.severity_cleared);
+                    } else if (severity.equals("MINOR")) {
+                        severityColor = res.getColor(R.color.severity_minor);
+                    } else if (severity.equals("NORMAL")) {
+                        severityColor = res.getColor(R.color.severity_normal);
+                    } else if (severity.equals("INDETERMINATE")) {
+                        severityColor = res.getColor(R.color.severity_minor);
+                    } else if (severity.equals("WARNING")) {
+                        severityColor = res.getColor(R.color.severity_warning);
+                    } else if (severity.equals("MAJOR")) {
+                        severityColor = res.getColor(R.color.severity_major);
+                    } else {
+                        severityColor = res.getColor(R.color.severity_critical);
+                    }
+                    idText.setBackgroundColor(severityColor);
+
+                    String message = cursor
+                            .getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));
+                    TextView messageText =
+                            (TextView) item.findViewById(R.id.node_details_event_message);
                     messageText.setText(message);
 
                     container.addView(item);
