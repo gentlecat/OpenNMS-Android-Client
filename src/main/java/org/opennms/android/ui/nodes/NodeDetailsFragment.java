@@ -26,11 +26,14 @@ import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
+import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.provider.DatabaseHelper;
 
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class NodeDetailsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -39,6 +42,9 @@ public class NodeDetailsFragment extends Fragment
     private static final int LOADER_ID = 0x4;
     private long nodeId;
     private LoaderManager loaderManager;
+    private String nodeName;
+    private AlarmsLoader alarmsLoader;
+    private EventsLoader eventsLoader;
 
     // Do not remove
     public NodeDetailsFragment() {
@@ -69,8 +75,10 @@ public class NodeDetailsFragment extends Fragment
         /** Checking if data has been loaded from the DB */
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
-            new AlarmsLoader().execute();
-            new EventsLoader().execute();
+            alarmsLoader = new AlarmsLoader();
+            alarmsLoader.execute();
+            eventsLoader = new EventsLoader();
+            eventsLoader.execute();
         } else {
             /** If not, trying to get information from the server */
             new GetDetailsFromServer().execute();
@@ -84,6 +92,9 @@ public class NodeDetailsFragment extends Fragment
             public void run() {
                 RelativeLayout detailsContainer =
                         (RelativeLayout) getActivity().findViewById(R.id.details_container);
+                if (detailsContainer == null) {
+                    return;
+                }
                 detailsContainer.removeAllViews();
                 LayoutInflater inflater = (LayoutInflater) getActivity()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -106,6 +117,17 @@ public class NodeDetailsFragment extends Fragment
         return inflater.inflate(R.layout.details_loading, container, false);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (alarmsLoader != null) {
+            alarmsLoader.cancel(true);
+        }
+        if (eventsLoader != null) {
+            eventsLoader.cancel(true);
+        }
+    }
+
     public void updateContent(Cursor cursor) {
         if (!cursor.moveToFirst()) {
             return;
@@ -121,7 +143,8 @@ public class NodeDetailsFragment extends Fragment
         LinearLayout detailsLayout =
                 (LinearLayout) getActivity().findViewById(R.id.node_details);
 
-        String name = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.NAME));
+        String name = nodeName = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Nodes.NAME));
         TextView nameView = (TextView) getActivity().findViewById(R.id.node_name);
         nameView.setText(name);
 
@@ -244,6 +267,23 @@ public class NodeDetailsFragment extends Fragment
     private class AlarmsLoader extends AsyncTask<Void, Void, Cursor> {
 
         protected Cursor doInBackground(Void... voids) {
+            Response response = null;
+            try {
+                response = new Client(getActivity()).get(
+                        "alarms/?query=" + URLEncoder.encode("nodeLabel = '" + nodeName + "'"));
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred while loading info from server", e);
+            }
+
+            if (response != null && response.getMessage() != null
+                && response.getCode() == HttpURLConnection.HTTP_OK) {
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                ArrayList<ContentValues> values = AlarmsParser.parseMultiple(response.getMessage());
+                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
+                                           values.toArray(new ContentValues[values.size()]));
+            }
+
+            /** Getting info from DB */
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.ALARMS);
             queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId);
