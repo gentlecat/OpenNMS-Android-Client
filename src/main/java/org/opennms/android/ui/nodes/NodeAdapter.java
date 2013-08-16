@@ -69,7 +69,8 @@ public class NodeAdapter extends CursorAdapter {
     private boolean anyAlarms(int nodeId) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(Contract.Tables.ALARMS);
-        queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId);
+        queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
+                                 + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
         return queryBuilder.query(db, null, null, null, null, null, null).moveToFirst();
     }
 

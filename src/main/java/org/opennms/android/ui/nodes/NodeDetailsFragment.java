@@ -303,7 +303,8 @@ public class NodeDetailsFragment extends Fragment
             /** Getting info from DB */
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.ALARMS);
-            queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId);
+            queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
+                                     + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
             SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
             String[] projection = {
                     Contract.Alarms._ID,
@@ -317,7 +318,7 @@ public class NodeDetailsFragment extends Fragment
             TextView alarmsPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_alarms_placeholder);
             if (!cursor.moveToFirst()) {
-                alarmsPlaceholder.setText(getString(R.string.no_alarms));
+                alarmsPlaceholder.setText(getString(R.string.no_outstanding_alarms));
             } else {
                 LinearLayout detailsLayout = (LinearLayout) getActivity()
                         .findViewById(R.id.node_details);

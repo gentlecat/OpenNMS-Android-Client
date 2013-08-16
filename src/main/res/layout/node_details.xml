@@ -128,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarms" />
+            android:text="@string/outstanding_alarms" />
 
         <TextView
             android:id="@+id/node_alarms_placeholder"
