@@ -44,8 +44,8 @@ import org.opennms.android.sync.SyncUtils;
 public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
-    private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_TIME + " IS NULL";
-    private static final String SELECTION_ACKED = Contract.Alarms.ACK_TIME + " IS NOT NULL";
+    private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_USER + " IS NULL";
+    private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
