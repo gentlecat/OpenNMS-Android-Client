@@ -3,6 +3,7 @@ package org.opennms.android.ui.nodes;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,6 +31,8 @@ import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.ui.alarms.AlarmDetailsActivity;
+import org.opennms.android.ui.events.EventDetailsActivity;
 
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -227,6 +230,20 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
+    private void showAlarmDetails(long alarmId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), AlarmDetailsActivity.class);
+        intent.putExtra(AlarmDetailsActivity.EXTRA_ALARM_ID, alarmId);
+        startActivity(intent);
+    }
+
+    private void showEventDetails(long eventId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
+        startActivity(intent);
+    }
+
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... voids) {
@@ -315,7 +332,7 @@ public class NodeDetailsFragment extends Fragment
                 for (boolean b = cursor.moveToFirst(); b; b = cursor.moveToNext()) {
                     View item = inflater.inflate(R.layout.node_details_alarm, null);
 
-                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
+                    final int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms._ID));
                     TextView idText = (TextView) item.findViewById(R.id.node_details_alarm_id);
                     idText.setText("#" + id);
 
@@ -347,6 +364,13 @@ public class NodeDetailsFragment extends Fragment
                     messageText.setText(message);
 
                     container.addView(item);
+
+                    item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showAlarmDetails(id);
+                        }
+                    });
                 }
             }
         }
@@ -386,7 +410,7 @@ public class NodeDetailsFragment extends Fragment
                 for (boolean b = cursor.moveToFirst(); b; b = cursor.moveToNext()) {
                     View item = inflater.inflate(R.layout.node_details_event, null);
 
-                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID));
+                    final int id = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events._ID));
                     TextView idText = (TextView) item.findViewById(R.id.node_details_event_id);
                     idText.setText("#" + id);
 
@@ -418,6 +442,13 @@ public class NodeDetailsFragment extends Fragment
                     messageText.setText(message);
 
                     container.addView(item);
+
+                    item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showEventDetails(id);
+                        }
+                    });
                 }
             }
         }
