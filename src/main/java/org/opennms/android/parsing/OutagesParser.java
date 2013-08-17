@@ -76,13 +76,22 @@ public class OutagesParser extends Parser {
             values.put(Contract.Outages.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
         }
 
+        Node nodeId = getXmlNodeForExpression("serviceLostEvent/nodeId", node);
+        if (nodeId != null) {
+            values.put(Contract.Outages.NODE_ID, nodeId.getTextContent());
+        }
+
+        Node nodeLabel = getXmlNodeForExpression("serviceLostEvent/nodeLabel", node);
+        if (nodeLabel != null) {
+            values.put(Contract.Outages.NODE_LABEL, nodeLabel.getTextContent());
+        }
+
         Node lostServiceTime = getXmlNodeForExpression("ifLostService", node);
         if (lostServiceTime != null) {
             values.put(Contract.Outages.SERVICE_LOST_TIME, lostServiceTime.getTextContent());
         }
 
-        Node serviceLostEventId =
-                getXmlNodeForExpression("serviceLostEvent/@id", node);
+        Node serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", node);
         if (serviceLostEventId != null) {
             values.put(Contract.Outages.SERVICE_LOST_EVENT_ID,
                        Integer.parseInt(serviceLostEventId.getTextContent()));

@@ -30,6 +30,7 @@
     <string name="outage_details_service_type">Service type</string>
     <string name="outage_details_ip_address">IP address</string>
     <string name="outage_details_ip_interface_id">IP interface ID</string>
+    <string name="outage_details_node">Node</string>
     <string name="outage_details_lost_event">Lost service event</string>
     <string name="outage_details_regained_event">Regained service event</string>
 

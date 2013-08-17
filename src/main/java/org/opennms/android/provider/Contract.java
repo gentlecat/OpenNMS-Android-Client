@@ -61,6 +61,9 @@ public final class Contract {
         String IP_INTERFACE_ID = "ip_interface_id";
         String SERVICE_TYPE_ID = "service_type_id";
         String SERVICE_TYPE_NAME = "service_type_name";
+        // Node
+        String NODE_ID = "node_id";
+        String NODE_LABEL = "node_label";
         // Service lost event
         String SERVICE_LOST_TIME = "service_lost_time";
         String SERVICE_LOST_EVENT_ID = "service_lost_event_id";

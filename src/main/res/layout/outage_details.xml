@@ -71,6 +71,19 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/outage_node_title"
+            style="@style/DetailsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/details_section_padding_top"
+            android:text="@string/outage_details_node" />
+
+        <TextView
+            android:id="@+id/outage_node"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:id="@+id/outage_lost_service_event_title"
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"

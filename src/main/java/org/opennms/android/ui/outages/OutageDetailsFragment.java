@@ -132,6 +132,12 @@ public class OutageDetailsFragment extends Fragment
                 (TextView) getActivity().findViewById(R.id.outage_ip_interface_id);
         ipInterfaceIdView.setText(String.valueOf(ipInterfaceId));
 
+        int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.NODE_ID));
+        String nodeLabel = cursor.getString(
+                cursor.getColumnIndexOrThrow(Contract.Outages.NODE_LABEL));
+        TextView nodeView = (TextView) getActivity().findViewById(R.id.outage_node);
+        nodeView.setText(nodeLabel + " (#" + nodeId + ")");
+
         String serviceLostTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_TIME));
         int serviceLostEventId = cursor.getInt(

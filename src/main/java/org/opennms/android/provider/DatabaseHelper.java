@@ -41,6 +41,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Outages.SERVICE_ID + " INTEGER, "
             + Outages.SERVICE_TYPE_NAME + " TEXT, "
             + Outages.SERVICE_TYPE_ID + " INTEGER, "
+            + Outages.NODE_ID + " INTEGER, "
+            + Outages.NODE_LABEL + " TEXT, "
             + Outages.SERVICE_LOST_TIME + " TEXT, "
             + Outages.SERVICE_LOST_EVENT_ID + " INTEGER, "
             + Outages.SERVICE_REGAINED_TIME + " TEXT, "
