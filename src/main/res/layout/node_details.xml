@@ -147,6 +147,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
+            android:text="@string/outages" />
+
+        <TextView
+            android:id="@+id/node_outages_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading_outages" />
+
+        <LinearLayout
+            android:id="@+id/node_details_outages_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+
+        <TextView
+            style="@style/DetailsHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/details_section_padding_top"
             android:text="@string/events" />
 
         <TextView

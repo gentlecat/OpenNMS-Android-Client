@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +30,12 @@ import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.NodesParser;
+import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.ui.alarms.AlarmDetailsActivity;
 import org.opennms.android.ui.events.EventDetailsActivity;
+import org.opennms.android.ui.outages.OutageDetailsActivity;
 
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -47,6 +50,7 @@ public class NodeDetailsFragment extends Fragment
     private LoaderManager loaderManager;
     private String nodeName;
     private AlarmsLoader alarmsLoader;
+    private OutagesLoader outagesLoader;
     private EventsLoader eventsLoader;
 
     // Do not remove
@@ -82,6 +86,8 @@ public class NodeDetailsFragment extends Fragment
             alarmsLoader.execute();
             eventsLoader = new EventsLoader();
             eventsLoader.execute();
+            outagesLoader = new OutagesLoader();
+            outagesLoader.execute();
         } else {
             /** If not, trying to get information from the server */
             new GetDetailsFromServer().execute();
@@ -125,6 +131,9 @@ public class NodeDetailsFragment extends Fragment
         super.onPause();
         if (alarmsLoader != null) {
             alarmsLoader.cancel(true);
+        }
+        if (outagesLoader != null) {
+            outagesLoader.cancel(true);
         }
         if (eventsLoader != null) {
             eventsLoader.cancel(true);
@@ -234,6 +243,13 @@ public class NodeDetailsFragment extends Fragment
         // TODO: Adjust for tablets
         Intent intent = new Intent(getActivity(), AlarmDetailsActivity.class);
         intent.putExtra(AlarmDetailsActivity.EXTRA_ALARM_ID, alarmId);
+        startActivity(intent);
+    }
+
+    private void showOutageDetails(long outageId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), OutageDetailsActivity.class);
+        intent.putExtra(OutageDetailsActivity.EXTRA_OUTAGE_ID, outageId);
         startActivity(intent);
     }
 
@@ -377,6 +393,80 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
+    private class OutagesLoader extends AsyncTask<Void, Void, Cursor> {
+
+        protected Cursor doInBackground(Void... voids) {
+            Response response = null;
+            try {
+                response = new Client(getActivity()).get("outages/forNode/" + nodeId);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred while loading info from server", e);
+            }
+
+            if (response != null && response.getMessage() != null
+                && response.getCode() == HttpURLConnection.HTTP_OK) {
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                ArrayList<ContentValues> values =
+                        OutagesParser.parseMultiple(response.getMessage());
+                contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
+                                           values.toArray(new ContentValues[values.size()]));
+            }
+
+            /** Getting info from DB */
+            SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+            queryBuilder.setTables(Contract.Tables.OUTAGES);
+            queryBuilder.appendWhere(Contract.Outages.NODE_ID + "=" + nodeId);
+            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
+            String[] projection = {
+                    Contract.Outages._ID,
+                    Contract.Outages.SERVICE_TYPE_NAME
+            };
+            return queryBuilder.query(db, projection, null, null, null, null, null);
+        }
+
+        protected void onPostExecute(Cursor cursor) {
+            TextView alarmsPlaceholder =
+                    (TextView) getActivity().findViewById(R.id.node_outages_placeholder);
+            if (!cursor.moveToFirst()) {
+                alarmsPlaceholder.setText(getString(R.string.no_outages));
+            } else {
+                LinearLayout detailsLayout = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details);
+                detailsLayout.removeView(alarmsPlaceholder);
+
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                LinearLayout container = (LinearLayout) getActivity()
+                        .findViewById(R.id.node_details_outages_container);
+
+                for (boolean b = cursor.moveToFirst(); b; b = cursor.moveToNext()) {
+                    View item = inflater.inflate(R.layout.node_details_outage, null);
+
+                    final int id =
+                            cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages._ID));
+                    TextView idText = (TextView) item.findViewById(R.id.node_details_outage_id);
+                    idText.setText("#" + id);
+
+                    String serviceType = cursor.getString(
+                            cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_TYPE_NAME));
+                    TextView serviceTypeText =
+                            (TextView) item.findViewById(R.id.node_details_outage_service);
+                    serviceTypeText.setText(serviceType);
+
+                    container.addView(item);
+
+                    item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showOutageDetails(id);
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     private class EventsLoader extends AsyncTask<Void, Void, Cursor> {
 
         protected Cursor doInBackground(Void... voids) {
@@ -440,7 +530,7 @@ public class NodeDetailsFragment extends Fragment
                             .getString(cursor.getColumnIndexOrThrow(Contract.Events.LOG_MESSAGE));
                     TextView messageText =
                             (TextView) item.findViewById(R.id.node_details_event_message);
-                    messageText.setText(message);
+                    messageText.setText(Html.fromHtml(message));
 
                     container.addView(item);
 
