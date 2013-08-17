@@ -15,15 +15,19 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,8 +40,13 @@ import org.opennms.android.sync.SyncAdapter;
 import org.opennms.android.sync.SyncUtils;
 
 public class OutagesListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
+    private static final String SELECTION_CURRENT =
+            Contract.Outages.SERVICE_REGAINED_TIME + " IS NULL";
+    private static final String SELECTION_RESOLVED =
+            Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
+    private static final String SELECTION_ALL = null;
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -63,6 +72,7 @@ public class OutagesListFragment extends ListFragment
             });
         }
     };
+    private String cursorSelection = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +106,32 @@ public class OutagesListFragment extends ListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.outages_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(Loaders.OUTAGES, null, this);
+        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        SpinnerAdapter mSpinnerAdapter =
+                ArrayAdapter.createFromResource(getActivity(), R.array.outages_action_list,
+                                                android.R.layout.simple_spinner_dropdown_item);
+        actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        switch (itemPosition) {
+            case 0:
+                cursorSelection = SELECTION_CURRENT;
+                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                return true;
+            case 1:
+                cursorSelection = SELECTION_RESOLVED;
+                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                return true;
+            case 2:
+                cursorSelection = SELECTION_ALL;
+                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -176,7 +211,7 @@ public class OutagesListFragment extends ListFragment
                 getActivity(),
                 Contract.Outages.CONTENT_URI,
                 projection,
-                null,
+                cursorSelection,
                 null,
                 Contract.Outages._ID + " DESC"
         );

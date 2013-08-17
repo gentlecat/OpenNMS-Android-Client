@@ -25,6 +25,9 @@
 
     <!-- Outages -->
     <string name="outages">Outages</string>
+    <string name="outages_current">Current outages</string>
+    <string name="outages_resolved">Resolved outages</string>
+    <string name="outages_all">All outages</string>
     <string name="outages_list_empty">No outages</string>
     <string name="outage_details">Outage #</string>
     <string name="outage_details_id">Outage #</string>

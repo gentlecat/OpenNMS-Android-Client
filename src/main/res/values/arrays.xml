@@ -2,9 +2,10 @@
 <resources>
 
     <!--
-        It is important to preserve order of items in both arrays!
-        Changes may break notification system.
+        It is important to preserve order of items in all arrays!
+        Changes may break some parts of application.
      -->
+
     <string-array name="severity">
         <item>@string/alarm_severity_critical</item>
         <item>@string/alarm_severity_major</item>
@@ -27,6 +28,12 @@
     <string-array name="alarms_action_list">
         <item>@string/outstanding_alarms</item>
         <item>@string/acked_alarms</item>
+    </string-array>
+
+    <string-array name="outages_action_list">
+        <item>@string/outages_current</item>
+        <item>@string/outages_resolved</item>
+        <item>@string/outages_all</item>
     </string-array>
 
 </resources>
