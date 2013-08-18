@@ -3,6 +3,7 @@ package org.opennms.android.provider;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.opennms.android.provider.Contract.Alarms;
 import org.opennms.android.provider.Contract.Events;
@@ -12,7 +13,9 @@ import org.opennms.android.provider.Contract.Tables;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // If you change the database schema, you must increment the database version.
+    public static final String TAG = "DatabaseHelper";
+
+    // If you change the database schema, you must increment the database version!
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "OpenNMS.db";
     /**
@@ -91,6 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "Creating database.");
         db.execSQL(SQL_CREATE_TABLE_NODES);
         db.execSQL(SQL_CREATE_TABLE_OUTAGES);
         db.execSQL(SQL_CREATE_TABLE_EVENTS);
@@ -99,6 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d(TAG, "Upgrading database.");
         db.execSQL(SQL_DROP_TABLE_NODES);
         db.execSQL(SQL_DROP_TABLE_OUTAGES);
         db.execSQL(SQL_DROP_TABLE_EVENTS);
@@ -112,6 +117,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_OUTAGES);
         db.execSQL(SQL_CREATE_TABLE_EVENTS);
         db.execSQL(SQL_CREATE_TABLE_ALARMS);
+    }
+
+    public void wipe() {
+        Log.d(TAG, "Wiping database.");
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (db != null) {
+            onUpgrade(db, 0, DATABASE_VERSION);
+        }
     }
 
 }

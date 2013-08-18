@@ -10,25 +10,31 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.opennms.android.R;
+import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 
 public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
 
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
+    private String oldHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
         setTitle(R.string.settings);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        oldHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
+
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
         updateSummaries();
@@ -50,7 +56,7 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_save_settings:
+            case R.id.menu_apply_settings:
                 finish();
                 return true;
             default:
@@ -72,6 +78,12 @@ public class SettingsActivity extends PreferenceActivity
                 String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int frequency = Integer.parseInt(syncRate) * 60;
         SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
+
+        String newHost = sharedPref.getString(
+                "host", String.valueOf(getString(R.string.default_host)));
+        if (!newHost.equals(oldHost)) {
+            new DatabaseHelper(getApplicationContext()).wipe();
+        }
     }
 
     private void updateSummaries() {
@@ -113,9 +125,9 @@ public class SettingsActivity extends PreferenceActivity
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String syncRate = sharedPref
-                .getString("sync_rate", String.valueOf(getResources().getInteger(
-                        R.integer.default_sync_rate_minutes)));
+        String syncRate = sharedPref.getString(
+                "sync_rate",
+                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int refreshRateVal = Integer.parseInt(syncRate);
         String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {
