@@ -52,6 +52,7 @@ public class NodeDetailsFragment extends Fragment
     private AlarmsLoader alarmsLoader;
     private OutagesLoader outagesLoader;
     private EventsLoader eventsLoader;
+    private SQLiteDatabase db;
 
     // Do not remove
     public NodeDetailsFragment() {
@@ -116,8 +117,16 @@ public class NodeDetailsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        db = new DatabaseHelper(getActivity()).getReadableDatabase();
+
         loaderManager = getLoaderManager();
         loaderManager.restartLoader(LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        db.close();
     }
 
     @Override
@@ -321,7 +330,6 @@ public class NodeDetailsFragment extends Fragment
             queryBuilder.setTables(Contract.Tables.ALARMS);
             queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
                                      + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
-            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
             String[] projection = {
                     Contract.Alarms._ID,
                     Contract.Alarms.LOG_MESSAGE,
@@ -416,7 +424,6 @@ public class NodeDetailsFragment extends Fragment
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.OUTAGES);
             queryBuilder.appendWhere(Contract.Outages.NODE_ID + "=" + nodeId);
-            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
             String[] projection = {
                     Contract.Outages._ID,
                     Contract.Outages.SERVICE_TYPE_NAME
@@ -473,7 +480,6 @@ public class NodeDetailsFragment extends Fragment
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.EVENTS);
             queryBuilder.appendWhere(Contract.Events.NODE_ID + "=" + nodeId);
-            SQLiteDatabase db = new DatabaseHelper(getActivity()).getReadableDatabase();
             String[] projection = {
                     Contract.Events._ID,
                     Contract.Events.LOG_MESSAGE,
