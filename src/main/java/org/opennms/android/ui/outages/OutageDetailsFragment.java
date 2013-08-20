@@ -109,6 +109,9 @@ public class OutageDetailsFragment extends Fragment
 
         RelativeLayout detailsContainer =
                 (RelativeLayout) getActivity().findViewById(R.id.details_container);
+        if (detailsContainer == null) {
+            return;
+        }
         detailsContainer.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getActivity()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
