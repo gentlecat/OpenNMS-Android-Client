@@ -69,7 +69,7 @@
     <string name="alarm_unack_fail_offline">Cannot unacknowledge. Device is offline.</string>
 
     <!-- Events -->
-    <string name="events">Events</string>
+    <string name="latest_events">Latest events</string>
     <string name="events_list_empty">No events</string>
     <string name="event_details">Event #</string>
     <string name="event_details_id">Event #</string>

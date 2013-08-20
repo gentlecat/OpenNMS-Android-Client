@@ -12,7 +12,7 @@ public class EventsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.content_frame, new EventsListFragment()).commit();
-        getSupportActionBar().setTitle(R.string.events);
+        getSupportActionBar().setTitle(R.string.latest_events);
     }
 
 }

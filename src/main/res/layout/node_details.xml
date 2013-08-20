@@ -166,7 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/events" />
+            android:text="@string/latest_events" />
 
         <TextView
             android:id="@+id/node_events_placeholder"
