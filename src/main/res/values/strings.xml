@@ -116,6 +116,8 @@
     <string name="welcome">Welcome!</string>
     <string name="welcome_message_pos_button">Configure connection</string>
     <string name="welcome_message_neg_button">Try demo</string>
+    <string name="welcome_settings_toast">You can go to settings and connect to your OpenNMS server
+        when you ready.</string>
 
     <!-- Notifications -->
     <string name="new_alarms_notif_title">New alarms</string>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.util.TypedValue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,15 @@ public class Utils {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    public static int getActionBarHeight(Context context) {
+        TypedValue typedValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
+            return TypedValue.complexToDimensionPixelSize(
+                    typedValue.data, context.getResources().getDisplayMetrics());
+        }
+        return 0;
     }
 
 }

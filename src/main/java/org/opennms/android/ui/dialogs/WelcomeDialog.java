@@ -6,9 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Toast;
 
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.ui.SettingsActivity;
 
 public class WelcomeDialog extends DialogFragment {
@@ -27,8 +30,8 @@ public class WelcomeDialog extends DialogFragment {
                         getResources().getString(R.string.welcome_message_pos_button),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent settingsIntent = new Intent(getActivity(),
-                                                                   SettingsActivity.class);
+                                Intent settingsIntent =
+                                        new Intent(getActivity(), SettingsActivity.class);
                                 startActivity(settingsIntent);
                             }
                         })
@@ -37,6 +40,13 @@ public class WelcomeDialog extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
+                                Toast message = Toast.makeText(
+                                        getActivity(),
+                                        getString(R.string.welcome_settings_toast),
+                                        Toast.LENGTH_LONG);
+                                message.setGravity(Gravity.TOP,
+                                                   0, Utils.getActionBarHeight(getActivity()));
+                                message.show();
                             }
                         })
                 .setCancelable(false)
