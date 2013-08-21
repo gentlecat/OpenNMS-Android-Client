@@ -46,6 +46,7 @@ public class AlarmDetailsFragment extends Fragment
     private Menu menu;
     private MenuItem ackMenuItem;
     private MenuItem unackMenuItem;
+    private Boolean isAcked = null;
 
     // Do not remove!
     public AlarmDetailsFragment() {
@@ -87,10 +88,13 @@ public class AlarmDetailsFragment extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
-
         loaderManager = getLoaderManager();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         loaderManager.restartLoader(LOADER_ID, null, this);
     }
 
@@ -123,14 +127,19 @@ public class AlarmDetailsFragment extends Fragment
         ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
         unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
         super.onCreateOptionsMenu(menu, inflater);
+
+        // Fix (if update is attempted before onCreateOptionsMenu is called)
+        if (isAcked != null) {
+            updateMenu(isAcked);
+        }
     }
 
-    private void updateMenu(boolean acked) {
+    private void updateMenu(boolean acknowledged) {
         if (ackMenuItem != null) {
-            ackMenuItem.setVisible(!acked);
+            ackMenuItem.setVisible(!acknowledged);
         }
         if (unackMenuItem != null) {
-            unackMenuItem.setVisible(acked);
+            unackMenuItem.setVisible(acknowledged);
         }
     }
 
@@ -286,7 +295,8 @@ public class AlarmDetailsFragment extends Fragment
             }
         });
 
-        updateMenu(ackTime != null);
+        isAcked = ackTime != null;
+        updateMenu(isAcked);
     }
 
     private void showNodeDetails(long nodeId) {
