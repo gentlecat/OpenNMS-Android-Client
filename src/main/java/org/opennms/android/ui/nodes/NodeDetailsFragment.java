@@ -345,7 +345,9 @@ public class NodeDetailsFragment extends Fragment
             TextView alarmsPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_alarms_placeholder);
             if (!cursor.moveToFirst()) {
-                alarmsPlaceholder.setText(getString(R.string.no_outstanding_alarms));
+                if (alarmsPlaceholder != null) {
+                    alarmsPlaceholder.setText(getString(R.string.no_outstanding_alarms));
+                }
             } else {
                 LinearLayout detailsLayout = (LinearLayout) getActivity()
                         .findViewById(R.id.node_details);
@@ -435,14 +437,16 @@ public class NodeDetailsFragment extends Fragment
         }
 
         protected void onPostExecute(Cursor cursor) {
-            TextView alarmsPlaceholder =
+            TextView outagesPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_outages_placeholder);
             if (!cursor.moveToFirst()) {
-                alarmsPlaceholder.setText(getString(R.string.no_outages));
+                if (outagesPlaceholder != null) {
+                    outagesPlaceholder.setText(getString(R.string.no_outages));
+                }
             } else {
                 LinearLayout detailsLayout = (LinearLayout) getActivity()
                         .findViewById(R.id.node_details);
-                detailsLayout.removeView(alarmsPlaceholder);
+                detailsLayout.removeView(outagesPlaceholder);
 
                 LayoutInflater inflater = (LayoutInflater) getActivity()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -492,14 +496,16 @@ public class NodeDetailsFragment extends Fragment
         }
 
         protected void onPostExecute(Cursor cursor) {
-            TextView alarmsPlaceholder =
+            TextView eventsPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_events_placeholder);
             if (!cursor.moveToFirst()) {
-                alarmsPlaceholder.setText(getString(R.string.no_events));
+                if (eventsPlaceholder != null) {
+                    eventsPlaceholder.setText(getString(R.string.no_events));
+                }
             } else {
                 LinearLayout detailsLayout = (LinearLayout) getActivity()
                         .findViewById(R.id.node_details);
-                detailsLayout.removeView(alarmsPlaceholder);
+                detailsLayout.removeView(eventsPlaceholder);
 
                 LayoutInflater inflater = (LayoutInflater) getActivity()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
