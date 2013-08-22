@@ -4,10 +4,15 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -67,10 +72,24 @@ public class NodesListFragment extends ListFragment
         }
     };
 
+    private SharedPreferences sharedPref;
+    public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
+    private Handler restoreHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            /** Restoring previously displayed node details fragment */
+            long activeNodeId = sharedPref.getLong(STATE_ACTIVE_NODE_ID, -1);
+            if (activeNodeId != -1) {
+                showDetails(activeNodeId);
+            }
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -93,8 +112,6 @@ public class NodesListFragment extends ListFragment
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.nodes_list_empty));
-
-        getActivity().getSupportLoaderManager().initLoader(Loaders.NODES, null, this);
     }
 
     @Override
@@ -118,6 +135,7 @@ public class NodesListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_NODE_ID, id).commit();
         showDetails(id);
     }
 
@@ -206,10 +224,15 @@ public class NodesListFragment extends ListFragment
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
                                 Contract.Nodes.NAME);
     }
-
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
+        if (isDualPane) {
+            if (cursor.moveToFirst()) {
+                /** If list is not empty, trying to restore previously displayed details. */
+                restoreHandler.sendEmptyMessage(0);
+            }
+        }
     }
 
     @Override
@@ -220,6 +243,8 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
+        getActivity().getSupportLoaderManager().restartLoader(Loaders.NODES, null, this);
+
         mSyncStatusObserver.onStatusChanged(0);
 
         // Watch for sync state changes
