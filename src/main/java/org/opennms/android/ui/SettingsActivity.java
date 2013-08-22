@@ -14,6 +14,7 @@ import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
+import org.opennms.android.ui.nodes.NodesListFragment;
 
 public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
@@ -84,6 +85,9 @@ public class SettingsActivity extends PreferenceActivity
                 "host", String.valueOf(getString(R.string.default_host)));
         if (!newHost.equals(oldHost)) {
             new DatabaseHelper(getApplicationContext()).wipe();
+
+            /** Resetting information about active fragments with details */
+            sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
             sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
         }
     }
