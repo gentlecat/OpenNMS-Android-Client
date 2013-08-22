@@ -4,11 +4,13 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -44,6 +46,7 @@ import org.opennms.android.sync.SyncUtils;
 public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
+    public static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_USER + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
     private AlarmAdapter adapter;
@@ -73,20 +76,37 @@ public class AlarmsListFragment extends ListFragment
     };
     private String cursorSelection = null;
     private Fragment activeDetailsFragment;
-    private Handler handler = new Handler() {
+    private Handler removeDetailsHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.remove(activeDetailsFragment);
-            fragmentTransaction.commit();
-            showEmptyDetails();
+            if (activeDetailsFragment != null) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.remove(activeDetailsFragment);
+                fragmentTransaction.commit();
+                showEmptyDetails();
+            }
         }
     };
+    private Handler restoreHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            /** Restoring previously displayed node details fragment */
+            long activeAlarmId = sharedPref.getLong(STATE_ACTIVE_ALARM_ID, -1);
+            if (activeAlarmId != -1) {
+                showDetails(activeAlarmId);
+            } else {
+                showEmptyDetails();
+            }
+        }
+    };
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -117,6 +137,26 @@ public class AlarmsListFragment extends ListFragment
                 ArrayAdapter.createFromResource(getActivity(), R.array.alarms_action_list,
                                                 android.R.layout.simple_spinner_dropdown_item);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSyncStatusObserver.onStatusChanged(0);
+
+        // Watch for sync state changes
+        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
+                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (syncObserverHandle != null) {
+            ContentResolver.removeStatusChangeListener(syncObserverHandle);
+            syncObserverHandle = null;
+        }
     }
 
     @Override
@@ -154,24 +194,20 @@ public class AlarmsListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
-
-        if (isDualPane && !cursor.moveToFirst() && activeDetailsFragment != null) {
-            detailsContainer.removeAllViews();
-            handler.sendEmptyMessage(0);
+        if (isDualPane) {
+            if (cursor.moveToFirst()) {
+                /** If list is not empty, trying to restore previously displayed details. */
+                restoreHandler.sendEmptyMessage(0);
+            } else {
+                /** If list became empty, removing previously displayed details */
+                removeDetailsHandler.sendEmptyMessage(0);
+            }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         adapter.swapCursor(null);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (isDualPane) {
-            showEmptyDetails();
-        }
     }
 
     private void showEmptyDetails() {
@@ -191,6 +227,7 @@ public class AlarmsListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_ALARM_ID, id).commit();
         showDetails(id);
     }
 
@@ -234,26 +271,6 @@ public class AlarmsListFragment extends ListFragment
             Toast.makeText(getActivity(),
                            getString(R.string.refresh_failed_offline),
                            Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mSyncStatusObserver.onStatusChanged(0);
-
-        // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
-        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (syncObserverHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncObserverHandle);
-            syncObserverHandle = null;
         }
     }
 
