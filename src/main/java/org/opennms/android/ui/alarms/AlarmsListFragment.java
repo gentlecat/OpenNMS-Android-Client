@@ -90,7 +90,7 @@ public class AlarmsListFragment extends ListFragment
     private Handler restoreHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            /** Restoring previously displayed node details fragment */
+            /** Restoring previously displayed alarm details fragment */
             long activeAlarmId = sharedPref.getLong(STATE_ACTIVE_ALARM_ID, -1);
             if (activeAlarmId != -1) {
                 showDetails(activeAlarmId);
