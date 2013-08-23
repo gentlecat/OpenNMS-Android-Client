@@ -342,15 +342,16 @@ public class NodeDetailsFragment extends Fragment
         }
 
         protected void onPostExecute(Cursor cursor) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity()
+                    .findViewById(R.id.node_details);
+            if (detailsLayout == null) {
+                return;
+            }
             TextView alarmsPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_alarms_placeholder);
             if (!cursor.moveToFirst()) {
-                if (alarmsPlaceholder != null) {
-                    alarmsPlaceholder.setText(getString(R.string.no_outstanding_alarms));
-                }
+                alarmsPlaceholder.setText(getString(R.string.no_outstanding_alarms));
             } else {
-                LinearLayout detailsLayout = (LinearLayout) getActivity()
-                        .findViewById(R.id.node_details);
                 detailsLayout.removeView(alarmsPlaceholder);
 
                 LayoutInflater inflater = (LayoutInflater) getActivity()
@@ -437,15 +438,16 @@ public class NodeDetailsFragment extends Fragment
         }
 
         protected void onPostExecute(Cursor cursor) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity()
+                    .findViewById(R.id.node_details);
+            if (detailsLayout == null) {
+                return;
+            }
             TextView outagesPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_outages_placeholder);
             if (!cursor.moveToFirst()) {
-                if (outagesPlaceholder != null) {
-                    outagesPlaceholder.setText(getString(R.string.no_outages));
-                }
+                outagesPlaceholder.setText(getString(R.string.no_outages));
             } else {
-                LinearLayout detailsLayout = (LinearLayout) getActivity()
-                        .findViewById(R.id.node_details);
                 detailsLayout.removeView(outagesPlaceholder);
 
                 LayoutInflater inflater = (LayoutInflater) getActivity()
@@ -496,15 +498,16 @@ public class NodeDetailsFragment extends Fragment
         }
 
         protected void onPostExecute(Cursor cursor) {
+            LinearLayout detailsLayout = (LinearLayout) getActivity()
+                    .findViewById(R.id.node_details);
+            if (detailsLayout == null) {
+                return;
+            }
             TextView eventsPlaceholder =
                     (TextView) getActivity().findViewById(R.id.node_events_placeholder);
             if (!cursor.moveToFirst()) {
-                if (eventsPlaceholder != null) {
-                    eventsPlaceholder.setText(getString(R.string.no_events));
-                }
+                eventsPlaceholder.setText(getString(R.string.no_events));
             } else {
-                LinearLayout detailsLayout = (LinearLayout) getActivity()
-                        .findViewById(R.id.node_details);
                 detailsLayout.removeView(eventsPlaceholder);
 
                 LayoutInflater inflater = (LayoutInflater) getActivity()
