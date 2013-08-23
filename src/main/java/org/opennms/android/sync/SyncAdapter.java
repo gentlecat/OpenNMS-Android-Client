@@ -218,7 +218,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Synchronizing outages...");
         String result;
         try {
-            result = serverCommunication.get("outages?orderBy=id&order=desc&limit=25").getMessage();
+            result = serverCommunication
+                    .get("outages?ifRegainedService=null&comparator=eq").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during outage synchronization process", e);
             return;
