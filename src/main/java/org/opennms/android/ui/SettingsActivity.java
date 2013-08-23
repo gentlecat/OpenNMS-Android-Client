@@ -15,6 +15,7 @@ import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
+import org.opennms.android.ui.outages.OutagesListFragment;
 
 public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
@@ -89,6 +90,7 @@ public class SettingsActivity extends PreferenceActivity
             /** Resetting information about active fragments with details */
             sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
             sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
+            sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
         }
     }
 

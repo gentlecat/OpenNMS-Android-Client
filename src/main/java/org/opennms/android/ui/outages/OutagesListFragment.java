@@ -4,9 +4,13 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -42,6 +46,7 @@ import org.opennms.android.sync.SyncUtils;
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
+    public static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     private static final String SELECTION_CURRENT =
             Contract.Outages.SERVICE_REGAINED_TIME + " IS NULL";
     private static final String SELECTION_RESOLVED =
@@ -73,17 +78,41 @@ public class OutagesListFragment extends ListFragment
         }
     };
     private String cursorSelection = null;
+    private SharedPreferences sharedPref;
+    private Handler restoreHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            /** Restoring previously displayed outage details fragment */
+            long activeOutageId = sharedPref.getLong(STATE_ACTIVE_OUTAGE_ID, -1);
+            if (activeOutageId != -1) {
+                showDetails(activeOutageId);
+            } else {
+                showEmptyDetails();
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_layout, container, false);
+    }
+
+    private void showEmptyDetails() {
+        detailsContainer.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout emptyView = (RelativeLayout) inflater
+                .inflate(R.layout.empty_details, null);
+        detailsContainer.addView(emptyView);
     }
 
     @Override
@@ -135,19 +164,6 @@ public class OutagesListFragment extends ListFragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            LayoutInflater inflater = (LayoutInflater) getActivity()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            RelativeLayout emptyView =
-                    (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
-            detailsContainer.addView(emptyView);
-        }
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         showDetails(position);
     }
@@ -155,6 +171,7 @@ public class OutagesListFragment extends ListFragment
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_OUTAGE_ID, id).commit();
         showDetails(id);
     }
 
@@ -220,6 +237,12 @@ public class OutagesListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
+        if (isDualPane) {
+            if (cursor.moveToFirst()) {
+                /** If list is not empty, trying to restore previously displayed details. */
+                restoreHandler.sendEmptyMessage(0);
+            }
+        }
     }
 
     @Override
