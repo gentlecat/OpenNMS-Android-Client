@@ -37,6 +37,8 @@ public abstract class BaseActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+
         SyncUtils.createSyncAccount(this);
 
         final CharSequence drawerTitle = title = getTitle();
