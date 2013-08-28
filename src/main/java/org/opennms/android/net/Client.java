@@ -7,8 +7,6 @@ import android.preference.PreferenceManager;
 import com.squareup.okhttp.OkAuthenticator;
 import com.squareup.okhttp.OkHttpClient;
 
-import org.opennms.android.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,17 +23,15 @@ public class Client {
     private static final int CONNECT_TIMEOUT_MS = 15000;
     private SharedPreferences settings;
     private OkHttpClient client;
-    private Context appContext;
 
     public Client(Context appContext) {
         client = new OkHttpClient();
-        this.appContext = appContext;
+
         settings = PreferenceManager.getDefaultSharedPreferences(appContext);
 
-        final String user = settings.getString("user", appContext
-                .getResources().getString(R.string.default_user));
-        final String password = settings.getString("password", appContext
-                .getResources().getString(R.string.default_password));
+        final String user = settings.getString("user", null);
+        final String password = settings.getString("password", null);
+
         client.setAuthenticator(new OkAuthenticator() {
             @Override
             public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges)
@@ -95,17 +91,13 @@ public class Client {
     }
 
     private int getPort() {
-        return Integer.parseInt(settings.getString("port", Integer
-                .toString(appContext.getResources().getInteger(R.integer.default_port))));
+        return Integer.parseInt(settings.getString("port", null));
     }
 
     private URL getURL(String path) throws MalformedURLException {
-        Boolean isHttps = settings.getBoolean("https", appContext.getResources()
-                .getBoolean(R.bool.default_https));
-        String host = settings.getString("host", appContext.getResources()
-                .getString(R.string.default_host));
-        String restUrl = settings.getString("rest_url", appContext.getResources()
-                .getString(R.string.default_rest_url));
+        Boolean isHttps = settings.getBoolean("https", false);
+        String host = settings.getString("host", null);
+        String restUrl = settings.getString("rest_url", null);
         String base = String.format("http%s://%s:%d/" + restUrl,
                 (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);
