@@ -44,7 +44,7 @@ public class MenuFragment extends ListFragment {
         adapter.add(new MenuItem(getString(R.string.nodes), MENU_ITEM_NODES));
         adapter.add(new MenuItem(getString(R.string.alarms), MENU_ITEM_ALARMS));
         adapter.add(new MenuItem(getString(R.string.outages), MENU_ITEM_OUTAGES));
-        adapter.add(new MenuItem(getString(R.string.events), MENU_ITEM_EVENTS));
+        adapter.add(new MenuItem(getString(R.string.latest_events), MENU_ITEM_EVENTS));
         setListAdapter(adapter);
     }
 
