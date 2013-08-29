@@ -29,7 +29,6 @@ import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
-import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
@@ -487,23 +486,6 @@ public class NodeDetailsFragment extends Fragment
     private class EventsLoader extends AsyncTask<Void, Void, Cursor> {
 
         protected Cursor doInBackground(Void... voids) {
-            Response response = null;
-            try {
-                response = new Client(getActivity()).get(
-                        "alarms/?query=" + URLEncoder.encode("nodeLabel = '" + nodeName + "'"));
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info from server", e);
-            }
-
-            if (response != null && response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                ArrayList<ContentValues> values = EventsParser.parseMultiple(response.getMessage());
-                contentResolver.bulkInsert(Contract.Events.CONTENT_URI,
-                        values.toArray(new ContentValues[values.size()]));
-            }
-
-            /** Getting info from DB */
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.EVENTS);
             queryBuilder.appendWhere(Contract.Events.NODE_ID + "=" + nodeId);
