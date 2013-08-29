@@ -47,9 +47,9 @@ public class OutageDetailsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                                Uri.withAppendedPath(Contract.Outages.CONTENT_URI,
-                                                     String.valueOf(outageId)),
-                                null, null, null, null);
+                Uri.withAppendedPath(Contract.Outages.CONTENT_URI,
+                        String.valueOf(outageId)),
+                null, null, null, null);
     }
 
     @Override
@@ -84,6 +84,10 @@ public class OutageDetailsFragment extends Fragment
     }
 
     private void showErrorMessage() {
+        if (!isAdded()) {
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 RelativeLayout detailsContainer =
@@ -151,7 +155,7 @@ public class OutageDetailsFragment extends Fragment
         TextView lostServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
         lostServiceEvent.setText(Utils.parseDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
-                                 + "\n#" + serviceLostEventId);
+                + "\n#" + serviceLostEventId);
 
         String serviceRegainedTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME));
@@ -161,8 +165,8 @@ public class OutageDetailsFragment extends Fragment
                 (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
         if (serviceRegainedTime != null) {
             regainedServiceEvent.setText(Utils.parseDate(serviceRegainedTime,
-                                                         "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
-                                         + serviceRegainedEventId);
+                    "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
+                    + serviceRegainedEventId);
         } else {
             detailsLayout.removeView(regainedServiceEvent);
             TextView title = (TextView) getActivity()
@@ -200,7 +204,7 @@ public class OutageDetailsFragment extends Fragment
             /** If information is available, updating DB */
             if (response != null) {
                 if (response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+                        && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = OutagesParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
@@ -208,7 +212,7 @@ public class OutageDetailsFragment extends Fragment
 
                     Cursor newCursor = getActivity().getContentResolver().query(
                             Uri.withAppendedPath(Contract.Outages.CONTENT_URI,
-                                                 String.valueOf(outageId)),
+                                    String.valueOf(outageId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();
