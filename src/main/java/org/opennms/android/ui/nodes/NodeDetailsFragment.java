@@ -65,9 +65,9 @@ public class NodeDetailsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                                Uri.withAppendedPath(Contract.Nodes.CONTENT_URI,
-                                                     String.valueOf(nodeId)),
-                                null, null, null, null);
+                Uri.withAppendedPath(Contract.Nodes.CONTENT_URI,
+                        String.valueOf(nodeId)),
+                null, null, null, null);
     }
 
     @Override
@@ -98,6 +98,10 @@ public class NodeDetailsFragment extends Fragment
     }
 
     private void showErrorMessage() {
+        if (!isAdded()) {
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 RelativeLayout detailsContainer =
@@ -288,7 +292,7 @@ public class NodeDetailsFragment extends Fragment
             /** If information is available, updating DB */
             if (response != null) {
                 if (response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+                        && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = NodesParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
@@ -296,7 +300,7 @@ public class NodeDetailsFragment extends Fragment
 
                     Cursor newCursor = getActivity().getContentResolver().query(
                             Uri.withAppendedPath(Contract.Nodes.CONTENT_URI,
-                                                 String.valueOf(nodeId)),
+                                    String.valueOf(nodeId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();
@@ -321,18 +325,18 @@ public class NodeDetailsFragment extends Fragment
             }
 
             if (response != null && response.getMessage() != null
-                && response.getCode() == HttpURLConnection.HTTP_OK) {
+                    && response.getCode() == HttpURLConnection.HTTP_OK) {
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 ArrayList<ContentValues> values = AlarmsParser.parseMultiple(response.getMessage());
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
-                                           values.toArray(new ContentValues[values.size()]));
+                        values.toArray(new ContentValues[values.size()]));
             }
 
             /** Getting info from DB */
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.ALARMS);
             queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
-                                     + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
+                    + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
             String[] projection = {
                     Contract.Alarms._ID,
                     Contract.Alarms.LOG_MESSAGE,
@@ -418,12 +422,12 @@ public class NodeDetailsFragment extends Fragment
             }
 
             if (response != null && response.getMessage() != null
-                && response.getCode() == HttpURLConnection.HTTP_OK) {
+                    && response.getCode() == HttpURLConnection.HTTP_OK) {
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 ArrayList<ContentValues> values =
                         OutagesParser.parseMultiple(response.getMessage());
                 contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
-                                           values.toArray(new ContentValues[values.size()]));
+                        values.toArray(new ContentValues[values.size()]));
             }
 
             /** Getting info from DB */

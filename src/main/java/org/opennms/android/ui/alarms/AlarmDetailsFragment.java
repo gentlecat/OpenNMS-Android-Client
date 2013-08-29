@@ -105,6 +105,10 @@ public class AlarmDetailsFragment extends Fragment
     }
 
     private void showErrorMessage() {
+        if (!isAdded()) {
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 RelativeLayout detailsContainer =
