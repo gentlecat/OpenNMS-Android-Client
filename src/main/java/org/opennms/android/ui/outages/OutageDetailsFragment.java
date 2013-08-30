@@ -154,7 +154,7 @@ public class OutageDetailsFragment extends Fragment
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID));
         TextView lostServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
-        lostServiceEvent.setText(Utils.parseDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
+        lostServiceEvent.setText(Utils.reformatDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
                 + "\n#" + serviceLostEventId);
 
         String serviceRegainedTime = cursor.getString(
@@ -164,7 +164,7 @@ public class OutageDetailsFragment extends Fragment
         TextView regainedServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
         if (serviceRegainedTime != null) {
-            regainedServiceEvent.setText(Utils.parseDate(serviceRegainedTime,
+            regainedServiceEvent.setText(Utils.reformatDate(serviceRegainedTime,
                     "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
                     + serviceRegainedEventId);
         } else {

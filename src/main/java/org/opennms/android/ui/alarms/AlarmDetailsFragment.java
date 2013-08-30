@@ -234,7 +234,7 @@ public class AlarmDetailsFragment extends Fragment
         TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
         if (ackTime != null) {
             ackStatus.setText(getString(R.string.alarm_details_acked));
-            ackMessage.setText(Utils.parseDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
+            ackMessage.setText(Utils.reformatDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
                                + " " + getString(R.string.alarm_details_acked_by) + " "
                                + ackUser);
         } else {
@@ -291,7 +291,7 @@ public class AlarmDetailsFragment extends Fragment
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
         TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
         lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
-                          + Utils.parseDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+                          + Utils.reformatDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
         lastEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

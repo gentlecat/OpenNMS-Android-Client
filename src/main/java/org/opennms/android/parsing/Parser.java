@@ -11,6 +11,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+/**
+ * XML parser that provides helper methods.
+ */
 public abstract class Parser {
 
     static XPath xPath = XPathFactory.newInstance().newXPath();

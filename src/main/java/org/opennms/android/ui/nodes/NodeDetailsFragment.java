@@ -194,7 +194,7 @@ public class NodeDetailsFragment extends Fragment
         String createdTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Nodes.CREATED_TIME));
         TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
-        timeView.setText(Utils.parseDate(createdTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
+        timeView.setText(Utils.reformatDate(createdTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
 
         String labelSource = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL_SOURCE));
