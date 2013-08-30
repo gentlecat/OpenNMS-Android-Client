@@ -16,6 +16,9 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * HTTP client that works with OpenNMS server specified in {@link android.content.SharedPreferences}.
+ */
 public class Client {
 
     private static final String ENCODING = "UTF-8";
@@ -24,10 +27,14 @@ public class Client {
     private SharedPreferences settings;
     private OkHttpClient client;
 
+    /**
+     * @param appContext Application context used to get connection information from
+     *                   {@link android.content.SharedPreferences}.
+     */
     public Client(Context appContext) {
-        client = new OkHttpClient();
-
         settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+
+        client = new OkHttpClient();
 
         final String user = settings.getString("user", null);
         final String password = settings.getString("password", null);
@@ -47,6 +54,13 @@ public class Client {
         });
     }
 
+    /**
+     * Make GET request to OpenNMS server.
+     *
+     * @param path REST API path.
+     * @return {@link org.opennms.android.net.Response} object.
+     * @throws IOException
+     */
     public Response get(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
         connection.setRequestMethod("GET");
@@ -64,6 +78,13 @@ public class Client {
         }
     }
 
+    /**
+     * Make PUT request to OpenNMS server.
+     *
+     * @param path REST API path.
+     * @return {@link org.opennms.android.net.Response} object.
+     * @throws IOException
+     */
     public Response put(String path) throws IOException {
         HttpURLConnection connection = client.open(getURL(path));
         connection.setRequestMethod("PUT");
@@ -94,6 +115,14 @@ public class Client {
         return Integer.parseInt(settings.getString("port", null));
     }
 
+    /**
+     * Creates complete URL that is used in requests by appending path to base URL for REST calls
+     * specified in settings.
+     *
+     * @param path Path after base URL.
+     * @return {@link java.net.URL}
+     * @throws MalformedURLException
+     */
     private URL getURL(String path) throws MalformedURLException {
         Boolean isHttps = settings.getBoolean("https", false);
         String host = settings.getString("host", null);
