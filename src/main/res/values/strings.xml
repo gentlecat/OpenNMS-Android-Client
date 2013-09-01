@@ -114,6 +114,7 @@
     <string name="server_check_ok">Server settings are correct.</string>
     <string name="server_check_not_ok">Can\'t connect to server. Check connection settings.</string>
     <string name="server_check_failed">Error occurred while checking server connection!</string>
+    <string name="server_check_offline">Can\'t check connection. Device is offline.</string>
 
     <!-- "Welcome" dialog -->
     <string name="welcome_message">You can configure connection to your OpenNMS server or

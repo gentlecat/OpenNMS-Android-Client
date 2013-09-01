@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.opennms.android.R;
+import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.provider.DatabaseHelper;
@@ -80,10 +81,15 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     private void checkServer() {
-        Toast.makeText(getApplicationContext(), R.string.server_check_wait,
-                Toast.LENGTH_LONG).show();
-        checkTask = new ServerCheckTask();
-        checkTask.execute();
+        if (Utils.isOnline(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), R.string.server_check_wait,
+                    Toast.LENGTH_LONG).show();
+            checkTask = new ServerCheckTask();
+            checkTask.execute();
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.server_check_offline,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
