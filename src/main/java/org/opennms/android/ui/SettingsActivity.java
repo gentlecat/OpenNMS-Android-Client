@@ -2,14 +2,19 @@ package org.opennms.android.ui;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.opennms.android.R;
+import org.opennms.android.net.Client;
+import org.opennms.android.net.Response;
 import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
@@ -17,11 +22,15 @@ import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
+import java.net.HttpURLConnection;
+
 public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
 
+    public static final String TAG = "SettingsActivity";
     private SharedPreferences sharedPref;
     private String oldHost;
+    private ServerCheckTask checkTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +68,50 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_check_settings:
+                checkServer();
+                return true;
             case R.id.menu_apply_settings:
                 finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void checkServer() {
+        Toast.makeText(getApplicationContext(), R.string.server_check_wait,
+                Toast.LENGTH_LONG).show();
+        checkTask = new ServerCheckTask();
+        checkTask.execute();
+    }
+
+    private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
+
+        protected Response doInBackground(Void... voids) {
+            String user = sharedPref.getString("user", null);
+            try {
+                return new Client(getApplicationContext()).get("users/" + user);
+            } catch (Exception e) {
+                // TODO: Check if exception is thrown if settings are incorrect
+                Log.e(TAG, "Error occurred while testing connection to server!", e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Response response) {
+            if (response != null) {
+                if (response.getCode() == HttpURLConnection.HTTP_OK) {
+                    Toast.makeText(getApplicationContext(), R.string.server_check_ok,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok,
+                            Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.server_check_failed,
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -92,6 +140,8 @@ public class SettingsActivity extends PreferenceActivity
             sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
             sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
         }
+
+        if (checkTask != null) checkTask.cancel(true);
     }
 
     private void updateSummaries() {
@@ -127,7 +177,7 @@ public class SettingsActivity extends PreferenceActivity
         }
 
         String minimalSeverity = sharedPref.getString("minimal_severity",
-                                                      getString(R.string.default_minimal_severity));
+                getString(R.string.default_minimal_severity));
         ListPreference minimalSeverityPreference =
                 (ListPreference) findPreference("minimal_severity");
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
