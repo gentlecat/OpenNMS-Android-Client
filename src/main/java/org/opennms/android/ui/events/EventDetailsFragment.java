@@ -3,6 +3,7 @@ package org.opennms.android.ui.events;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,6 +27,7 @@ import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.provider.Contract;
+import org.opennms.android.ui.nodes.NodeDetailsActivity;
 
 import java.net.HttpURLConnection;
 
@@ -48,9 +50,9 @@ public class EventDetailsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                                Uri.withAppendedPath(Contract.Events.CONTENT_URI,
-                                                     String.valueOf(eventId)),
-                                null, null, null, null);
+                Uri.withAppendedPath(Contract.Events.CONTENT_URI,
+                        String.valueOf(eventId)),
+                null, null, null, null);
     }
 
     @Override
@@ -196,11 +198,17 @@ public class EventDetailsFragment extends Fragment
         }
 
         // Node
-        int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID));
+        final int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Events.NODE_ID));
         String nodeLabel = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Events.NODE_LABEL));
         TextView nodeView = (TextView) getActivity().findViewById(R.id.event_node);
         nodeView.setText(nodeLabel + " (#" + nodeId + ")");
+        nodeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNodeDetails(nodeId);
+            }
+        });
 
         // Service type
         int serviceTypeId = cursor.getInt(
@@ -219,6 +227,13 @@ public class EventDetailsFragment extends Fragment
         }
     }
 
+    private void showNodeDetails(long nodeId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), NodeDetailsActivity.class);
+        intent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, nodeId);
+        startActivity(intent);
+    }
+
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... voids) {
@@ -235,7 +250,7 @@ public class EventDetailsFragment extends Fragment
             /** If information is available, updating DB */
             if (response != null) {
                 if (response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+                        && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = EventsParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
@@ -243,7 +258,7 @@ public class EventDetailsFragment extends Fragment
 
                     Cursor newCursor = getActivity().getContentResolver().query(
                             Uri.withAppendedPath(Contract.Events.CONTENT_URI,
-                                                 String.valueOf(eventId)),
+                                    String.valueOf(eventId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();
