@@ -3,6 +3,7 @@ package org.opennms.android.ui.outages;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,6 +26,8 @@ import org.opennms.android.net.Client;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
+import org.opennms.android.ui.events.EventDetailsActivity;
+import org.opennms.android.ui.nodes.NodeDetailsActivity;
 
 import java.net.HttpURLConnection;
 
@@ -142,24 +145,36 @@ public class OutageDetailsFragment extends Fragment
                 (TextView) getActivity().findViewById(R.id.outage_ip_interface_id);
         ipInterfaceIdView.setText(String.valueOf(ipInterfaceId));
 
-        int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.NODE_ID));
+        final int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Outages.NODE_ID));
         String nodeLabel = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Outages.NODE_LABEL));
         TextView nodeView = (TextView) getActivity().findViewById(R.id.outage_node);
         nodeView.setText(nodeLabel + " (#" + nodeId + ")");
+        nodeView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNodeDetails(nodeId);
+            }
+        });
 
         String serviceLostTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_TIME));
-        int serviceLostEventId = cursor.getInt(
+        final int serviceLostEventId = cursor.getInt(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID));
         TextView lostServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
         lostServiceEvent.setText(Utils.reformatDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
                 + "\n#" + serviceLostEventId);
+        lostServiceEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showEventDetails(serviceLostEventId);
+            }
+        });
 
         String serviceRegainedTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_TIME));
-        int serviceRegainedEventId = cursor.getInt(
+        final int serviceRegainedEventId = cursor.getInt(
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_REGAINED_EVENT_ID));
         TextView regainedServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
@@ -167,6 +182,12 @@ public class OutageDetailsFragment extends Fragment
             regainedServiceEvent.setText(Utils.reformatDate(serviceRegainedTime,
                     "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
                     + serviceRegainedEventId);
+            regainedServiceEvent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showEventDetails(serviceLostEventId);
+                }
+            });
         } else {
             detailsLayout.removeView(regainedServiceEvent);
             TextView title = (TextView) getActivity()
@@ -186,6 +207,20 @@ public class OutageDetailsFragment extends Fragment
         TextView serviceTypeView =
                 (TextView) getActivity().findViewById(R.id.outage_service_type);
         serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
+    }
+
+    private void showNodeDetails(long nodeId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), NodeDetailsActivity.class);
+        intent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, nodeId);
+        startActivity(intent);
+    }
+
+    private void showEventDetails(long eventId) {
+        // TODO: Adjust for tablets
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
+        startActivity(intent);
     }
 
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
