@@ -91,6 +91,7 @@ public class OutagesListFragment extends ListFragment
             }
         }
     };
+    private boolean firstLoad = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,7 +141,7 @@ public class OutagesListFragment extends ListFragment
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         SpinnerAdapter mSpinnerAdapter =
                 ArrayAdapter.createFromResource(getActivity(), R.array.outages_action_list,
-                                                android.R.layout.simple_spinner_dropdown_item);
+                        android.R.layout.simple_spinner_dropdown_item);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
     }
 
@@ -213,8 +214,8 @@ public class OutagesListFragment extends ListFragment
             SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_OUTAGES);
         } else {
             Toast.makeText(getActivity(),
-                           getString(R.string.refresh_failed_offline),
-                           Toast.LENGTH_LONG).show();
+                    getString(R.string.refresh_failed_offline),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -237,12 +238,17 @@ public class OutagesListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
-        if (isDualPane) {
-            if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
+            if (isDualPane) {
                 /** If list is not empty, trying to restore previously displayed details. */
                 restoreHandler.sendEmptyMessage(0);
             }
+        } else {
+            if (firstLoad) {
+                refreshList();
+            }
         }
+        firstLoad = false;
     }
 
     @Override
@@ -257,7 +263,7 @@ public class OutagesListFragment extends ListFragment
 
         // Watch for sync state changes
         final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 

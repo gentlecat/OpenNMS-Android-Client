@@ -100,6 +100,7 @@ public class AlarmsListFragment extends ListFragment
         }
     };
     private SharedPreferences sharedPref;
+    private boolean firstLoad = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,7 +125,7 @@ public class AlarmsListFragment extends ListFragment
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
         adapter = new AlarmAdapter(getActivity(), null,
-                                   CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
@@ -135,7 +136,7 @@ public class AlarmsListFragment extends ListFragment
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         SpinnerAdapter mSpinnerAdapter =
                 ArrayAdapter.createFromResource(getActivity(), R.array.alarms_action_list,
-                                                android.R.layout.simple_spinner_dropdown_item);
+                        android.R.layout.simple_spinner_dropdown_item);
         actionBar.setListNavigationCallbacks(mSpinnerAdapter, this);
     }
 
@@ -146,7 +147,7 @@ public class AlarmsListFragment extends ListFragment
 
         // Watch for sync state changes
         final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 
@@ -203,6 +204,10 @@ public class AlarmsListFragment extends ListFragment
                 removeDetailsHandler.sendEmptyMessage(0);
             }
         }
+        if (!cursor.moveToFirst() && firstLoad) {
+            refreshList();
+        }
+        firstLoad = false;
     }
 
     @Override
@@ -269,8 +274,8 @@ public class AlarmsListFragment extends ListFragment
             SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_ALARMS);
         } else {
             Toast.makeText(getActivity(),
-                           getString(R.string.refresh_failed_offline),
-                           Toast.LENGTH_LONG).show();
+                    getString(R.string.refresh_failed_offline),
+                    Toast.LENGTH_LONG).show();
         }
     }
 

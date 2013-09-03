@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -84,6 +83,8 @@ public class NodesListFragment extends ListFragment
             }
         }
     };
+    private boolean firstLoad = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +108,7 @@ public class NodesListFragment extends ListFragment
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
         adapter = new NodeAdapter(getActivity(), null,
-                                  CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
@@ -183,8 +184,8 @@ public class NodesListFragment extends ListFragment
             SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_NODES);
         } else {
             Toast.makeText(getActivity(),
-                           getString(R.string.refresh_failed_offline),
-                           Toast.LENGTH_LONG).show();
+                    getString(R.string.refresh_failed_offline),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -222,17 +223,23 @@ public class NodesListFragment extends ListFragment
                 Contract.Nodes.NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                                Contract.Nodes.NAME);
+                Contract.Nodes.NAME);
     }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
-        if (isDualPane) {
-            if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
+            if (isDualPane) {
                 /** If list is not empty, trying to restore previously displayed details. */
                 restoreHandler.sendEmptyMessage(0);
             }
+        } else {
+            if (firstLoad) {
+                refreshList();
+            }
         }
+        firstLoad = false;
     }
 
     @Override
@@ -249,7 +256,7 @@ public class NodesListFragment extends ListFragment
 
         // Watch for sync state changes
         final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                         | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
+                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
     }
 
