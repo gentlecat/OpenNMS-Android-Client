@@ -114,8 +114,15 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
-        if (!cursor.moveToFirst() && firstLoad) {
-            refreshList();
+
+        /** If there is no sync going and list is empty, refreshing list. */
+        Account account = AccountService.getAccount();
+        if (account != null) {
+            boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
+            boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
+            if (!cursor.moveToFirst() && firstLoad && !(syncActive || syncPending)) {
+                refreshList();
+            }
         }
         firstLoad = false;
     }

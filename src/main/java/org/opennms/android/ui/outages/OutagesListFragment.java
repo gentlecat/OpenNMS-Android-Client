@@ -244,8 +244,14 @@ public class OutagesListFragment extends ListFragment
                 restoreHandler.sendEmptyMessage(0);
             }
         } else {
-            if (firstLoad) {
-                refreshList();
+            /** If there is no sync going and list is empty, refreshing list. */
+            Account account = AccountService.getAccount();
+            if (account != null) {
+                boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
+                boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
+                if (firstLoad && !(syncActive || syncPending)) {
+                    refreshList();
+                }
             }
         }
         firstLoad = false;
