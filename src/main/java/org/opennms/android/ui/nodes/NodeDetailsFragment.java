@@ -396,7 +396,7 @@ public class NodeDetailsFragment extends Fragment
                             .getString(cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
                     TextView messageText =
                             (TextView) item.findViewById(R.id.node_details_alarm_message);
-                    messageText.setText(message);
+                    messageText.setText(Html.fromHtml(message));
 
                     container.addView(item);
 

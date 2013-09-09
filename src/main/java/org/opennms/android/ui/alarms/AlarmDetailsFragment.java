@@ -59,9 +59,9 @@ public class AlarmDetailsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
-                                                     String.valueOf(alarmId)),
-                                null, null, null, null);
+                Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
+                        String.valueOf(alarmId)),
+                null, null, null, null);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class AlarmDetailsFragment extends Fragment
             new AcknowledgementTask(this).execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_ack_fail_offline),
-                           Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -175,7 +175,7 @@ public class AlarmDetailsFragment extends Fragment
             new UnacknowledgementTask(this).execute();
         } else {
             Toast.makeText(getActivity(), getString(R.string.alarm_unack_fail_offline),
-                           Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -235,8 +235,8 @@ public class AlarmDetailsFragment extends Fragment
         if (ackTime != null) {
             ackStatus.setText(getString(R.string.alarm_details_acked));
             ackMessage.setText(Utils.reformatDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
-                               + " " + getString(R.string.alarm_details_acked_by) + " "
-                               + ackUser);
+                    + " " + getString(R.string.alarm_details_acked_by) + " "
+                    + ackUser);
         } else {
             ackStatus.setText(getString(R.string.alarm_details_not_acked));
             ackMessage.setText("");
@@ -252,7 +252,7 @@ public class AlarmDetailsFragment extends Fragment
         String logMessage = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LOG_MESSAGE));
         TextView logMessageView = (TextView) getActivity().findViewById(R.id.alarm_log_message);
-        logMessageView.setText(logMessage);
+        logMessageView.setText(Html.fromHtml(logMessage));
 
         // Node
         final int nodeId = cursor.getInt(cursor.getColumnIndexOrThrow(Contract.Alarms.NODE_ID));
@@ -291,7 +291,7 @@ public class AlarmDetailsFragment extends Fragment
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
         TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
         lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
-                          + Utils.reformatDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+                + Utils.reformatDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
         lastEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -333,7 +333,7 @@ public class AlarmDetailsFragment extends Fragment
             /** If information is available, updating DB */
             if (response != null) {
                 if (response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+                        && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = AlarmsParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
@@ -341,7 +341,7 @@ public class AlarmDetailsFragment extends Fragment
 
                     Cursor newCursor = getActivity().getContentResolver().query(
                             Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
-                                                 String.valueOf(alarmId)),
+                                    String.valueOf(alarmId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();
@@ -384,8 +384,8 @@ public class AlarmDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                 Toast.makeText(getActivity(),
-                               String.format(getString(R.string.alarm_ack_success), alarmId),
-                               Toast.LENGTH_LONG).show();
+                        String.format(getString(R.string.alarm_ack_success), alarmId),
+                        Toast.LENGTH_LONG).show();
 
                 // Updating database
                 ContentValues[] values = new ContentValues[1];
@@ -397,8 +397,8 @@ public class AlarmDetailsFragment extends Fragment
                 loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
-                               "Error occurred during acknowledgement process!",
-                               Toast.LENGTH_LONG).show();
+                        "Error occurred during acknowledgement process!",
+                        Toast.LENGTH_LONG).show();
                 updateMenu(false);
             }
         }
@@ -435,8 +435,8 @@ public class AlarmDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                 Toast.makeText(getActivity(),
-                               String.format(getString(R.string.alarm_unack_success), alarmId),
-                               Toast.LENGTH_LONG).show();
+                        String.format(getString(R.string.alarm_unack_success), alarmId),
+                        Toast.LENGTH_LONG).show();
 
                 // Updating database
                 ContentValues[] values = new ContentValues[1];
@@ -448,8 +448,8 @@ public class AlarmDetailsFragment extends Fragment
                 loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
-                               "Error occurred during unacknowledgement process!",
-                               Toast.LENGTH_LONG).show();
+                        "Error occurred during unacknowledgement process!",
+                        Toast.LENGTH_LONG).show();
                 updateMenu(true);
             }
         }
