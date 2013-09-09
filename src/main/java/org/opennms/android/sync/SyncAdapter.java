@@ -100,7 +100,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Synchronizing nodes...");
         String result;
         try {
-            result = serverCommunication.get("nodes/?limit=0").getMessage();
+            result = serverCommunication.get("nodes").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during node synchronization process", e);
             return;
@@ -162,7 +162,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String result;
         try {
-            result = serverCommunication.get("alarms?orderBy=id&order=desc&limit=0").getMessage();
+            result = serverCommunication.get("alarms?orderBy=id&order=desc").getMessage();
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during alarm synchronization process", e);
             return;
