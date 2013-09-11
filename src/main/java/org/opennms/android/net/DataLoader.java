@@ -38,6 +38,10 @@ public class DataLoader {
         return serverCommunication.get(String.format("outages?limit=%d&offset=%d", limit, offset));
     }
 
+    public Response loadUser(String name) throws IOException {
+        return serverCommunication.get(String.format("users/%s", name));
+    }
+
     public ArrayList<ContentValues> loadCurrentOutages() {
         Log.d(TAG, "Loading current outages...");
         String result;

@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.Client;
+import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.sync.AccountService;
@@ -98,7 +98,7 @@ public class SettingsActivity extends PreferenceActivity
         protected Response doInBackground(Void... voids) {
             String user = sharedPref.getString("user", null);
             try {
-                return new Client(getApplicationContext()).get("users/" + user);
+                return new DataLoader(getApplicationContext()).loadUser(user);
             } catch (Exception e) {
                 // TODO: Check if exception is thrown if settings are incorrect
                 Log.e(TAG, "Error occurred while testing connection to server!", e);
