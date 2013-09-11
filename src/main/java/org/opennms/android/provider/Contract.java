@@ -6,7 +6,7 @@ import android.provider.BaseColumns;
 
 public final class Contract {
 
-    public static final String CONTENT_AUTHORITY = "org.opennms.android.sync.SyncAdapter";
+    public static final String CONTENT_AUTHORITY = "org.opennms.android.sync.AlarmsSyncAdapter";
     public static final String PATH_NODES = Tables.NODES;
     public static final String PATH_ALARMS = Tables.ALARMS;
     public static final String PATH_OUTAGES = Tables.OUTAGES;

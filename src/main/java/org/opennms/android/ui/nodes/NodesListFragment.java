@@ -21,6 +21,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,44 +34,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.Loaders;
+import org.opennms.android.LoaderIDs;
+import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.SyncAdapter;
-import org.opennms.android.sync.SyncUtils;
+import org.opennms.android.sync.LoadManager;
 
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    public static final String TAG = "NodesListFragment";
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
     private FrameLayout detailsContainer;
-    private Object syncObserverHandle;
     private Menu optionsMenu;
-    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
-        @Override
-        public void onStatusChanged(int which) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Account account = AccountService.getAccount();
-                    if (account == null) {
-                        setRefreshActionButtonState(false);
-                        return;
-                    }
-                    boolean syncActive = ContentResolver
-                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver
-                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
-                    setRefreshActionButtonState(syncActive || syncPending);
-                }
-            });
-        }
-    };
-
     private SharedPreferences sharedPref;
     public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private Handler restoreHandler = new Handler() {
@@ -84,12 +64,13 @@ public class NodesListFragment extends ListFragment
         }
     };
     private boolean firstLoad = true;
+    MainApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        app = (MainApplication) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
@@ -181,7 +162,12 @@ public class NodesListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_NODES);
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.NODES);
+                setRefreshActionButtonState(true);
+            } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
@@ -246,6 +232,7 @@ public class NodesListFragment extends ListFragment
             }
         }
         firstLoad = false;
+        setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
     }
 
     @Override
@@ -256,23 +243,10 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().getSupportLoaderManager().restartLoader(Loaders.NODES, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
 
-        mSyncStatusObserver.onStatusChanged(0);
-
-        // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
-        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (syncObserverHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncObserverHandle);
-            syncObserverHandle = null;
-        }
+        if (app.serviceConnected)
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

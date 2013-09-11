@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,13 +34,11 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.Loaders;
+import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.SyncAdapter;
-import org.opennms.android.sync.SyncUtils;
 
 public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
@@ -52,28 +49,7 @@ public class AlarmsListFragment extends ListFragment
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
-    private Object syncObserverHandle;
     private Menu optionsMenu;
-    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
-        @Override
-        public void onStatusChanged(int which) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Account account = AccountService.getAccount();
-                    if (account == null) {
-                        setRefreshActionButtonState(false);
-                        return;
-                    }
-                    boolean syncActive = ContentResolver
-                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver
-                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
-                    setRefreshActionButtonState(syncActive || syncPending);
-                }
-            });
-        }
-    };
     private String cursorSelection = null;
     private Fragment activeDetailsFragment;
     private Handler removeDetailsHandler = new Handler() {
@@ -143,21 +119,6 @@ public class AlarmsListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mSyncStatusObserver.onStatusChanged(0);
-
-        // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
-        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (syncObserverHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncObserverHandle);
-            syncObserverHandle = null;
-        }
     }
 
     @Override
@@ -165,11 +126,11 @@ public class AlarmsListFragment extends ListFragment
         switch (itemPosition) {
             case 0:
                 cursorSelection = SELECTION_OUTSTANDING;
-                getActivity().getSupportLoaderManager().restartLoader(Loaders.ALARMS, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.ALARMS, null, this);
                 return true;
             case 1:
                 cursorSelection = SELECTION_ACKED;
-                getActivity().getSupportLoaderManager().restartLoader(Loaders.ALARMS, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.ALARMS, null, this);
                 return true;
         }
         return false;
@@ -278,7 +239,7 @@ public class AlarmsListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_ALARMS);
+            // TODO: Implement
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),

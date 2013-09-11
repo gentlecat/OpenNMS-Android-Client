@@ -1,6 +1,7 @@
 package org.opennms.android;
 
-public final class Loaders {
+// TODO: Get rid of this class
+public final class LoaderIDs {
 
     public static final int NODES = 0;
     public static final int ALARMS = 1;

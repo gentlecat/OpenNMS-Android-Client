@@ -35,13 +35,12 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.Loaders;
+import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.SyncAdapter;
-import org.opennms.android.sync.SyncUtils;
+import org.opennms.android.net.DataLoader;
 
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
@@ -55,28 +54,7 @@ public class OutagesListFragment extends ListFragment
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
-    private Object syncObserverHandle;
     private Menu optionsMenu;
-    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
-        @Override
-        public void onStatusChanged(int which) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Account account = AccountService.getAccount();
-                    if (account == null) {
-                        setRefreshActionButtonState(false);
-                        return;
-                    }
-                    boolean syncActive = ContentResolver
-                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver
-                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
-                    setRefreshActionButtonState(syncActive || syncPending);
-                }
-            });
-        }
-    };
     private String cursorSelection = null;
     private SharedPreferences sharedPref;
     private Handler restoreHandler = new Handler() {
@@ -150,15 +128,15 @@ public class OutagesListFragment extends ListFragment
         switch (itemPosition) {
             case 0:
                 cursorSelection = SELECTION_CURRENT;
-                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
                 return true;
             case 1:
                 cursorSelection = SELECTION_RESOLVED;
-                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
                 return true;
             case 2:
                 cursorSelection = SELECTION_ALL;
-                getActivity().getSupportLoaderManager().restartLoader(Loaders.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
                 return true;
         }
         return false;
@@ -211,7 +189,7 @@ public class OutagesListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_OUTAGES);
+            // TODO: Implement
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
@@ -265,21 +243,6 @@ public class OutagesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mSyncStatusObserver.onStatusChanged(0);
-
-        // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
-        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (syncObserverHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncObserverHandle);
-            syncObserverHandle = null;
-        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

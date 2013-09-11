@@ -15,7 +15,7 @@ public class AccountService extends Service {
 
     public static final String ACCOUNT_NAME = "Synchronization";
     private static final String TAG = "AccountService";
-    private static final String ACCOUNT_TYPE = "org.opennms.android.sync.SyncAdapter";
+    private static final String ACCOUNT_TYPE = "org.opennms.android.sync.AlarmsSyncAdapter";
     private Authenticator authenticator;
 
     /**

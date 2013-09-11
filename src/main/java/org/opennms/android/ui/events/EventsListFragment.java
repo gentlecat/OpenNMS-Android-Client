@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -26,13 +25,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.Loaders;
+import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.SyncAdapter;
-import org.opennms.android.sync.SyncUtils;
 
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -40,28 +37,7 @@ public class EventsListFragment extends ListFragment
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
-    private Object syncObserverHandle;
     private Menu optionsMenu;
-    private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
-        @Override
-        public void onStatusChanged(int which) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Account account = AccountService.getAccount();
-                    if (account == null) {
-                        setRefreshActionButtonState(false);
-                        return;
-                    }
-                    boolean syncActive = ContentResolver
-                            .isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                    boolean syncPending = ContentResolver
-                            .isSyncPending(account, Contract.CONTENT_AUTHORITY);
-                    setRefreshActionButtonState(syncActive || syncPending);
-                }
-            });
-        }
-    };
     private boolean firstLoad = true;
 
     @Override
@@ -91,7 +67,7 @@ public class EventsListFragment extends ListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.events_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(Loaders.EVENTS, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LoaderIDs.EVENTS, null, this);
     }
 
     @Override
@@ -191,7 +167,7 @@ public class EventsListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            SyncUtils.triggerRefresh(SyncAdapter.SYNC_TYPE_EVENTS);
+            // TODO: Implement
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
@@ -202,21 +178,6 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        mSyncStatusObserver.onStatusChanged(0);
-
-        // Watch for sync state changes
-        final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING
-                | ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
-        syncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (syncObserverHandle != null) {
-            ContentResolver.removeStatusChangeListener(syncObserverHandle);
-            syncObserverHandle = null;
-        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

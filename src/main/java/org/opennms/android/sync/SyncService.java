@@ -13,7 +13,7 @@ public class SyncService extends Service {
     // Object to use as a thread-safe lock
     private static final Object syncAdapterLock = new Object();
     // Storage for an instance of the sync adapter
-    private static SyncAdapter syncAdapter = null;
+    private static AlarmsSyncAdapter syncAdapter = null;
 
     /*
      * Instantiate the sync adapter object.
@@ -27,7 +27,7 @@ public class SyncService extends Service {
          */
         synchronized (syncAdapterLock) {
             if (syncAdapter == null) {
-                syncAdapter = new SyncAdapter(getApplicationContext(), true);
+                syncAdapter = new AlarmsSyncAdapter(getApplicationContext(), true);
             }
         }
     }
@@ -40,7 +40,7 @@ public class SyncService extends Service {
         /*
          * Get the object that allows external processes
          * to call onPerformSync(). The object is created
-         * in the base class code when the SyncAdapter
+         * in the base class code when the AlarmsSyncAdapter
          * constructors call super()
          */
         return syncAdapter.getSyncAdapterBinder();
