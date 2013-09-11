@@ -81,6 +81,7 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     private void checkServer() {
+        if (checkTask != null && checkTask.getStatus() == AsyncTask.Status.RUNNING) return;
         if (Utils.isOnline(getApplicationContext())) {
             Toast.makeText(getApplicationContext(), R.string.server_check_wait,
                     Toast.LENGTH_LONG).show();
@@ -106,6 +107,7 @@ public class SettingsActivity extends PreferenceActivity
         }
 
         protected void onPostExecute(Response response) {
+            // TODO: Replace previous toast if it is still displayed
             if (response != null) {
                 if (response.getCode() == HttpURLConnection.HTTP_OK) {
                     Toast.makeText(getApplicationContext(), R.string.server_check_ok,
