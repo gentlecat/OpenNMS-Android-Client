@@ -78,6 +78,8 @@ public class NodesListFragment extends ListFragment
         return inflater.inflate(R.layout.list_layout, container, false);
     }
 
+    private View listFooter;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -86,10 +88,15 @@ public class NodesListFragment extends ListFragment
                 (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
 
+        getListView().setOnScrollListener(this);
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        listFooter = inflater.inflate(R.layout.list_loading_footer, null);
+        getListView().addFooterView(listFooter);
+
         adapter = new NodeAdapter(getActivity(), null,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
-        getListView().setOnScrollListener(this);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.nodes_list_empty));
@@ -210,6 +217,7 @@ public class NodesListFragment extends ListFragment
                 Contract.Nodes.NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
+                /** Sort order must be the same as in requests to server. */
                 Contract.Nodes._ID);
     }
 
@@ -248,14 +256,19 @@ public class NodesListFragment extends ListFragment
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
+        if (refreshing) {
+            listFooter.setVisibility(View.VISIBLE);
+        } else {
+            listFooter.setVisibility(View.GONE);
+        }
+
         if (optionsMenu == null) {
             return;
         }
         final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_refresh);
         if (refreshItem != null) {
             if (refreshing) {
-                MenuItemCompat.setActionView(
-                        refreshItem, R.layout.actionbar_indeterminate_progress);
+                MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
             }
