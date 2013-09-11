@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
+import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
 
@@ -85,7 +86,7 @@ public class LoadManager extends Service {
                 // TODO: Implement
                 break;
             case EVENTS:
-                // TODO: Implement
+                new EventsLoader(limit, offset).execute();
                 break;
             case OUTAGES:
                 // TODO: Implement
@@ -126,6 +127,42 @@ public class LoadManager extends Service {
 
         protected void onPostExecute(Response response) {
             nodesLoadActive = false;
+        }
+    }
+
+    class EventsLoader extends AsyncTask<Void, Void, Response> {
+        private int limit, offset;
+
+        public EventsLoader(int limit, int offset) {
+            this.limit = limit;
+            this.offset = offset;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            eventsLoadActive = true;
+        }
+
+        protected Response doInBackground(Void... voids) {
+            Response response;
+            try {
+                response = new DataLoader(getApplicationContext()).loadEvents(limit, offset);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred during events loading", e);
+                return null;
+            }
+
+            /** Updating database records */
+            ArrayList<ContentValues> values = EventsParser.parseMultiple(response.getMessage());
+            getContentResolver().bulkInsert(Contract.Events.CONTENT_URI,
+                    values.toArray(new ContentValues[values.size()]));
+
+            return response;
+        }
+
+        protected void onPostExecute(Response response) {
+            eventsLoadActive = false;
         }
     }
 

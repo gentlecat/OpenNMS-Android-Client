@@ -13,12 +13,14 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -26,24 +28,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opennms.android.LoaderIDs;
+import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
+import org.opennms.android.sync.LoadManager;
 
 public class EventsListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
+    public static final String TAG = "EventsListFragment";
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
     private Menu optionsMenu;
     private boolean firstLoad = true;
+    private View listFooter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        app = (MainApplication) getActivity().getApplication();
     }
 
     @Override
@@ -59,6 +66,12 @@ public class EventsListFragment extends ListFragment
         detailsContainer =
                 (FrameLayout) getActivity().findViewById(R.id.details_fragment_container);
         isDualPane = detailsContainer != null && detailsContainer.getVisibility() == View.VISIBLE;
+
+        getListView().setOnScrollListener(this);
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        listFooter = inflater.inflate(R.layout.list_loading_footer, null);
+        getListView().addFooterView(listFooter);
 
         adapter = new EventAdapter(getActivity(), null,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -101,6 +114,9 @@ public class EventsListFragment extends ListFragment
             }
         }
         firstLoad = false;
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+        }
     }
 
     @Override
@@ -167,7 +183,14 @@ public class EventsListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            // TODO: Implement
+            getActivity().getContentResolver().delete(Contract.Events.CONTENT_URI, null, null);
+            currentBatch = 1;
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, 0);
+                setRefreshActionButtonState(true);
+            } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
@@ -178,20 +201,51 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
+
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
+        if (refreshing) {
+            listFooter.setVisibility(View.VISIBLE);
+        } else {
+            listFooter.setVisibility(View.GONE);
+        }
+
         if (optionsMenu == null) {
             return;
         }
         final MenuItem refreshItem = optionsMenu.findItem(R.id.menu_refresh);
         if (refreshItem != null) {
             if (refreshing) {
-                MenuItemCompat.setActionView(
-                        refreshItem, R.layout.actionbar_indeterminate_progress);
+                MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
             }
         }
     }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    }
+
+    MainApplication app;
+    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
+    private static final int LOAD_LIMIT = 25;
+    private int currentBatch = 1;
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.EVENTS)) return;
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
+                app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                currentBatch++;
+                setRefreshActionButtonState(true);
+            }
+        }
+    }
+
 }
