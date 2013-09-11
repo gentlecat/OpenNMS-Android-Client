@@ -10,8 +10,10 @@ import android.util.Log;
 
 import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
+import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.parsing.NodesParser;
+import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
 
 import java.util.ArrayList;
@@ -83,13 +85,13 @@ public class LoadManager extends Service {
                 new NodesLoader(limit, offset).execute();
                 break;
             case ALARMS:
-                // TODO: Implement
+                new AlarmsLoader(limit, offset).execute();
                 break;
             case EVENTS:
                 new EventsLoader(limit, offset).execute();
                 break;
             case OUTAGES:
-                // TODO: Implement
+                new OutagesLoader(limit, offset).execute();
                 break;
         }
     }
@@ -130,6 +132,42 @@ public class LoadManager extends Service {
         }
     }
 
+    class AlarmsLoader extends AsyncTask<Void, Void, Response> {
+        private int limit, offset;
+
+        public AlarmsLoader(int limit, int offset) {
+            this.limit = limit;
+            this.offset = offset;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            alarmsLoadActive = true;
+        }
+
+        protected Response doInBackground(Void... voids) {
+            Response response;
+            try {
+                response = new DataLoader(getApplicationContext()).loadAlarms(limit, offset);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred during alarms loading", e);
+                return null;
+            }
+
+            /** Updating database records */
+            ArrayList<ContentValues> values = AlarmsParser.parseMultiple(response.getMessage());
+            getContentResolver().bulkInsert(Contract.Alarms.CONTENT_URI,
+                    values.toArray(new ContentValues[values.size()]));
+
+            return response;
+        }
+
+        protected void onPostExecute(Response response) {
+            alarmsLoadActive = false;
+        }
+    }
+
     class EventsLoader extends AsyncTask<Void, Void, Response> {
         private int limit, offset;
 
@@ -163,6 +201,42 @@ public class LoadManager extends Service {
 
         protected void onPostExecute(Response response) {
             eventsLoadActive = false;
+        }
+    }
+
+    class OutagesLoader extends AsyncTask<Void, Void, Response> {
+        private int limit, offset;
+
+        public OutagesLoader(int limit, int offset) {
+            this.limit = limit;
+            this.offset = offset;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            outagesLoadActive = true;
+        }
+
+        protected Response doInBackground(Void... voids) {
+            Response response;
+            try {
+                response = new DataLoader(getApplicationContext()).loadOutages(limit, offset);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred during outages loading", e);
+                return null;
+            }
+
+            /** Updating database records */
+            ArrayList<ContentValues> values = OutagesParser.parseMultiple(response.getMessage());
+            getContentResolver().bulkInsert(Contract.Outages.CONTENT_URI,
+                    values.toArray(new ContentValues[values.size()]));
+
+            return response;
+        }
+
+        protected void onPostExecute(Response response) {
+            outagesLoadActive = false;
         }
     }
 
