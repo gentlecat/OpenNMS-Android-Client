@@ -1,7 +1,6 @@
 package org.opennms.android.sync;
 
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -73,10 +72,14 @@ public class LoadManager extends Service {
         return false;
     }
 
-    public void startLoading(LoadType loadType) {
+    public void startLoading(LoadType loadType, int limit, int offset) {
+        if (isLoading(loadType)) {
+            Log.i(TAG, "Already loading.");
+            return;
+        }
         switch (loadType) {
             case NODES:
-                new NodesLoader().execute();
+                new NodesLoader(limit, offset).execute();
                 break;
             case ALARMS:
                 // TODO: Implement
@@ -91,6 +94,13 @@ public class LoadManager extends Service {
     }
 
     class NodesLoader extends AsyncTask<Void, Void, Response> {
+        private int limit, offset;
+
+        public NodesLoader(int limit, int offset) {
+            this.limit = limit;
+            this.offset = offset;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -100,17 +110,15 @@ public class LoadManager extends Service {
         protected Response doInBackground(Void... voids) {
             Response response;
             try {
-                response = new DataLoader(getApplicationContext()).loadNodes(25);
+                response = new DataLoader(getApplicationContext()).loadNodes(limit, offset);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred during nodes loading", e);
                 return null;
             }
 
             /** Updating database records */
-            ContentResolver contentResolver = getContentResolver();
-            contentResolver.delete(Contract.Nodes.CONTENT_URI, null, null);
             ArrayList<ContentValues> values = NodesParser.parseMultiple(response.getMessage());
-            contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI,
+            getContentResolver().bulkInsert(Contract.Nodes.CONTENT_URI,
                     values.toArray(new ContentValues[values.size()]));
 
             return response;

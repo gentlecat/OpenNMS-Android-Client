@@ -1,11 +1,8 @@
 package org.opennms.android.ui.nodes;
 
-import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -39,11 +37,11 @@ import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
-import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.LoadManager;
 
 public class NodesListFragment extends ListFragment
-        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
+        implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor>,
+        AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
     private NodeAdapter adapter;
@@ -91,6 +89,7 @@ public class NodesListFragment extends ListFragment
         adapter = new NodeAdapter(getActivity(), null,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         getListView().setAdapter(adapter);
+        getListView().setOnScrollListener(this);
 
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.nodes_list_empty));
@@ -162,8 +161,10 @@ public class NodesListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
+            getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
+            currentBatch = 1;
             if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.NODES);
+                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
                 setRefreshActionButtonState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
@@ -209,7 +210,7 @@ public class NodesListFragment extends ListFragment
                 Contract.Nodes.NAME
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
-                Contract.Nodes.NAME);
+                Contract.Nodes._ID);
     }
 
     @Override
@@ -221,18 +222,15 @@ public class NodesListFragment extends ListFragment
                 restoreHandler.sendEmptyMessage(0);
             }
         } else {
-            /** If there is no sync going and list is empty, refreshing list. */
-            Account account = AccountService.getAccount();
-            if (account != null) {
-                boolean syncActive = ContentResolver.isSyncActive(account, Contract.CONTENT_AUTHORITY);
-                boolean syncPending = ContentResolver.isSyncPending(account, Contract.CONTENT_AUTHORITY);
-                if (firstLoad && !(syncActive || syncPending)) {
-                    refreshList();
-                }
+            /** If list is empty, refreshing it. */
+            if (firstLoad) {
+                refreshList();
             }
         }
         firstLoad = false;
-        setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        }
     }
 
     @Override
@@ -260,6 +258,26 @@ public class NodesListFragment extends ListFragment
                         refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    }
+
+    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
+    private static final int LOAD_LIMIT = 25;
+    private int currentBatch = 1;
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
+                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                currentBatch++;
+                setRefreshActionButtonState(true);
             }
         }
     }

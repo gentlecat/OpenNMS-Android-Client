@@ -28,7 +28,7 @@ public class DataLoader {
     }
 
     public Response loadNodes(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("nodes?limit=%d&offset=%d", limit, offset));
+        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d", limit, offset));
     }
 
     public Response loadEvents(int limit) throws IOException {
