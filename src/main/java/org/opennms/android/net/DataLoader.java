@@ -1,29 +1,23 @@
 package org.opennms.android.net;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
-
-import org.opennms.android.parsing.OutagesParser;
-import org.opennms.android.provider.Contract;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class DataLoader {
 
-    private static final String TAG = "DataLoader";
-    private ContentResolver contentResolver;
     private Client serverCommunication;
 
     public DataLoader(Context context) {
-        contentResolver = context.getContentResolver();
         serverCommunication = new Client(context);
     }
 
     public Response loadNodes(int limit, int offset) throws IOException {
         return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d", limit, offset));
+    }
+
+    public Response loadNodes(int limit, int offset, String searchQuery) throws IOException {
+        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d&comparator=ilike&label=%s", limit, offset, searchQuery));
     }
 
     public Response loadEvents(int limit, int offset) throws IOException {
@@ -34,30 +28,30 @@ public class DataLoader {
         return serverCommunication.get(String.format("alarms?limit=%d&offset=%d", limit, offset));
     }
 
+    public Response loadOutstandingAlarms(int limit, int offset) throws IOException {
+        return serverCommunication.get(String.format("alarms?comparator=eq&alarmAckUser=null&limit=%d&offset=%d", limit, offset));
+    }
+
+    public Response loadAcknowledgedAlarms(int limit, int offset) throws IOException {
+        // TODO: Fix (not working)
+        return serverCommunication.get(String.format("alarms?comparator=ne&alarmAckUser=null&limit=%d&offset=%d", limit, offset));
+    }
+
     public Response loadOutages(int limit, int offset) throws IOException {
         return serverCommunication.get(String.format("outages?limit=%d&offset=%d", limit, offset));
     }
 
-    public Response loadUser(String name) throws IOException {
-        return serverCommunication.get(String.format("users/%s", name));
+    public Response loadCurrentOutages(int limit, int offset) throws IOException {
+        return serverCommunication.get(String.format("outages?ifRegainedService=null&comparator=eq&limit=%d&offset=%d", limit, offset));
     }
 
-    public ArrayList<ContentValues> loadCurrentOutages() {
-        Log.d(TAG, "Loading current outages...");
-        String result;
-        try {
-            result = serverCommunication
-                    .get("outages?ifRegainedService=null&comparator=eq").getMessage();
-        } catch (Exception e) {
-            Log.e(TAG, "Error occurred during outages loading process", e);
-            return null;
-        }
-        contentResolver.delete(Contract.Outages.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = OutagesParser.parseMultiple(result);
-        contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
-                values.toArray(new ContentValues[values.size()]));
-        Log.d(TAG, "Outage loading complete.");
-        return values;
+    public Response loadResolvedOutages(int limit, int offset) throws IOException {
+        // TODO: Fix (not working)
+        return serverCommunication.get(String.format("outages?ifRegainedService=null&comparator=ne&limit=%d&offset=%d", limit, offset));
+    }
+
+    public Response loadUser(String name) throws IOException {
+        return serverCommunication.get(String.format("users/%s", name));
     }
 
 }
