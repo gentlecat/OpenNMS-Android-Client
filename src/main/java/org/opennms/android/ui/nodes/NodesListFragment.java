@@ -201,7 +201,6 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
         String newFilter = !TextUtils.isEmpty(query) ? query : null;
         if (currentFilter == null && newFilter == null) {
             return true;
@@ -268,7 +267,6 @@ public class NodesListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
-
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
