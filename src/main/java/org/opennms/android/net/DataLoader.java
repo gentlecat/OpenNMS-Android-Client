@@ -17,7 +17,7 @@ public class DataLoader {
     }
 
     public Response loadNodes(int limit, int offset, String searchQuery) throws IOException {
-        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d&comparator=ilike&label=%s", limit, offset, searchQuery));
+        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d&comparator=ilike&label=%s%%25", limit, offset, searchQuery));
     }
 
     public Response loadEvents(int limit, int offset) throws IOException {
@@ -28,26 +28,8 @@ public class DataLoader {
         return serverCommunication.get(String.format("alarms?limit=%d&offset=%d", limit, offset));
     }
 
-    public Response loadOutstandingAlarms(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("alarms?comparator=eq&alarmAckUser=null&limit=%d&offset=%d", limit, offset));
-    }
-
-    public Response loadAcknowledgedAlarms(int limit, int offset) throws IOException {
-        // TODO: Fix (not working)
-        return serverCommunication.get(String.format("alarms?comparator=ne&alarmAckUser=null&limit=%d&offset=%d", limit, offset));
-    }
-
     public Response loadOutages(int limit, int offset) throws IOException {
         return serverCommunication.get(String.format("outages?limit=%d&offset=%d", limit, offset));
-    }
-
-    public Response loadCurrentOutages(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("outages?ifRegainedService=null&comparator=eq&limit=%d&offset=%d", limit, offset));
-    }
-
-    public Response loadResolvedOutages(int limit, int offset) throws IOException {
-        // TODO: Fix (not working)
-        return serverCommunication.get(String.format("outages?ifRegainedService=null&comparator=ne&limit=%d&offset=%d", limit, offset));
     }
 
     public Response loadUser(String name) throws IOException {
