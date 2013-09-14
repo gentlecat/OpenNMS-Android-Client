@@ -256,6 +256,7 @@ public class NodesListFragment extends ListFragment
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
+        currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
     @Override

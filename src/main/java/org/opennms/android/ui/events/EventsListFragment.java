@@ -121,6 +121,7 @@ public class EventsListFragment extends ListFragment
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
         }
+        currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
     @Override
