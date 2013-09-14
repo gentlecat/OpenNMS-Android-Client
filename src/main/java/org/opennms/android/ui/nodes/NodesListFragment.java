@@ -1,10 +1,12 @@
 package org.opennms.android.ui.nodes;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,14 +38,21 @@ import org.opennms.android.LoaderIDs;
 import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
+import org.opennms.android.net.DataLoader;
+import org.opennms.android.net.Response;
+import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.LoadManager;
+
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
 
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor>,
         AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
+    private  MainApplication app;
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
@@ -62,7 +71,6 @@ public class NodesListFragment extends ListFragment
         }
     };
     private boolean firstLoad = true;
-    MainApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -185,7 +193,15 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+        return false;
+    }
+
+    private AsyncTask searchUpdateTask;
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
+        String newFilter = !TextUtils.isEmpty(query) ? query : null;
         if (currentFilter == null && newFilter == null) {
             return true;
         }
@@ -193,12 +209,12 @@ public class NodesListFragment extends ListFragment
             return true;
         }
         currentFilter = newFilter;
+        if (searchUpdateTask != null) {
+            searchUpdateTask.cancel(true);
+        }
+        setRefreshActionButtonState(true);
+        searchUpdateTask = new SearchUpdate().execute();
         getActivity().getSupportLoaderManager().restartLoader(0, null, this);
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
         return true;
     }
 
@@ -251,8 +267,9 @@ public class NodesListFragment extends ListFragment
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
 
-        if (app.serviceConnected)
+        if (app.serviceConnected){
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
@@ -288,10 +305,32 @@ public class NodesListFragment extends ListFragment
         if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
+                // TODO: Add search support
                 app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
                 setRefreshActionButtonState(true);
             }
+        }
+    }
+
+    private class SearchUpdate extends AsyncTask<Void, Void, Response> {
+        protected Response doInBackground(Void... voids) {
+            try {
+                return new DataLoader(getActivity()).loadNodes(LOAD_LIMIT, 0, currentFilter);
+            } catch (Exception e) {
+                Log.e(TAG, "Error occurred while loading info from server", e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Response response) {
+            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+                /** Updating database records */
+                ArrayList<ContentValues> values = NodesParser.parseMultiple(response.getMessage());
+                getActivity().getContentResolver().bulkInsert(Contract.Nodes.CONTENT_URI,
+                        values.toArray(new ContentValues[values.size()]));
+            }
+            setRefreshActionButtonState(false);
         }
     }
 
