@@ -20,6 +20,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,17 +36,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.opennms.android.LoaderIDs;
+import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
+import org.opennms.android.sync.LoadManager;
 
 public class AlarmsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
     public static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
+    public static final String TAG = "AlarmsListFragment";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_USER + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
+    private static final int LOAD_LIMIT = 30;
+    private MainApplication app;
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -82,7 +88,7 @@ public class AlarmsListFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        app = (MainApplication) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
@@ -119,6 +125,9 @@ public class AlarmsListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
+        }
     }
 
     @Override
@@ -176,6 +185,9 @@ public class AlarmsListFragment extends ListFragment
             }
         }
         firstLoad = false;
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
+        }
     }
 
     @Override
@@ -239,7 +251,13 @@ public class AlarmsListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            // TODO: Implement
+            getActivity().getContentResolver().delete(Contract.Alarms.CONTENT_URI, null, null);
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.ALARMS, LOAD_LIMIT, 0);
+                setRefreshActionButtonState(true);
+            } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
