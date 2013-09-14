@@ -52,14 +52,16 @@ public class NodesListFragment extends ListFragment
         AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
-    private  MainApplication app;
+    public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
+    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
+    private static final int LOAD_LIMIT = 25;
+    private MainApplication app;
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
     private FrameLayout detailsContainer;
     private Menu optionsMenu;
     private SharedPreferences sharedPref;
-    public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private Handler restoreHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -71,6 +73,9 @@ public class NodesListFragment extends ListFragment
         }
     };
     private boolean firstLoad = true;
+    private View listFooter;
+    private AsyncTask searchUpdateTask;
+    private int currentBatch = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,8 +90,6 @@ public class NodesListFragment extends ListFragment
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.list_layout, container, false);
     }
-
-    private View listFooter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -196,8 +199,6 @@ public class NodesListFragment extends ListFragment
         return false;
     }
 
-    private AsyncTask searchUpdateTask;
-
     @Override
     public boolean onQueryTextSubmit(String query) {
         Toast.makeText(getActivity(), query, Toast.LENGTH_SHORT).show();
@@ -267,7 +268,7 @@ public class NodesListFragment extends ListFragment
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
 
-        if (app.serviceConnected){
+        if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
     }
@@ -295,10 +296,6 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
-
-    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
-    private static final int LOAD_LIMIT = 25;
-    private int currentBatch = 1;
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {

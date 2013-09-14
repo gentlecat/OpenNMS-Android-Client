@@ -39,12 +39,16 @@ public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
     public static final String TAG = "EventsListFragment";
+    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
+    private static final int LOAD_LIMIT = 25;
+    private MainApplication app;
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
     private Menu optionsMenu;
     private boolean firstLoad = true;
     private View listFooter;
+    private int currentBatch = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -230,11 +234,6 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     }
-
-    MainApplication app;
-    private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
-    private static final int LOAD_LIMIT = 25;
-    private int currentBatch = 1;
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
