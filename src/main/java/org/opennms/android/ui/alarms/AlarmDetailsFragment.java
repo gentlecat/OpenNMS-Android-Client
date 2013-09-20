@@ -28,6 +28,7 @@ import android.widget.Toast;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
+import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
@@ -321,7 +322,7 @@ public class AlarmDetailsFragment extends Fragment
 
         protected Response doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).get("alarms/" + alarmId);
+                return new DataLoader(getActivity()).alarm(alarmId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about alarm from server", e);
                 showErrorMessage();
@@ -332,16 +333,14 @@ public class AlarmDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             /** If information is available, updating DB */
             if (response != null) {
-                if (response.getMessage() != null
-                        && response.getCode() == HttpURLConnection.HTTP_OK) {
+                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = AlarmsParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
                     contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
 
                     Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Alarms.CONTENT_URI,
-                                    String.valueOf(alarmId)),
+                            Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();

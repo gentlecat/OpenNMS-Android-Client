@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.Client;
+import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.provider.Contract;
@@ -238,7 +238,7 @@ public class EventDetailsFragment extends Fragment
 
         protected Response doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).get("events/" + eventId);
+                return new DataLoader(getActivity()).event(eventId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about event from server", e);
                 showErrorMessage();
@@ -249,16 +249,14 @@ public class EventDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             /** If information is available, updating DB */
             if (response != null) {
-                if (response.getMessage() != null
-                        && response.getCode() == HttpURLConnection.HTTP_OK) {
+                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = EventsParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
                     contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values);
 
                     Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Events.CONTENT_URI,
-                                    String.valueOf(eventId)),
+                            Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();

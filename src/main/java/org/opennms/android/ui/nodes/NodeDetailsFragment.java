@@ -27,6 +27,7 @@ import android.widget.TextView;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.net.Client;
+import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.parsing.NodesParser;
@@ -285,7 +286,7 @@ public class NodeDetailsFragment extends Fragment
 
         protected Response doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).get("nodes/" + nodeId);
+                return new DataLoader(getActivity()).node(nodeId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about node from server", e);
                 showErrorMessage();
@@ -296,16 +297,14 @@ public class NodeDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             /** If information is available, updating DB */
             if (response != null) {
-                if (response.getMessage() != null
-                        && response.getCode() == HttpURLConnection.HTTP_OK) {
+                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = NodesParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
                     contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values);
 
                     Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Nodes.CONTENT_URI,
-                                    String.valueOf(nodeId)),
+                            Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(nodeId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();
