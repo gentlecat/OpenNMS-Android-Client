@@ -34,7 +34,6 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -46,6 +45,7 @@ public class AlarmsListFragment extends ListFragment
     public static final String STATE_ACTIVE_ALARM_ID = "active_alarm_id";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_USER + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
+    private static final int LOADER_ID = 0;
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -126,11 +126,11 @@ public class AlarmsListFragment extends ListFragment
         switch (itemPosition) {
             case 0:
                 cursorSelection = SELECTION_OUTSTANDING;
-                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.ALARMS, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
             case 1:
                 cursorSelection = SELECTION_ACKED;
-                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.ALARMS, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
         }
         return false;

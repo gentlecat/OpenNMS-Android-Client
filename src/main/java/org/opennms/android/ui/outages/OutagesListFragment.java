@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,12 +34,10 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
-import org.opennms.android.net.DataLoader;
 
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
@@ -51,6 +48,7 @@ public class OutagesListFragment extends ListFragment
     private static final String SELECTION_RESOLVED =
             Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
     private static final String SELECTION_ALL = null;
+    private static final int LOADER_ID = 1;
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -128,15 +126,15 @@ public class OutagesListFragment extends ListFragment
         switch (itemPosition) {
             case 0:
                 cursorSelection = SELECTION_CURRENT;
-                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
             case 1:
                 cursorSelection = SELECTION_RESOLVED;
-                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
             case 2:
                 cursorSelection = SELECTION_ALL;
-                getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.OUTAGES, null, this);
+                getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                 return true;
         }
         return false;

@@ -25,7 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.LoaderIDs;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -34,6 +33,7 @@ import org.opennms.android.sync.AccountService;
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int LOADER_ID = 2;
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -67,7 +67,7 @@ public class EventsListFragment extends ListFragment
         TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
         emptyText.setText(getString(R.string.events_list_empty));
 
-        getActivity().getSupportLoaderManager().initLoader(LoaderIDs.EVENTS, null, this);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override

@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SyncStatusObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.LoaderIDs;
 import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
@@ -46,13 +44,15 @@ public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "NodesListFragment";
+    public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
+    private static final int LOADER_ID = 3;
+    MainApplication app;
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
     private FrameLayout detailsContainer;
     private Menu optionsMenu;
     private SharedPreferences sharedPref;
-    public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private Handler restoreHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -64,7 +64,6 @@ public class NodesListFragment extends ListFragment
         }
     };
     private boolean firstLoad = true;
-    MainApplication app;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -243,7 +242,7 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
 
         if (app.serviceConnected)
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
