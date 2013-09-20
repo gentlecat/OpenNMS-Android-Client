@@ -76,8 +76,7 @@ public class EventsParser extends Parser {
 
         Node nodeId = getXmlNodeForExpression("nodeId", node);
         if (nodeId != null) {
-            values.put(Contract.Events.NODE_ID,
-                       Integer.parseInt(nodeId.getTextContent()));
+            values.put(Contract.Events.NODE_ID, Integer.parseInt(nodeId.getTextContent()));
         }
 
         Node nodeLabel = getXmlNodeForExpression("nodeLabel", node);
@@ -92,14 +91,12 @@ public class EventsParser extends Parser {
 
         Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", node);
         if (serviceTypeId != null) {
-            values.put(Contract.Events.SERVICE_TYPE_ID,
-                       Integer.parseInt(serviceTypeId.getTextContent()));
+            values.put(Contract.Events.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
         }
 
         Node serviceTypeName = getXmlNodeForExpression("serviceType/name", node);
         if (serviceTypeName != null) {
-            values.put(Contract.Events.SERVICE_TYPE_NAME,
-                       serviceTypeName.getTextContent());
+            values.put(Contract.Events.SERVICE_TYPE_NAME, serviceTypeName.getTextContent());
         }
 
         return values;

@@ -111,6 +111,9 @@ public class Client {
         return out.toByteArray();
     }
 
+    /**
+     * @return port that is used to connect to OpenNMS server.
+     */
     private int getPort() {
         return Integer.parseInt(settings.getString("port", null));
     }

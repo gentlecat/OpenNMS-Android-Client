@@ -16,7 +16,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public abstract class Parser {
 
-    static XPath xPath = XPathFactory.newInstance().newXPath();
+    private static XPath xPath = XPathFactory.newInstance().newXPath();
 
     public static NodeList getXmlNodeListForExpression(String expression, String xml)
             throws XPathExpressionException {

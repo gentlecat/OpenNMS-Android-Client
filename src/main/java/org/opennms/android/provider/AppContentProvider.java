@@ -131,8 +131,7 @@ public class AppContentProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
         }
 
-        Cursor cursor =
-                queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
@@ -143,30 +142,22 @@ public class AppContentProvider extends ContentProvider {
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES: {
-                long id =
-                        db.insertWithOnConflict(Tables.NODES, null, values,
-                                                SQLiteDatabase.CONFLICT_REPLACE);
+                long id = db.insertWithOnConflict(Tables.NODES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, id);
             }
             case EVENTS: {
-                long id =
-                        db.insertWithOnConflict(Tables.EVENTS, null, values,
-                                                SQLiteDatabase.CONFLICT_REPLACE);
+                long id = db.insertWithOnConflict(Tables.EVENTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, id);
             }
             case ALARMS: {
-                long id =
-                        db.insertWithOnConflict(Tables.ALARMS, null, values,
-                                                SQLiteDatabase.CONFLICT_REPLACE);
+                long id = db.insertWithOnConflict(Tables.ALARMS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, id);
             }
             case OUTAGES: {
-                long id =
-                        db.insertWithOnConflict(Tables.OUTAGES, null, values,
-                                                SQLiteDatabase.CONFLICT_REPLACE);
+                long id = db.insertWithOnConflict(Tables.OUTAGES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, id);
             }
@@ -215,7 +206,7 @@ public class AppContentProvider extends ContentProvider {
             int rowsAffected = values.length;
             for (ContentValues currentValues : values) {
                 db.insertWithOnConflict(table, null, currentValues,
-                                        SQLiteDatabase.CONFLICT_REPLACE);
+                        SQLiteDatabase.CONFLICT_REPLACE);
                 db.yieldIfContendedSafely();
             }
             db.setTransactionSuccessful();
@@ -302,10 +293,7 @@ public class AppContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = db.delete(Tables.NODES, BaseColumns._ID + "=" + nodeId, null);
                 } else {
-                    rowsAffected =
-                            db.delete(Tables.NODES,
-                                      selection + " AND " + BaseColumns._ID + "=" + nodeId,
-                                      selectionArgs);
+                    rowsAffected = db.delete(Tables.NODES, selection + " AND " + BaseColumns._ID + "=" + nodeId, selectionArgs);
                 }
                 break;
             case ALARMS:
@@ -316,10 +304,7 @@ public class AppContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = db.delete(Tables.ALARMS, BaseColumns._ID + "=" + alarmId, null);
                 } else {
-                    rowsAffected =
-                            db.delete(Tables.ALARMS,
-                                      selection + " AND " + BaseColumns._ID + "=" + alarmId,
-                                      selectionArgs);
+                    rowsAffected = db.delete(Tables.ALARMS, selection + " AND " + BaseColumns._ID + "=" + alarmId, selectionArgs);
                 }
                 break;
             case EVENTS:
@@ -330,10 +315,7 @@ public class AppContentProvider extends ContentProvider {
                 if (TextUtils.isEmpty(selection)) {
                     rowsAffected = db.delete(Tables.EVENTS, BaseColumns._ID + "=" + eventId, null);
                 } else {
-                    rowsAffected =
-                            db.delete(Tables.EVENTS,
-                                      selection + " AND " + BaseColumns._ID + "=" + eventId,
-                                      selectionArgs);
+                    rowsAffected = db.delete(Tables.EVENTS, selection + " AND " + BaseColumns._ID + "=" + eventId, selectionArgs);
                 }
                 break;
             case OUTAGES:
@@ -345,10 +327,7 @@ public class AppContentProvider extends ContentProvider {
                     rowsAffected =
                             db.delete(Tables.OUTAGES, BaseColumns._ID + "=" + outageId, null);
                 } else {
-                    rowsAffected =
-                            db.delete(Tables.OUTAGES,
-                                      selection + " AND " + BaseColumns._ID + "=" + outageId,
-                                      selectionArgs);
+                    rowsAffected = db.delete(Tables.OUTAGES, selection + " AND " + BaseColumns._ID + "=" + outageId, selectionArgs);
                 }
                 break;
             default:

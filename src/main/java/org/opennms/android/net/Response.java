@@ -1,7 +1,7 @@
 package org.opennms.android.net;
 
 /**
- * Stores server response.
+ * Helper-class that is used as temporary storage for server response.
  */
 public class Response {
 
@@ -9,7 +9,7 @@ public class Response {
     private String message;
 
     /**
-     * @param code    HTTP status code.
+     * @param code    HTTP status code. See status-codes in {@link java.net.HttpURLConnection}.
      * @param message Message returned by server.
      */
     public Response(int code, String message) {
