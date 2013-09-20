@@ -30,7 +30,7 @@ public class DataLoader {
      * @return Server response.
      * @throws IOException
      */
-    public Response node(int nodeId) throws IOException {
+    public Response node(long nodeId) throws IOException {
         return serverCommunication.get(String.format("nodes/%d", nodeId));
     }
 
@@ -45,7 +45,7 @@ public class DataLoader {
      * @return Server response.
      * @throws IOException
      */
-    public Response event(int eventId) throws IOException {
+    public Response event(long eventId) throws IOException {
         return serverCommunication.get(String.format("events/%d", eventId));
     }
 
@@ -60,7 +60,7 @@ public class DataLoader {
      * @return Server response.
      * @throws IOException
      */
-    public Response alarm(int alarmId) throws IOException {
+    public Response alarm(long alarmId) throws IOException {
         return serverCommunication.get(String.format("alarms/%d", alarmId));
     }
 
@@ -75,7 +75,7 @@ public class DataLoader {
      * @return Server response.
      * @throws IOException
      */
-    public Response outage(int outageId) throws IOException {
+    public Response outage(long outageId) throws IOException {
         return serverCommunication.get(String.format("outages/%d", outageId));
     }
 
