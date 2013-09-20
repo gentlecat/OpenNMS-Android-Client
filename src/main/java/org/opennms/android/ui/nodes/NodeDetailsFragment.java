@@ -276,6 +276,11 @@ public class NodeDetailsFragment extends Fragment
         startActivity(intent);
     }
 
+    /**
+     * {@link android.os.AsyncTask} that is used to load details form server.
+     * Useful if details fragment was opened from another section and information is not saved in
+     * the database.
+     */
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... voids) {

@@ -312,7 +312,7 @@ public class NodesListFragment extends ListFragment
     private class SearchUpdate extends AsyncTask<Void, Void, Response> {
         protected Response doInBackground(Void... voids) {
             try {
-                return new DataLoader(getActivity()).loadNodes(LOAD_LIMIT, 0, currentFilter);
+                return new DataLoader(getActivity()).nodes(LOAD_LIMIT, 0, currentFilter);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
                 return null;

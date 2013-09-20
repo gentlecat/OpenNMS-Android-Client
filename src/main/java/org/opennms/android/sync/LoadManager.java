@@ -113,7 +113,7 @@ public class LoadManager extends Service {
         protected Response doInBackground(Void... voids) {
             Response response;
             try {
-                response = new DataLoader(getApplicationContext()).loadNodes(limit, offset);
+                response = new DataLoader(getApplicationContext()).nodes(limit, offset);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred during nodes loading", e);
                 return null;
@@ -149,7 +149,7 @@ public class LoadManager extends Service {
         protected Response doInBackground(Void... voids) {
             Response response;
             try {
-                response = new DataLoader(getApplicationContext()).loadAlarms(limit, offset);
+                response = new DataLoader(getApplicationContext()).alarms(limit, offset);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred during alarms loading", e);
                 return null;
@@ -185,7 +185,7 @@ public class LoadManager extends Service {
         protected Response doInBackground(Void... voids) {
             Response response;
             try {
-                response = new DataLoader(getApplicationContext()).loadEvents(limit, offset);
+                response = new DataLoader(getApplicationContext()).events(limit, offset);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred during events loading", e);
                 return null;
@@ -221,7 +221,7 @@ public class LoadManager extends Service {
         protected Response doInBackground(Void... voids) {
             Response response;
             try {
-                response = new DataLoader(getApplicationContext()).loadOutages(limit, offset);
+                response = new DataLoader(getApplicationContext()).outages(limit, offset);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred during outages loading", e);
                 return null;
