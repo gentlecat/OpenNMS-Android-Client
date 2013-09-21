@@ -51,7 +51,7 @@ public class NodesListFragment extends ListFragment
         AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
-	private static final int LOADER_ID = 3;
+    private static final int LOADER_ID = 3;
     public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
@@ -248,13 +248,13 @@ public class NodesListFragment extends ListFragment
         } else {
             /** If list is empty, refreshing it. */
             if (firstLoad) {
-                    refreshList();
-                }
+                refreshList();
             }
+        }
         firstLoad = false;
         if (app.serviceConnected) {
-        setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
-    }
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
@@ -269,7 +269,7 @@ public class NodesListFragment extends ListFragment
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
-    }
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

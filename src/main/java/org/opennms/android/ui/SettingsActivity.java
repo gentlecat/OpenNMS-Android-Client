@@ -98,7 +98,7 @@ public class SettingsActivity extends PreferenceActivity
         protected Response doInBackground(Void... voids) {
             String user = sharedPref.getString("user", null);
             try {
-                return new DataLoader(getApplicationContext()).loadUser(user);
+                return new DataLoader(getApplicationContext()).user(user);
             } catch (Exception e) {
                 // TODO: Check if exception is thrown if settings are incorrect
                 Log.e(TAG, "Error occurred while testing connection to server!", e);
@@ -110,15 +110,12 @@ public class SettingsActivity extends PreferenceActivity
             // TODO: Replace previous toast if it is still displayed
             if (response != null) {
                 if (response.getCode() == HttpURLConnection.HTTP_OK) {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_ok,
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.server_check_ok, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok,
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok, Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), R.string.server_check_failed,
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.server_check_failed, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -130,16 +127,12 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onStop() {
         super.onStop();
-        boolean sync = sharedPref.getBoolean(
-                "notifications_on", getResources().getBoolean(R.bool.default_notifications));
-        String syncRate = sharedPref.getString(
-                "sync_rate",
-                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        boolean sync = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int frequency = Integer.parseInt(syncRate) * 60;
         SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
 
-        String newHost = sharedPref.getString(
-                "host", String.valueOf(getString(R.string.default_host)));
+        String newHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
         if (!newHost.equals(oldHost)) {
             new DatabaseHelper(getApplicationContext()).wipe();
 
@@ -158,16 +151,12 @@ public class SettingsActivity extends PreferenceActivity
                 sharedPref.getString("user", getResources().getString(R.string.default_user)));
 
         // Server
-        findPreference("host").setSummary(
-                sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(sharedPref.getString(
-                "port", Integer.toString(getResources().getInteger(R.integer.default_port))));
+        findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
+        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
         if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
-            findPreference("https")
-                    .setSummary(getResources().getString(R.string.settings_https_on));
+            findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
         } else {
-            findPreference("https")
-                    .setSummary(getResources().getString(R.string.settings_https_off));
+            findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
         }
         findPreference("rest_url").setSummary(sharedPref.getString("rest_url", getResources()
                 .getString(R.string.default_rest_url)));
@@ -177,23 +166,17 @@ public class SettingsActivity extends PreferenceActivity
                 "notifications_on", getResources().getBoolean(R.bool.default_notifications));
         setNotificationPrefsEnabled(notificationsOn);
         if (notificationsOn) {
-            findPreference("notifications_on").setSummary(
-                    getResources().getString(R.string.settings_notifications_enabled_true));
+            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_true));
         } else {
-            findPreference("notifications_on").setSummary(
-                    getResources().getString(R.string.settings_notifications_enabled_false));
+            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_false));
         }
 
-        String minimalSeverity = sharedPref.getString("minimal_severity",
-                getString(R.string.default_minimal_severity));
-        ListPreference minimalSeverityPreference =
-                (ListPreference) findPreference("minimal_severity");
+        String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
+        ListPreference minimalSeverityPreference = (ListPreference) findPreference("minimal_severity");
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String syncRate = sharedPref.getString(
-                "sync_rate",
-                String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
         int refreshRateVal = Integer.parseInt(syncRate);
         String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {

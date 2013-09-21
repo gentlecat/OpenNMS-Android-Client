@@ -52,7 +52,7 @@ public class OutagesListFragment extends ListFragment
     private static final String SELECTION_RESOLVED =
             Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
     private static final String SELECTION_ALL = null;
-	private static final int LOADER_ID = 1;
+    private static final int LOADER_ID = 1;
     private static final int LOAD_LIMIT = 30;
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
@@ -197,7 +197,7 @@ public class OutagesListFragment extends ListFragment
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
                 setRefreshActionButtonState(true);
-        } else {
+            } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
         } else {
@@ -245,7 +245,7 @@ public class OutagesListFragment extends ListFragment
         firstLoad = false;
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
-    }
+        }
     }
 
     @Override
@@ -258,7 +258,7 @@ public class OutagesListFragment extends ListFragment
         super.onResume();
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
-    }
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

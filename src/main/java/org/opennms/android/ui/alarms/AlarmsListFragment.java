@@ -127,7 +127,7 @@ public class AlarmsListFragment extends ListFragment
         super.onResume();
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
-    }
+        }
     }
 
     @Override
@@ -187,7 +187,7 @@ public class AlarmsListFragment extends ListFragment
         firstLoad = false;
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
-    }
+        }
     }
 
     @Override
@@ -255,7 +255,7 @@ public class AlarmsListFragment extends ListFragment
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.ALARMS, LOAD_LIMIT, 0);
                 setRefreshActionButtonState(true);
-        } else {
+            } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
         } else {

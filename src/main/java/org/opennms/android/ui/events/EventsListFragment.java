@@ -37,7 +37,7 @@ import org.opennms.android.sync.LoadManager;
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
-	private static final int LOADER_ID = 2;
+    private static final int LOADER_ID = 2;
     public static final String TAG = "EventsListFragment";
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
@@ -120,7 +120,7 @@ public class EventsListFragment extends ListFragment
         firstLoad = false;
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
-    }
+        }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
@@ -193,7 +193,7 @@ public class EventsListFragment extends ListFragment
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, 0);
                 setRefreshActionButtonState(true);
-        } else {
+            } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
         } else {
@@ -209,7 +209,7 @@ public class EventsListFragment extends ListFragment
 
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
-    }
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
