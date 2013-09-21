@@ -51,11 +51,15 @@ public class NodesListFragment extends ListFragment
         AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
-	private static final int LOADER_ID = 3;
     public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
+<<<<<<< HEAD
+    private static final int LOADER_ID = 3;
+    MainApplication app;
+=======
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
     private MainApplication app;
+>>>>>>> d70c516afefc72f827a195bb6b5c75bf30961565
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
@@ -73,9 +77,12 @@ public class NodesListFragment extends ListFragment
         }
     };
     private boolean firstLoad = true;
+<<<<<<< HEAD
+=======
     private View listFooter;
     private AsyncTask searchUpdateTask;
     private int currentBatch = 1;
+>>>>>>> d70c516afefc72f827a195bb6b5c75bf30961565
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -248,13 +255,13 @@ public class NodesListFragment extends ListFragment
         } else {
             /** If list is empty, refreshing it. */
             if (firstLoad) {
-                    refreshList();
-                }
+                refreshList();
             }
+        }
         firstLoad = false;
         if (app.serviceConnected) {
-        setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
-    }
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
@@ -266,10 +273,16 @@ public class NodesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
+<<<<<<< HEAD
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+
+        if (app.serviceConnected)
+=======
+        getActivity().getSupportLoaderManager().restartLoader(LoaderIDs.NODES, null, this);
         if (app.serviceConnected) {
+>>>>>>> d70c516afefc72f827a195bb6b5c75bf30961565
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
-    }
+        }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {

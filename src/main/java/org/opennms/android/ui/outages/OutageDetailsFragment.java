@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.Client;
+import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
@@ -227,7 +227,7 @@ public class OutageDetailsFragment extends Fragment
 
         protected Response doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).get("outages/" + outageId);
+                return new DataLoader(getActivity()).outage(outageId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about outage from server", e);
                 showErrorMessage();
@@ -238,16 +238,14 @@ public class OutageDetailsFragment extends Fragment
         protected void onPostExecute(Response response) {
             /** If information is available, updating DB */
             if (response != null) {
-                if (response.getMessage() != null
-                        && response.getCode() == HttpURLConnection.HTTP_OK) {
+                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
                     ContentValues[] values = new ContentValues[1];
                     values[0] = OutagesParser.parseSingle(response.getMessage());
                     ContentResolver contentResolver = getActivity().getContentResolver();
                     contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values);
 
                     Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Outages.CONTENT_URI,
-                                    String.valueOf(outageId)),
+                            Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
                             null, null, null, null);
                     updateContent(newCursor);
                     newCursor.close();

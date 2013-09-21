@@ -61,14 +61,12 @@ public class OutagesParser extends Parser {
 
         Node ipInterfaceId = getXmlNodeForExpression("monitoredService/ipInterfaceId", node);
         if (ipInterfaceId != null) {
-            values.put(Contract.Outages.IP_INTERFACE_ID,
-                       Integer.parseInt(ipInterfaceId.getTextContent()));
+            values.put(Contract.Outages.IP_INTERFACE_ID, Integer.parseInt(ipInterfaceId.getTextContent()));
         }
 
         Node serviceTypeId = getXmlNodeForExpression("monitoredService/serviceType/@id", node);
         if (serviceTypeId != null) {
-            values.put(Contract.Outages.SERVICE_TYPE_ID,
-                       Integer.parseInt(serviceTypeId.getTextContent()));
+            values.put(Contract.Outages.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
         }
 
         Node serviceTypeName = getXmlNodeForExpression("monitoredService/serviceType/name", node);
@@ -93,20 +91,17 @@ public class OutagesParser extends Parser {
 
         Node serviceLostEventId = getXmlNodeForExpression("serviceLostEvent/@id", node);
         if (serviceLostEventId != null) {
-            values.put(Contract.Outages.SERVICE_LOST_EVENT_ID,
-                       Integer.parseInt(serviceLostEventId.getTextContent()));
+            values.put(Contract.Outages.SERVICE_LOST_EVENT_ID, Integer.parseInt(serviceLostEventId.getTextContent()));
         }
 
         Node regainedServiceTime = getXmlNodeForExpression("ifRegainedService", node);
         if (regainedServiceTime != null) {
-            values.put(Contract.Outages.SERVICE_REGAINED_TIME,
-                       regainedServiceTime.getTextContent());
+            values.put(Contract.Outages.SERVICE_REGAINED_TIME, regainedServiceTime.getTextContent());
         }
 
         Node serviceRegainedEventId = getXmlNodeForExpression("serviceRegainedEvent/@id", node);
         if (serviceRegainedEventId != null) {
-            values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID,
-                       Integer.parseInt(serviceRegainedEventId.getTextContent()));
+            values.put(Contract.Outages.SERVICE_REGAINED_EVENT_ID, Integer.parseInt(serviceRegainedEventId.getTextContent()));
         }
 
         return values;

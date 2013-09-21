@@ -86,8 +86,7 @@ public class AlarmsParser extends Parser {
 
         Node lastEventId = getXmlNodeForExpression("lastEvent/@id", node);
         if (lastEventId != null) {
-            values.put(Contract.Alarms.LAST_EVENT_ID,
-                       Integer.parseInt(lastEventId.getTextContent()));
+            values.put(Contract.Alarms.LAST_EVENT_ID, Integer.parseInt(lastEventId.getTextContent()));
         }
 
         Node lastEventSeverity = getXmlNodeForExpression("lastEvent/@severity", node);
@@ -107,8 +106,7 @@ public class AlarmsParser extends Parser {
 
         Node serviceTypeId = getXmlNodeForExpression("serviceType/@id", node);
         if (serviceTypeId != null) {
-            values.put(Contract.Alarms.SERVICE_TYPE_ID,
-                       Integer.parseInt(serviceTypeId.getTextContent()));
+            values.put(Contract.Alarms.SERVICE_TYPE_ID, Integer.parseInt(serviceTypeId.getTextContent()));
         }
 
         Node serviceTypeName = getXmlNodeForExpression("serviceType/name", node);

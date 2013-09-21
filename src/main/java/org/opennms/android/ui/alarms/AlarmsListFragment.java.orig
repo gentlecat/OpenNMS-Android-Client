@@ -35,7 +35,11 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+<<<<<<< HEAD
+=======
+import org.opennms.android.LoaderIDs;
 import org.opennms.android.MainApplication;
+>>>>>>> d70c516afefc72f827a195bb6b5c75bf30961565
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -49,9 +53,12 @@ public class AlarmsListFragment extends ListFragment
     public static final String TAG = "AlarmsListFragment";
     private static final String SELECTION_OUTSTANDING = Contract.Alarms.ACK_USER + " IS NULL";
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
+<<<<<<< HEAD
     private static final int LOADER_ID = 0;
+=======
     private static final int LOAD_LIMIT = 30;
     private MainApplication app;
+>>>>>>> d70c516afefc72f827a195bb6b5c75bf30961565
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -127,7 +134,7 @@ public class AlarmsListFragment extends ListFragment
         super.onResume();
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
-    }
+        }
     }
 
     @Override
@@ -187,7 +194,7 @@ public class AlarmsListFragment extends ListFragment
         firstLoad = false;
         if (app.serviceConnected) {
             setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
-    }
+        }
     }
 
     @Override
@@ -255,7 +262,7 @@ public class AlarmsListFragment extends ListFragment
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.ALARMS, LOAD_LIMIT, 0);
                 setRefreshActionButtonState(true);
-        } else {
+            } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
         } else {

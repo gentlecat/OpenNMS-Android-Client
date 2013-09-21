@@ -20,6 +20,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,21 +35,25 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.opennms.android.MainApplication;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
+import org.opennms.android.sync.LoadManager;
 
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
 
     public static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
+    public static final String TAG = "AlarmsListFragment";
     private static final String SELECTION_CURRENT =
             Contract.Outages.SERVICE_REGAINED_TIME + " IS NULL";
     private static final String SELECTION_RESOLVED =
             Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
     private static final String SELECTION_ALL = null;
-    private static final int LOADER_ID = 1;
+	private static final int LOADER_ID = 1;
+    private static final int LOAD_LIMIT = 30;
     private SimpleCursorAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -67,13 +72,14 @@ public class OutagesListFragment extends ListFragment
             }
         }
     };
+    private MainApplication app;
     private boolean firstLoad = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
+        app = (MainApplication) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
@@ -187,7 +193,13 @@ public class OutagesListFragment extends ListFragment
 
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
-            // TODO: Implement
+            getActivity().getContentResolver().delete(Contract.Outages.CONTENT_URI, null, null);
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
+                setRefreshActionButtonState(true);
+        } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
@@ -231,6 +243,9 @@ public class OutagesListFragment extends ListFragment
             }
         }
         firstLoad = false;
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+    }
     }
 
     @Override
@@ -241,6 +256,9 @@ public class OutagesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+    }
     }
 
     public void setRefreshActionButtonState(boolean refreshing) {
