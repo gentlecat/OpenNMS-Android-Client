@@ -325,7 +325,6 @@ public class AlarmDetailsFragment extends Fragment
                 return new DataLoader(getActivity()).alarm(alarmId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about alarm from server", e);
-                showErrorMessage();
                 return null;
             }
         }

@@ -241,7 +241,6 @@ public class EventDetailsFragment extends Fragment
                 return new DataLoader(getActivity()).event(eventId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about event from server", e);
-                showErrorMessage();
                 return null;
             }
         }

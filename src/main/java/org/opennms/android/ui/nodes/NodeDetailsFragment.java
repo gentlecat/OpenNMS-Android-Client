@@ -289,7 +289,6 @@ public class NodeDetailsFragment extends Fragment
                 return new DataLoader(getActivity()).node(nodeId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about node from server", e);
-                showErrorMessage();
                 return null;
             }
         }

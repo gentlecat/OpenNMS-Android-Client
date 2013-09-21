@@ -230,7 +230,6 @@ public class OutageDetailsFragment extends Fragment
                 return new DataLoader(getActivity()).outage(outageId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about outage from server", e);
-                showErrorMessage();
                 return null;
             }
         }
