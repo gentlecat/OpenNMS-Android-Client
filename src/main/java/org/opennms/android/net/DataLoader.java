@@ -3,24 +3,25 @@ package org.opennms.android.net;
 import android.content.Context;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * Helper-class that can be used to access OpenNMS server.
  */
 public class DataLoader {
 
-    private Client serverCommunication;
+    private Client server;
 
     public DataLoader(Context context) {
-        serverCommunication = new Client(context);
+        server = new Client(context);
     }
 
     public Response nodes(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d", limit, offset));
+        return server.get(String.format("nodes?orderBy=id&limit=%d&offset=%d", limit, offset));
     }
 
     public Response nodes(int limit, int offset, String searchQuery) throws IOException {
-        return serverCommunication.get(String.format("nodes?orderBy=id&limit=%d&offset=%d&comparator=ilike&label=%s%%25", limit, offset, searchQuery));
+        return server.get(String.format("nodes?orderBy=id&limit=%d&offset=%d&comparator=ilike&label=%s%%25", limit, offset, searchQuery));
     }
 
     /**
@@ -31,11 +32,11 @@ public class DataLoader {
      * @throws IOException
      */
     public Response node(long nodeId) throws IOException {
-        return serverCommunication.get(String.format("nodes/%d", nodeId));
+        return server.get(String.format("nodes/%d", nodeId));
     }
 
     public Response events(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("events?orderBy=id&order=desc&limit=%d&offset=%d", limit, offset));
+        return server.get(String.format("events?orderBy=id&order=desc&limit=%d&offset=%d", limit, offset));
     }
 
     /**
@@ -46,11 +47,15 @@ public class DataLoader {
      * @throws IOException
      */
     public Response event(long eventId) throws IOException {
-        return serverCommunication.get(String.format("events/%d", eventId));
+        return server.get(String.format("events/%d", eventId));
     }
 
     public Response alarms(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("alarms?limit=%d&offset=%d", limit, offset));
+        return server.get(String.format("alarms?limit=%d&offset=%d", limit, offset));
+    }
+
+    public Response alarmsRelatedToNode(String nodeName) throws IOException {
+        return server.get("alarms/?query=" + URLEncoder.encode("nodeLabel = '" + nodeName + "'"));
     }
 
     /**
@@ -61,11 +66,15 @@ public class DataLoader {
      * @throws IOException
      */
     public Response alarm(long alarmId) throws IOException {
-        return serverCommunication.get(String.format("alarms/%d", alarmId));
+        return server.get(String.format("alarms/%d", alarmId));
     }
 
     public Response outages(int limit, int offset) throws IOException {
-        return serverCommunication.get(String.format("outages?limit=%d&offset=%d", limit, offset));
+        return server.get(String.format("outages?limit=%d&offset=%d", limit, offset));
+    }
+
+    public Response outagesRelatedToNode(long nodeId) throws IOException {
+        return server.get(String.format("outages/forNode/%d", nodeId));
     }
 
     /**
@@ -76,11 +85,11 @@ public class DataLoader {
      * @throws IOException
      */
     public Response outage(long outageId) throws IOException {
-        return serverCommunication.get(String.format("outages/%d", outageId));
+        return server.get(String.format("outages/%d", outageId));
     }
 
     public Response user(String name) throws IOException {
-        return serverCommunication.get(String.format("users/%s", name));
+        return server.get(String.format("users/%s", name));
     }
 
 }

@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.Client;
 import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
@@ -39,7 +38,6 @@ import org.opennms.android.ui.events.EventDetailsActivity;
 import org.opennms.android.ui.outages.OutageDetailsActivity;
 
 import java.net.HttpURLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class NodeDetailsFragment extends Fragment
@@ -316,13 +314,20 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
+    /**
+     * {@link android.os.AsyncTask} that loads alarms related to current node.
+     * Updates local database and generates views.
+     */
     private class AlarmsLoader extends AsyncTask<Void, Void, Cursor> {
 
+        /**
+         * @param voids No parameters.
+         * @return {@link android.database.Cursor} with alarms.
+         */
         protected Cursor doInBackground(Void... voids) {
             Response response = null;
             try {
-                response = new Client(getActivity()).get(
-                        "alarms/?query=" + URLEncoder.encode("nodeLabel = '" + nodeName + "'"));
+                response = new DataLoader(getActivity()).alarmsRelatedToNode(nodeName);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
             }
@@ -414,12 +419,20 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
+    /**
+     * {@link android.os.AsyncTask} that loads outages related to current node.
+     * Updates local database and generates views.
+     */
     private class OutagesLoader extends AsyncTask<Void, Void, Cursor> {
 
+        /**
+         * @param voids No parameters.
+         * @return {@link android.database.Cursor} with outages.
+         */
         protected Cursor doInBackground(Void... voids) {
             Response response = null;
             try {
-                response = new Client(getActivity()).get("outages/forNode/" + nodeId);
+                response = new DataLoader(getActivity()).outagesRelatedToNode(nodeId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
             }
@@ -490,8 +503,15 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
+    /**
+     * {@link android.os.AsyncTask} that loads events related to current node.
+     */
     private class EventsLoader extends AsyncTask<Void, Void, Cursor> {
 
+        /**
+         * @param voids No parameters.
+         * @return {@link android.database.Cursor} with events.
+         */
         protected Cursor doInBackground(Void... voids) {
             SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
             queryBuilder.setTables(Contract.Tables.EVENTS);
