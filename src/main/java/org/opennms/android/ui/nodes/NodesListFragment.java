@@ -51,8 +51,8 @@ public class NodesListFragment extends ListFragment
         AbsListView.OnScrollListener {
 
     public static final String TAG = "NodesListFragment";
-    private static final int LOADER_ID = 3;
     public static final String STATE_ACTIVE_NODE_ID = "active_node_id";
+    private static final int LOADER_ID = 3;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
     private MainApplication app;
@@ -127,29 +127,11 @@ public class NodesListFragment extends ListFragment
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        showDetails(position);
-    }
-
-    private void showDetails(int position) {
-        getListView().setItemChecked(position, true);
-        long id = getListView().getItemIdAtPosition(position);
-        sharedPref.edit().putLong(STATE_ACTIVE_NODE_ID, id).commit();
-        showDetails(id);
-    }
-
-    private void showDetails(long id) {
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            NodeDetailsFragment detailsFragment = new NodeDetailsFragment(id);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
-            detailsIntent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, id);
-            startActivity(detailsIntent);
+    public void onResume() {
+        super.onResume();
+        getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
     }
 
@@ -175,47 +157,6 @@ public class NodesListFragment extends ListFragment
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void refreshList() {
-        if (Utils.isOnline(getActivity())) {
-            getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
-            currentBatch = 1;
-            if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
-                setRefreshActionButtonState(true);
-            } else {
-                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
-            }
-        } else {
-            Toast.makeText(getActivity(),
-                    getString(R.string.refresh_failed_offline),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        String newFilter = !TextUtils.isEmpty(query) ? query : null;
-        if (currentFilter == null && newFilter == null) {
-            return true;
-        }
-        if (currentFilter != null && currentFilter.equals(newFilter)) {
-            return true;
-        }
-        currentFilter = newFilter;
-        if (searchUpdateTask != null) {
-            searchUpdateTask.cancel(true);
-        }
-        setRefreshActionButtonState(true);
-        searchUpdateTask = new SearchUpdate().execute();
-        getActivity().getSupportLoaderManager().restartLoader(0, null, this);
-        return true;
     }
 
     @Override
@@ -264,11 +205,87 @@ public class NodesListFragment extends ListFragment
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-        if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
+                // TODO: Add search support
+                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                currentBatch++;
+                setRefreshActionButtonState(true);
+            }
+        }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        String newFilter = !TextUtils.isEmpty(query) ? query : null;
+        if (currentFilter == null && newFilter == null) {
+            return true;
+        }
+        if (currentFilter != null && currentFilter.equals(newFilter)) {
+            return true;
+        }
+        currentFilter = newFilter;
+        if (searchUpdateTask != null) {
+            searchUpdateTask.cancel(true);
+        }
+        setRefreshActionButtonState(true);
+        searchUpdateTask = new SearchUpdate().execute();
+        getActivity().getSupportLoaderManager().restartLoader(0, null, this);
+        return true;
+    }
+
+    private void showDetails(int position) {
+        getListView().setItemChecked(position, true);
+        long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_NODE_ID, id).commit();
+        showDetails(id);
+    }
+
+    private void showDetails(long id) {
+        if (isDualPane) {
+            detailsContainer.removeAllViews();
+            NodeDetailsFragment detailsFragment = new NodeDetailsFragment(id);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getActivity(), NodeDetailsActivity.class);
+            detailsIntent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, id);
+            startActivity(detailsIntent);
+        }
+    }
+
+    private void refreshList() {
+        if (Utils.isOnline(getActivity())) {
+            getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
+            currentBatch = 1;
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
+                setRefreshActionButtonState(true);
+            } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
+        } else {
+            Toast.makeText(getActivity(),
+                    getString(R.string.refresh_failed_offline),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -288,23 +305,6 @@ public class NodesListFragment extends ListFragment
                 MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
-        if (scrollState == SCROLL_STATE_IDLE) {
-            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
-                // TODO: Add search support
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
-                currentBatch++;
-                setRefreshActionButtonState(true);
             }
         }
     }

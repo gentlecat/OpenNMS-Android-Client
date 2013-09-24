@@ -37,8 +37,8 @@ import org.opennms.android.sync.LoadManager;
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
-    private static final int LOADER_ID = 2;
     public static final String TAG = "EventsListFragment";
+    private static final int LOADER_ID = 2;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
     private MainApplication app;
@@ -88,6 +88,45 @@ public class EventsListFragment extends ListFragment
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (isDualPane) {
+            detailsContainer.removeAllViews();
+            LayoutInflater inflater = (LayoutInflater) getActivity()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            RelativeLayout emptyView = (RelativeLayout) inflater
+                    .inflate(R.layout.empty_details, null);
+            detailsContainer.addView(emptyView);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        optionsMenu = menu;
+        inflater.inflate(R.menu.list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                refreshList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 Contract.Events._ID,
@@ -130,21 +169,24 @@ public class EventsListFragment extends ListFragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            LayoutInflater inflater = (LayoutInflater) getActivity()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            RelativeLayout emptyView = (RelativeLayout) inflater
-                    .inflate(R.layout.empty_details, null);
-            detailsContainer.addView(emptyView);
-        }
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        showDetails(position);
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.EVENTS)) return;
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
+                app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                currentBatch++;
+                setRefreshActionButtonState(true);
+            }
+        }
     }
 
     private void showDetails(int position) {
@@ -168,24 +210,6 @@ public class EventsListFragment extends ListFragment
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        optionsMenu = menu;
-        inflater.inflate(R.menu.list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                refreshList();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
             getActivity().getContentResolver().delete(Contract.Events.CONTENT_URI, null, null);
@@ -200,15 +224,6 @@ public class EventsListFragment extends ListFragment
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
                     Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
         }
     }
 
@@ -228,22 +243,6 @@ public class EventsListFragment extends ListFragment
                 MenuItemCompat.setActionView(refreshItem, R.layout.actionbar_indeterminate_progress);
             } else {
                 MenuItemCompat.setActionView(refreshItem, null);
-            }
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.EVENTS)) return;
-        if (scrollState == SCROLL_STATE_IDLE) {
-            if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
-                app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
-                currentBatch++;
-                setRefreshActionButtonState(true);
             }
         }
     }

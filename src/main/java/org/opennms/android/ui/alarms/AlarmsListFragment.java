@@ -146,6 +146,24 @@ public class AlarmsListFragment extends ListFragment
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        optionsMenu = menu;
+        inflater.inflate(R.menu.list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                refreshList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = {
                 Contract.Alarms._ID,
@@ -195,6 +213,11 @@ public class AlarmsListFragment extends ListFragment
         adapter.swapCursor(null);
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
     private void showEmptyDetails() {
         detailsContainer.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getActivity()
@@ -202,11 +225,6 @@ public class AlarmsListFragment extends ListFragment
         RelativeLayout emptyView = (RelativeLayout) inflater
                 .inflate(R.layout.empty_details, null);
         detailsContainer.addView(emptyView);
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        showDetails(position);
     }
 
     private void showDetails(int position) {
@@ -228,24 +246,6 @@ public class AlarmsListFragment extends ListFragment
             Intent detailsIntent = new Intent(getActivity(), AlarmDetailsActivity.class);
             detailsIntent.putExtra(AlarmDetailsActivity.EXTRA_ALARM_ID, id);
             startActivity(detailsIntent);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        optionsMenu = menu;
-        inflater.inflate(R.menu.list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                refreshList();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 

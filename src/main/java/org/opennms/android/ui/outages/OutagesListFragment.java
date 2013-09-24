@@ -47,10 +47,8 @@ public class OutagesListFragment extends ListFragment
 
     public static final String STATE_ACTIVE_OUTAGE_ID = "active_outage_id";
     public static final String TAG = "AlarmsListFragment";
-    private static final String SELECTION_CURRENT =
-            Contract.Outages.SERVICE_REGAINED_TIME + " IS NULL";
-    private static final String SELECTION_RESOLVED =
-            Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
+    private static final String SELECTION_CURRENT = Contract.Outages.SERVICE_REGAINED_TIME + " IS NULL";
+    private static final String SELECTION_RESOLVED = Contract.Outages.SERVICE_REGAINED_TIME + " IS NOT NULL";
     private static final String SELECTION_ALL = null;
     private static final int LOADER_ID = 1;
     private static final int LOAD_LIMIT = 30;
@@ -89,15 +87,6 @@ public class OutagesListFragment extends ListFragment
         return inflater.inflate(R.layout.list_layout, container, false);
     }
 
-    private void showEmptyDetails() {
-        detailsContainer.removeAllViews();
-        LayoutInflater inflater = (LayoutInflater) getActivity()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout emptyView = (RelativeLayout) inflater
-                .inflate(R.layout.empty_details, null);
-        detailsContainer.addView(emptyView);
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -128,6 +117,14 @@ public class OutagesListFragment extends ListFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (app.serviceConnected) {
+            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+        }
+    }
+
+    @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         switch (itemPosition) {
             case 0:
@@ -147,33 +144,6 @@ public class OutagesListFragment extends ListFragment
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        showDetails(position);
-    }
-
-    private void showDetails(int position) {
-        getListView().setItemChecked(position, true);
-        long id = getListView().getItemIdAtPosition(position);
-        sharedPref.edit().putLong(STATE_ACTIVE_OUTAGE_ID, id).commit();
-        showDetails(id);
-    }
-
-    private void showDetails(long id) {
-        if (isDualPane) {
-            detailsContainer.removeAllViews();
-            OutageDetailsFragment detailsFragment = new OutageDetailsFragment(id);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
-        } else {
-            Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);
-            detailsIntent.putExtra(OutageDetailsActivity.EXTRA_OUTAGE_ID, id);
-            startActivity(detailsIntent);
-        }
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         optionsMenu = menu;
         inflater.inflate(R.menu.list, menu);
@@ -188,22 +158,6 @@ public class OutagesListFragment extends ListFragment
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void refreshList() {
-        if (Utils.isOnline(getActivity())) {
-            getActivity().getContentResolver().delete(Contract.Outages.CONTENT_URI, null, null);
-            if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
-                setRefreshActionButtonState(true);
-            } else {
-                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
-            }
-        } else {
-            Toast.makeText(getActivity(),
-                    getString(R.string.refresh_failed_offline),
-                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -254,10 +208,54 @@ public class OutagesListFragment extends ListFragment
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        showDetails(position);
+    }
+
+    private void showEmptyDetails() {
+        detailsContainer.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout emptyView = (RelativeLayout) inflater
+                .inflate(R.layout.empty_details, null);
+        detailsContainer.addView(emptyView);
+    }
+
+    private void showDetails(int position) {
+        getListView().setItemChecked(position, true);
+        long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_OUTAGE_ID, id).commit();
+        showDetails(id);
+    }
+
+    private void showDetails(long id) {
+        if (isDualPane) {
+            detailsContainer.removeAllViews();
+            OutageDetailsFragment detailsFragment = new OutageDetailsFragment(id);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        } else {
+            Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);
+            detailsIntent.putExtra(OutageDetailsActivity.EXTRA_OUTAGE_ID, id);
+            startActivity(detailsIntent);
+        }
+    }
+
+    private void refreshList() {
+        if (Utils.isOnline(getActivity())) {
+            getActivity().getContentResolver().delete(Contract.Outages.CONTENT_URI, null, null);
+            if (app.serviceConnected) {
+                app.loadManager.startLoading(LoadManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
+                setRefreshActionButtonState(true);
+            } else {
+                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
+            }
+        } else {
+            Toast.makeText(getActivity(),
+                    getString(R.string.refresh_failed_offline),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
