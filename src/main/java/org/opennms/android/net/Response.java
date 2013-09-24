@@ -17,6 +17,9 @@ public class Response {
         this.message = message;
     }
 
+    /**
+     * @return HTTP status code. See status-codes in {@link java.net.HttpURLConnection}.
+     */
     public int getCode() {
         return code;
     }
