@@ -197,7 +197,11 @@ public class NodeDetailsFragment extends Fragment
         TextView labelSourceView =
                 (TextView) getActivity().findViewById(R.id.node_label_source);
         if (labelSource != null) {
-            labelSourceView.setText(labelSource);
+            if (labelSource.equals("U")) labelSourceView.setText(R.string.node_label_source_userdefined);
+            else if (labelSource.equals("H")) labelSourceView.setText(R.string.node_label_source_hostname);
+            else if (labelSource.equals("S")) labelSourceView.setText(R.string.node_label_source_sysname);
+            else if (labelSource.equals("A")) labelSourceView.setText(R.string.node_label_source_address);
+            else labelSourceView.setText(labelSource);
         } else {
             detailsLayout.removeView(labelSourceView);
             TextView title =

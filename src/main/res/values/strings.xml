@@ -12,6 +12,10 @@
     <string name="node_details_contact">Contact</string>
     <string name="node_details_creation_time">Creation time</string>
     <string name="node_details_label_source">Label source</string>
+    <string name="node_label_source_address">IP address</string>
+    <string name="node_label_source_hostname">Hostname</string>
+    <string name="node_label_source_sysname">SNMP name</string>
+    <string name="node_label_source_userdefined">User defined</string>
     <string name="node_details_description">Description</string>
     <string name="node_details_location">Location</string>
     <string name="node_sys_object_id">sysObjectId</string>
