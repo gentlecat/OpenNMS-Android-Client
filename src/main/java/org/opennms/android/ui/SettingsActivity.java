@@ -61,6 +61,27 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        boolean sync = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        int frequency = Integer.parseInt(syncRate) * 60;
+        SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
+
+        String newHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
+        if (!newHost.equals(oldHost)) {
+            new DatabaseHelper(getApplicationContext()).wipe();
+
+            /** Resetting information about active fragments with details */
+            sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
+            sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
+            sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
+        }
+
+        if (checkTask != null) checkTask.cancel(true);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings, menu);
         return super.onCreateOptionsMenu(menu);
@@ -93,57 +114,10 @@ public class SettingsActivity extends PreferenceActivity
         }
     }
 
-    private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
-
-        protected Response doInBackground(Void... voids) {
-            String user = sharedPref.getString("user", null);
-            try {
-                return new DataLoader(getApplicationContext()).user(user);
-            } catch (Exception e) {
-                // TODO: Check if exception is thrown if settings are incorrect
-                Log.e(TAG, "Error occurred while testing connection to server!", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Response response) {
-            // TODO: Replace previous toast if it is still displayed
-            if (response != null) {
-                if (response.getCode() == HttpURLConnection.HTTP_OK) {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_ok, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok, Toast.LENGTH_LONG).show();
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.server_check_failed, Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateSummaries();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        boolean sync = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
-        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
-        int frequency = Integer.parseInt(syncRate) * 60;
-        SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
-
-        String newHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
-        if (!newHost.equals(oldHost)) {
-            new DatabaseHelper(getApplicationContext()).wipe();
-
-            /** Resetting information about active fragments with details */
-            sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
-            sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
-            sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
-        }
-
-        if (checkTask != null) checkTask.cancel(true);
-    }
 
     private void updateSummaries() {
         // Authentication
@@ -191,6 +165,33 @@ public class SettingsActivity extends PreferenceActivity
         findPreference("wifi_only").setEnabled(enabled);
         findPreference("minimal_severity").setEnabled(enabled);
         findPreference("sync_rate").setEnabled(enabled);
+    }
+
+    private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
+
+        protected Response doInBackground(Void... voids) {
+            String user = sharedPref.getString("user", null);
+            try {
+                return new DataLoader(getApplicationContext()).user(user);
+            } catch (Exception e) {
+                // TODO: Provide more information to user
+                Log.e(TAG, "Error occurred while testing connection to server!", e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Response response) {
+            // TODO: Replace previous toast if it is still displayed
+            if (response != null) {
+                if (response.getCode() == HttpURLConnection.HTTP_OK) {
+                    Toast.makeText(getApplicationContext(), R.string.server_check_ok, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok, Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.server_check_failed, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

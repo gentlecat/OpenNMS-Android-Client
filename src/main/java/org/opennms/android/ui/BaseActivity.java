@@ -93,10 +93,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putCharSequence(STATE_TITLE, title);
-        savedInstanceState.putBoolean(STATE_IS_NAV_OPEN, navigationLayout.isDrawerOpen(navDrawer));
-        super.onSaveInstanceState(savedInstanceState);
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        navigationToggle.syncState();
     }
 
     @Override
@@ -127,12 +126,17 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
-    public void closeDrawer() {
-        navigationLayout.closeDrawer(navDrawer);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        navigationToggle.onConfigurationChanged(newConfig);
     }
 
-    public void openDrawer() {
-        navigationLayout.openDrawer(navDrawer);
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putCharSequence(STATE_TITLE, title);
+        savedInstanceState.putBoolean(STATE_IS_NAV_OPEN, navigationLayout.isDrawerOpen(navDrawer));
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -141,16 +145,12 @@ public abstract class BaseActivity extends ActionBarActivity {
         actionBar.setTitle(this.title);
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        navigationToggle.syncState();
+    public void closeDrawer() {
+        navigationLayout.closeDrawer(navDrawer);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        navigationToggle.onConfigurationChanged(newConfig);
+    public void openDrawer() {
+        navigationLayout.openDrawer(navDrawer);
     }
 
     public void showAboutDialog() {
