@@ -205,16 +205,6 @@ public class NodeDetailsFragment extends Fragment
             detailsLayout.removeView(title);
         }
 
-        String type = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Nodes.TYPE));
-        TextView typeView = (TextView) getActivity().findViewById(R.id.node_type);
-        if (type != null) {
-            typeView.setText(type);
-        } else {
-            detailsLayout.removeView(typeView);
-            TextView title = (TextView) getActivity().findViewById(R.id.node_type_title);
-            detailsLayout.removeView(title);
-        }
-
         String desc = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Nodes.DESCRIPTION));
         TextView descView = (TextView) getActivity().findViewById(R.id.node_description);

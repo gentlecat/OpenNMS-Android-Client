@@ -54,11 +54,6 @@ public class NodesParser extends Parser {
             values.put(Contract.Nodes.NAME, name.getNodeValue());
         }
 
-        Node type = getXmlNodeForExpression("@type", node);
-        if (type != null) {
-            values.put(Contract.Nodes.TYPE, type.getNodeValue());
-        }
-
         Node createTime = getXmlNodeForExpression("createTime", node);
         if (createTime != null) {
             values.put(Contract.Nodes.CREATED_TIME, createTime.getTextContent());

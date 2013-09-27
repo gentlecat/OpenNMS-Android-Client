@@ -33,15 +33,15 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/node_type_title"
+            android:id="@+id/node_label_source_title"
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_type" />
+            android:text="@string/node_details_label_source" />
 
         <TextView
-            android:id="@+id/node_type"
+            android:id="@+id/node_label_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -81,19 +81,6 @@
 
         <TextView
             android:id="@+id/node_contact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/node_label_source_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/node_details_label_source" />
-
-        <TextView
-            android:id="@+id/node_label_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

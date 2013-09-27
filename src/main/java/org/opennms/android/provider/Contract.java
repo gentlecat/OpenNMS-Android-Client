@@ -22,8 +22,6 @@ public final class Contract {
     }
 
     interface NodeColumns {
-
-        String TYPE = "type";
         String NAME = "name";
         String CREATED_TIME = "created_time";
         String LABEL_SOURCE = "label_source";
@@ -34,7 +32,6 @@ public final class Contract {
     }
 
     interface AlarmColumns {
-
         String SEVERITY = "severity";
         String DESCRIPTION = "description";
         String LOG_MESSAGE = "log_message";
@@ -54,7 +51,6 @@ public final class Contract {
     }
 
     interface OutageColumns {
-
         String IP_ADDRESS = "ip_address";
         // Service
         String SERVICE_ID = "service_id";
@@ -73,7 +69,6 @@ public final class Contract {
     }
 
     interface EventColumns {
-
         String SEVERITY = "severity";
         String LOG_MESSAGE = "log_message";
         String DESCRIPTION = "description";
@@ -89,7 +84,6 @@ public final class Contract {
     }
 
     public static class Nodes implements NodeColumns, BaseColumns {
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_NODES).build();
         public static final String CONTENT_TYPE =
@@ -99,7 +93,6 @@ public final class Contract {
     }
 
     public static class Alarms implements AlarmColumns, BaseColumns {
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_ALARMS).build();
         public static final String CONTENT_TYPE =
@@ -109,7 +102,6 @@ public final class Contract {
     }
 
     public static class Outages implements OutageColumns, BaseColumns {
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_OUTAGES).build();
         public static final String CONTENT_TYPE =
@@ -119,7 +111,6 @@ public final class Contract {
     }
 
     public static class Events implements EventColumns, BaseColumns {
-
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_EVENTS).build();
         public static final String CONTENT_TYPE =

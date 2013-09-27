@@ -25,7 +25,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + Tables.NODES
             + " ("
             + Nodes._ID + " INTEGER PRIMARY KEY, "
-            + Nodes.TYPE + " TEXT, "
             + Nodes.NAME + " TEXT, "
             + Nodes.CREATED_TIME + " TEXT, "
             + Nodes.LABEL_SOURCE + " TEXT, "
