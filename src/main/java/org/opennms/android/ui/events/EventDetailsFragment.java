@@ -3,7 +3,6 @@ package org.opennms.android.ui.events;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -27,7 +26,7 @@ import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.EventsParser;
 import org.opennms.android.provider.Contract;
-import org.opennms.android.ui.nodes.NodeDetailsActivity;
+import org.opennms.android.ui.ActivityUtils;
 
 import java.net.HttpURLConnection;
 
@@ -206,7 +205,7 @@ public class EventDetailsFragment extends Fragment
         nodeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNodeDetails(nodeId);
+                ActivityUtils.showNodeDetails(getActivity(), nodeId);
             }
         });
 
@@ -225,13 +224,6 @@ public class EventDetailsFragment extends Fragment
                     (TextView) getActivity().findViewById(R.id.event_service_type_title);
             detailsLayout.removeView(title);
         }
-    }
-
-    private void showNodeDetails(long nodeId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), NodeDetailsActivity.class);
-        intent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, nodeId);
-        startActivity(intent);
     }
 
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {

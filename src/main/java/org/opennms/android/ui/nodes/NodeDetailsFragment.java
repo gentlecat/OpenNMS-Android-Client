@@ -3,7 +3,6 @@ package org.opennms.android.ui.nodes;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,9 +32,7 @@ import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.parsing.OutagesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.provider.DatabaseHelper;
-import org.opennms.android.ui.alarms.AlarmDetailsActivity;
-import org.opennms.android.ui.events.EventDetailsActivity;
-import org.opennms.android.ui.outages.OutageDetailsActivity;
+import org.opennms.android.ui.ActivityUtils;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -254,27 +251,6 @@ public class NodeDetailsFragment extends Fragment
         }
     }
 
-    private void showAlarmDetails(long alarmId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), AlarmDetailsActivity.class);
-        intent.putExtra(AlarmDetailsActivity.EXTRA_ALARM_ID, alarmId);
-        startActivity(intent);
-    }
-
-    private void showOutageDetails(long outageId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), OutageDetailsActivity.class);
-        intent.putExtra(OutageDetailsActivity.EXTRA_OUTAGE_ID, outageId);
-        startActivity(intent);
-    }
-
-    private void showEventDetails(long eventId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
-        startActivity(intent);
-    }
-
     /**
      * {@link android.os.AsyncTask} that is used to load details form server.
      * Useful if details fragment was opened from another section and information is not saved in
@@ -411,7 +387,7 @@ public class NodeDetailsFragment extends Fragment
                     item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showAlarmDetails(id);
+                            ActivityUtils.showAlarmDetails(getActivity(), id);
                         }
                     });
                 }
@@ -495,7 +471,7 @@ public class NodeDetailsFragment extends Fragment
                     item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showOutageDetails(id);
+                            ActivityUtils.showOutageDetails(getActivity(), id);
                         }
                     });
                 }
@@ -582,7 +558,7 @@ public class NodeDetailsFragment extends Fragment
                     item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showEventDetails(id);
+                            ActivityUtils.showEventDetails(getActivity(), id);
                         }
                     });
                 }

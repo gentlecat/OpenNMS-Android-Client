@@ -3,7 +3,6 @@ package org.opennms.android.ui.alarms;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -32,8 +31,7 @@ import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
-import org.opennms.android.ui.events.EventDetailsActivity;
-import org.opennms.android.ui.nodes.NodeDetailsActivity;
+import org.opennms.android.ui.ActivityUtils;
 
 import java.net.HttpURLConnection;
 
@@ -264,7 +262,7 @@ public class AlarmDetailsFragment extends Fragment
         node.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showNodeDetails(nodeId);
+                ActivityUtils.showNodeDetails(getActivity(), nodeId);
             }
         });
 
@@ -296,26 +294,12 @@ public class AlarmDetailsFragment extends Fragment
         lastEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEventDetails(lastEventId);
+                ActivityUtils.showEventDetails(getActivity(), lastEventId);
             }
         });
 
         isAcked = ackTime != null;
         updateMenu(isAcked);
-    }
-
-    private void showNodeDetails(long nodeId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), NodeDetailsActivity.class);
-        intent.putExtra(NodeDetailsActivity.EXTRA_NODE_ID, nodeId);
-        startActivity(intent);
-    }
-
-    private void showEventDetails(long eventId) {
-        // TODO: Adjust for tablets
-        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
-        intent.putExtra(EventDetailsActivity.EXTRA_EVENT_ID, eventId);
-        startActivity(intent);
     }
 
     private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
