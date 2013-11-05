@@ -13,18 +13,18 @@ repositories {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:18.0.+"
-    compile "com.android.support:appcompat-v7:18.0.+"
+    compile "com.android.support:support-v4:19.+"
+    compile "com.android.support:appcompat-v7:18.+"
 
     compile "com.squareup.okhttp:okhttp:1.2.+"
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.1"
+    compileSdkVersion 19
+    buildToolsVersion "19"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 18
+        targetSdkVersion 19
     }
 }
