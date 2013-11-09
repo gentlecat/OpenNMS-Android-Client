@@ -33,6 +33,7 @@ import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.LoadManager;
+import org.opennms.android.ui.BaseActivity;
 
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
@@ -104,7 +105,7 @@ public class EventsListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
         }
     }
 
@@ -113,6 +114,16 @@ public class EventsListFragment extends ListFragment
         optionsMenu = menu;
         inflater.inflate(R.menu.list, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
+        MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
+        refreshItem.setVisible(!isDrawerOpen);
+        if (app.serviceConnected) {
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+        }
     }
 
     @Override
@@ -158,7 +169,7 @@ public class EventsListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.EVENTS));
         }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
@@ -184,7 +195,7 @@ public class EventsListFragment extends ListFragment
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
                 app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
-                setRefreshActionButtonState(true);
+                setRefreshIndicationState(true);
             }
         }
     }
@@ -216,7 +227,7 @@ public class EventsListFragment extends ListFragment
             currentBatch = 1;
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.EVENTS, LOAD_LIMIT, 0);
-                setRefreshActionButtonState(true);
+                setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
@@ -227,7 +238,7 @@ public class EventsListFragment extends ListFragment
         }
     }
 
-    public void setRefreshActionButtonState(boolean refreshing) {
+    public void setRefreshIndicationState(boolean refreshing) {
         if (refreshing) {
             listFooter.setVisibility(View.VISIBLE);
         } else {

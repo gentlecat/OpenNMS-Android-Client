@@ -32,6 +32,7 @@ import org.opennms.android.net.Response;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.ui.ActivityUtils;
+import org.opennms.android.ui.BaseActivity;
 
 import java.net.HttpURLConnection;
 
@@ -130,10 +131,20 @@ public class AlarmDetailsFragment extends Fragment
         ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
         unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
         super.onCreateOptionsMenu(menu, inflater);
+    }
 
-        // Fix (if update is attempted before onCreateOptionsMenu is called)
-        if (isAcked != null) {
-            updateMenu(isAcked);
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
+        if (isDrawerOpen) {
+            ackMenuItem.setVisible(false);
+            unackMenuItem.setVisible(false);
+        } else {
+            // TODO: Fix (one of the items is displayed when ack/unack process is active, that shouldn't happen)
+            // TODO: Fix (if update is attempted before onCreateOptionsMenu is called)
+            if (isAcked != null) {
+                updateMenu(isAcked);
+            }
         }
     }
 

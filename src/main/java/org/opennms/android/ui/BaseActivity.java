@@ -67,11 +67,13 @@ public abstract class BaseActivity extends ActionBarActivity {
         ) {
             public void onDrawerClosed(View view) {
                 actionBar.setTitle(title);
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
                 title = actionBar.getTitle();
                 actionBar.setTitle(drawerTitle);
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
         navigationLayout.setDrawerListener(navigationToggle);
@@ -151,6 +153,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     public void openDrawer() {
         navigationLayout.openDrawer(navDrawer);
+    }
+
+    public boolean isDrawerOpen() {
+        return navigationLayout.isDrawerOpen(navDrawer);
     }
 
     public void showAboutDialog() {

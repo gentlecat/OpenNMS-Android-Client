@@ -42,6 +42,7 @@ import org.opennms.android.net.Response;
 import org.opennms.android.parsing.NodesParser;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.LoadManager;
+import org.opennms.android.ui.BaseActivity;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class NodesListFragment extends ListFragment
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
     }
 
@@ -146,6 +147,18 @@ public class NodesListFragment extends ListFragment
         searchView.setOnQueryTextListener(this);
 
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
+        MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
+        refreshItem.setVisible(!isDrawerOpen);
+        if (app.serviceConnected) {
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+        }
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem.setVisible(!isDrawerOpen);
     }
 
     @Override
@@ -194,7 +207,7 @@ public class NodesListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
         }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
@@ -221,7 +234,7 @@ public class NodesListFragment extends ListFragment
                 // TODO: Add search support
                 app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
-                setRefreshActionButtonState(true);
+                setRefreshIndicationState(true);
             }
         }
     }
@@ -244,7 +257,7 @@ public class NodesListFragment extends ListFragment
         if (searchUpdateTask != null) {
             searchUpdateTask.cancel(true);
         }
-        setRefreshActionButtonState(true);
+        setRefreshIndicationState(true);
         searchUpdateTask = new SearchUpdate().execute();
         getActivity().getSupportLoaderManager().restartLoader(0, null, this);
         return true;
@@ -278,7 +291,7 @@ public class NodesListFragment extends ListFragment
             currentBatch = 1;
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
-                setRefreshActionButtonState(true);
+                setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
@@ -289,7 +302,7 @@ public class NodesListFragment extends ListFragment
         }
     }
 
-    public void setRefreshActionButtonState(boolean refreshing) {
+    public void setRefreshIndicationState(boolean refreshing) {
         if (refreshing) {
             listFooter.setVisibility(View.VISIBLE);
         } else {
@@ -326,7 +339,7 @@ public class NodesListFragment extends ListFragment
                 getActivity().getContentResolver().bulkInsert(Contract.Nodes.CONTENT_URI,
                         values.toArray(new ContentValues[values.size()]));
             }
-            setRefreshActionButtonState(false);
+            setRefreshIndicationState(false);
         }
     }
 

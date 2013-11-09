@@ -41,6 +41,7 @@ import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.LoadManager;
+import org.opennms.android.ui.BaseActivity;
 
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
@@ -120,7 +121,7 @@ public class OutagesListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
         }
     }
 
@@ -148,6 +149,16 @@ public class OutagesListFragment extends ListFragment
         optionsMenu = menu;
         inflater.inflate(R.menu.list, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
+        MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
+        refreshItem.setVisible(!isDrawerOpen);
+        if (app.serviceConnected) {
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+        }
     }
 
     @Override
@@ -198,7 +209,7 @@ public class OutagesListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshActionButtonState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
+            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.OUTAGES));
         }
     }
 
@@ -248,7 +259,7 @@ public class OutagesListFragment extends ListFragment
             getActivity().getContentResolver().delete(Contract.Outages.CONTENT_URI, null, null);
             if (app.serviceConnected) {
                 app.loadManager.startLoading(LoadManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
-                setRefreshActionButtonState(true);
+                setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
             }
@@ -259,7 +270,7 @@ public class OutagesListFragment extends ListFragment
         }
     }
 
-    public void setRefreshActionButtonState(boolean refreshing) {
+    public void setRefreshIndicationState(boolean refreshing) {
         if (optionsMenu == null) {
             return;
         }
