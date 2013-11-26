@@ -114,9 +114,9 @@
     <string name="settings_sync_rate_minutes_singular">minute</string>
     <string name="settings_sync_rate_minutes_plural">minutes</string>
     <string name="server_check_wait">Checking connection to server. Please wait.</string>
-    <string name="server_check_ok">Server settings are correct.</string>
-    <string name="server_check_not_ok">Can\'t connect to server. Check connection settings.</string>
-    <string name="server_check_failed">Error occurred while checking server connection!</string>
+    <string name="server_check_ok">Connection successful. Server settings are correct.</string>
+    <string name="server_check_not_ok">Can\'t connect to server. Make sure settings are correct.</string>
+    <string name="server_check_failed">Error occurred while checking connection!</string>
     <string name="server_check_offline">Can\'t check connection. Device is offline.</string>
 
     <!-- "Welcome" dialog -->
