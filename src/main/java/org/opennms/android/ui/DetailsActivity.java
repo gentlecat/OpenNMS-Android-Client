@@ -7,16 +7,12 @@ import android.view.MenuItem;
 
 import org.opennms.android.R;
 
-public abstract class DetailsActivity extends ActionBarActivity {
-
-    protected ActionBar actionBar;
+public abstract class DetailsActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.details);
-
-        actionBar = getSupportActionBar();
+        navigationToggle.setDrawerIndicatorEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 

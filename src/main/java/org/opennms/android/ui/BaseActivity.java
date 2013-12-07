@@ -28,9 +28,9 @@ public abstract class BaseActivity extends ActionBarActivity {
     private static final String STATE_IS_NAV_OPEN = "is_nav_open";
     private DrawerLayout navigationLayout;
     private FrameLayout navDrawer;
-    private ActionBarDrawerToggle navigationToggle;
     private CharSequence title;
-    private ActionBar actionBar;
+    protected ActionBarDrawerToggle navigationToggle;
+    protected ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

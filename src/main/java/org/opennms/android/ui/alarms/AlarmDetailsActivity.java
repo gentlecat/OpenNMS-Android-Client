@@ -23,7 +23,7 @@ public class AlarmDetailsActivity extends DetailsActivity {
         super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         AlarmDetailsFragment detailsFragment = new AlarmDetailsFragment(alarmId);
-        fragmentTransaction.replace(R.id.details_activity_fragment_container, detailsFragment);
+        fragmentTransaction.replace(R.id.content_frame, detailsFragment);
         fragmentTransaction.commit();
     }
 

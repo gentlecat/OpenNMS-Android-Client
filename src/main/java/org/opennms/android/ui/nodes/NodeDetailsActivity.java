@@ -23,7 +23,7 @@ public class NodeDetailsActivity extends DetailsActivity {
         super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         NodeDetailsFragment fragment = new NodeDetailsFragment(nodeId);
-        fragmentTransaction.replace(R.id.details_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
 

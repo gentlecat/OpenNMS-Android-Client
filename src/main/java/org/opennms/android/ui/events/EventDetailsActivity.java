@@ -23,7 +23,7 @@ public class EventDetailsActivity extends DetailsActivity {
         super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         EventDetailsFragment detailsFragment = new EventDetailsFragment(eventId);
-        fragmentTransaction.replace(R.id.details_activity_fragment_container, detailsFragment);
+        fragmentTransaction.replace(R.id.content_frame, detailsFragment);
         fragmentTransaction.commit();
     }
 

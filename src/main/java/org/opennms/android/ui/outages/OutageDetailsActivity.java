@@ -23,7 +23,7 @@ public class OutageDetailsActivity extends DetailsActivity {
         super.onStart();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         OutageDetailsFragment fragment = new OutageDetailsFragment(outageId);
-        fragmentTransaction.replace(R.id.details_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.content_frame, fragment);
         fragmentTransaction.commit();
     }
 }
