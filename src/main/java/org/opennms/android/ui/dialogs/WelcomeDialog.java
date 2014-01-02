@@ -45,7 +45,7 @@ public class WelcomeDialog extends DialogFragment {
                                         getString(R.string.welcome_settings_toast),
                                         Toast.LENGTH_LONG);
                                 message.setGravity(Gravity.TOP,
-                                                   0, Utils.getActionBarHeight(getActivity()));
+                                                   0, Utils.getActionBarHeight(getActivity()) + 40);
                                 message.show();
                             }
                         })
