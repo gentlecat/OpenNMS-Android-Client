@@ -150,7 +150,7 @@
 
     <string name="about">About</string>
     <string name="about_info"><![CDATA[
-        OpenNMS Copyright © 2002-2013 The OpenNMS Group, Inc.
+        OpenNMS Copyright © 2002-2014 The OpenNMS Group, Inc.
         <br/>OpenNMS® is a registered trademark of The OpenNMS Group, Inc.
         <br/><br/><a href="http://www.opennms.org/">http://www.opennms.org/</a>
     ]]></string>
