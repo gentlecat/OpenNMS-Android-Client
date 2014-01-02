@@ -4,8 +4,13 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -39,6 +44,7 @@ public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
     public static final String TAG = "EventsListFragment";
+    public static final String STATE_ACTIVE_EVENT_ID = "active_event_id";
     private static final int LOADER_ID = 2;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
@@ -50,12 +56,38 @@ public class EventsListFragment extends ListFragment
     private boolean firstLoad = true;
     private View listFooter;
     private int currentBatch = 1;
+    private Fragment activeDetailsFragment;
+    private Handler removeDetailsHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (activeDetailsFragment != null) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.remove(activeDetailsFragment);
+                fragmentTransaction.commit();
+                showEmptyDetails();
+            }
+        }
+    };
+    private Handler restoreHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            /** Restoring previously displayed details fragment */
+            long activeAlarmId = sharedPref.getLong(STATE_ACTIVE_EVENT_ID, -1);
+            if (activeAlarmId != -1) {
+                showDetails(activeAlarmId);
+            } else {
+                showEmptyDetails();
+            }
+        }
+    };
+    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         app = (MainApplication) getActivity().getApplication();
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -157,6 +189,15 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         adapter.swapCursor(cursor);
+        if (isDualPane) {
+            if (cursor.moveToFirst()) {
+                /** If list is not empty, trying to restore previously displayed details. */
+                restoreHandler.sendEmptyMessage(0);
+            } else {
+                /** If list became empty, removing previously displayed details */
+                removeDetailsHandler.sendEmptyMessage(0);
+            }
+        }
 
         /** If there is no sync going and list is empty, refreshing list. */
         Account account = AccountService.getAccount();
@@ -200,18 +241,28 @@ public class EventsListFragment extends ListFragment
         }
     }
 
+    private void showEmptyDetails() {
+        detailsContainer.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout emptyView = (RelativeLayout) inflater
+                .inflate(R.layout.empty_details, null);
+        detailsContainer.addView(emptyView);
+    }
+
     private void showDetails(int position) {
         getListView().setItemChecked(position, true);
         long id = getListView().getItemIdAtPosition(position);
+        sharedPref.edit().putLong(STATE_ACTIVE_EVENT_ID, id).commit();
         showDetails(id);
     }
 
     private void showDetails(long id) {
         if (isDualPane) {
             detailsContainer.removeAllViews();
-            EventDetailsFragment detailsFragment = new EventDetailsFragment(id);
+            activeDetailsFragment = new EventDetailsFragment(id);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
+            fragmentTransaction.replace(R.id.details_fragment_container, activeDetailsFragment);
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             fragmentTransaction.commit();
         } else {
