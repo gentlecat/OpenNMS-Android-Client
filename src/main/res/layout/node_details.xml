@@ -8,7 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/details_layout_padding">
+        android:paddingRight="@dimen/details_horizontal_margin"
+        android:paddingLeft="@dimen/details_horizontal_margin"
+        android:paddingTop="@dimen/details_vertical_margin"
+        android:paddingBottom="@dimen/details_vertical_margin">
 
         <TextView
             android:id="@+id/node_name"
@@ -22,7 +25,7 @@
             android:id="@+id/node_id_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_id"
             android:textAllCaps="true"
             android:textStyle="bold" />
@@ -37,7 +40,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_label_source" />
 
         <TextView
@@ -50,7 +53,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_sys_object_id" />
 
         <TextView
@@ -63,7 +66,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_creation_time" />
 
         <TextView
@@ -76,7 +79,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_contact" />
 
         <TextView
@@ -89,7 +92,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_location" />
 
         <TextView
@@ -102,7 +105,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/node_details_description" />
 
         <TextView
@@ -114,7 +117,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outstanding_alarms" />
 
         <TextView
@@ -133,7 +136,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outages" />
 
         <TextView
@@ -152,7 +155,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/latest_events" />
 
         <TextView

@@ -19,11 +19,11 @@
     <string name="node_details_description">Description</string>
     <string name="node_details_location">Location</string>
     <string name="node_sys_object_id">sysObjectId</string>
-    <string name="loading_alarms">Loading alarms...</string>
+    <string name="loading_alarms">Loading alarms&#8230;</string>
     <string name="no_outstanding_alarms">No outstanding alarms.</string>
-    <string name="loading_outages">Loading outages...</string>
+    <string name="loading_outages">Loading outages&#8230;</string>
     <string name="no_outages">No outages.</string>
-    <string name="loading_events">Loading events...</string>
+    <string name="loading_events">Loading events&#8230;</string>
     <string name="no_events">No events.</string>
 
     <!-- Outages -->
@@ -119,13 +119,10 @@
     <string name="server_check_failed">Error occurred while checking connection!</string>
     <string name="server_check_offline">Can\'t check connection. Device is offline.</string>
 
-    <!-- "Welcome" dialog -->
-    <string name="welcome_message">You can configure connection to your OpenNMS server or
-        try demo.</string>
-    <string name="welcome">Welcome!</string>
-    <string name="welcome_message_pos_button">Configure connection</string>
-    <string name="welcome_message_neg_button">Try demo</string>
-    <string name="welcome_settings_toast">You can go to settings and connect to your OpenNMS server
+    <!-- TitleActivity -->
+    <string name="title_activity_configure_button">Configure connection</string>
+    <string name="title_activity_demo_button">Try demo</string>
+    <string name="title_activity_tip_toast">You can go to settings and connect to your OpenNMS server
         when you ready.</string>
 
     <!-- Notifications -->
@@ -143,7 +140,7 @@
     <string name="refresh_failed_offline">Cannot refresh. Device is offline.</string>
     <string name="no_items">No items</string>
     <string name="no_details">Select item from the list\n to view details.</string>
-    <string name="loading_details">Loading details...</string>
+    <string name="loading_details">Loading details&#8230;</string>
     <string name="details_error">Error occurred during details loading process.</string>
 
     <string name="search">Search</string>
@@ -158,5 +155,6 @@
     <string name="unknown">Unknown</string>
 
     <string name="close_dialog">Close</string>
+    <string name="loading">Loading&#8230;</string>
 
 </resources>

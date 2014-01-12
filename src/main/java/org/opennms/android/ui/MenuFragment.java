@@ -92,10 +92,7 @@ public class MenuFragment extends ListFragment {
             default:
                 return;
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                        Intent.FLAG_ACTIVITY_NEW_TASK |
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                        Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
 
         if (finish) {
@@ -105,7 +102,6 @@ public class MenuFragment extends ListFragment {
     }
 
     private class MenuItem {
-
         String title;
         int id;
 
@@ -113,7 +109,6 @@ public class MenuFragment extends ListFragment {
             this.title = title;
             this.id = id;
         }
-
     }
 
     public class MenuAdapter extends ArrayAdapter<MenuItem> {

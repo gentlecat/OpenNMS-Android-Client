@@ -8,7 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/details_layout_padding">
+        android:paddingRight="@dimen/details_horizontal_margin"
+        android:paddingLeft="@dimen/details_horizontal_margin"
+        android:paddingTop="@dimen/details_vertical_margin"
+        android:paddingBottom="@dimen/details_vertical_margin">
 
         <TextView
             android:id="@+id/outage_id"
@@ -23,7 +26,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_ip_address" />
 
         <TextView
@@ -36,7 +39,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_ip_interface_id" />
 
         <TextView
@@ -49,7 +52,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_service_id" />
 
         <TextView
@@ -62,7 +65,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_service_type" />
 
         <TextView
@@ -75,7 +78,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_node" />
 
         <TextView
@@ -88,7 +91,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_lost_event" />
 
         <TextView
@@ -101,7 +104,7 @@
             style="@style/DetailsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/details_section_padding_top"
+            android:layout_marginTop="@dimen/details_section_margin_top"
             android:text="@string/outage_details_regained_event" />
 
         <TextView

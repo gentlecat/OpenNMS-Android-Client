@@ -44,14 +44,4 @@ public class Utils {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-    public static int getActionBarHeight(Context context) {
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = context.getTheme();
-        if (theme != null && theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {
-            return TypedValue.complexToDimensionPixelSize(
-                    typedValue.data, context.getResources().getDisplayMetrics());
-        }
-        return 0;
-    }
-
 }

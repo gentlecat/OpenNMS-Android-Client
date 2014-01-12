@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.opennms.android"
-    android:versionCode="1"
-    android:versionName="1.0.0-SNAPSHOT">
-
-    <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="19" />
+    package="org.opennms.android">
 
     <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -25,26 +19,44 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/opennms_logo"
-        android:theme="@style/Theme.OpenNMS">
+        android:theme="@style/Theme.AppCompat.Light">
 
-        <activity android:name=".ui.nodes.NodesActivity">
+        <activity
+            android:name=".ui.TitleActivity"
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.nodes.NodesActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.nodes.NodeDetailsActivity" />
 
-        <activity android:name=".ui.alarms.AlarmsActivity" />
+        <activity
+            android:name=".ui.alarms.AlarmsActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.alarms.AlarmDetailsActivity" />
 
-        <activity android:name=".ui.events.EventsActivity" />
+        <activity
+            android:name=".ui.events.EventsActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.events.EventDetailsActivity" />
 
-        <activity android:name=".ui.outages.OutagesActivity" />
+        <activity
+            android:name=".ui.outages.OutagesActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".ui.outages.OutageDetailsActivity" />
 
-        <activity android:name=".ui.SettingsActivity" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:parentActivityName=".ui.nodes.NodesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.nodes.NodesActivity" />
+        </activity>
 
         <provider
             android:authorities="org.opennms.android.sync.AlarmsSyncAdapter"
@@ -52,8 +64,8 @@
             android:name=".provider.AppContentProvider" />
 
         <service
-            android:exported="true"
-            android:name=".sync.SyncService">
+            android:name=".sync.SyncService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -61,7 +73,9 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        <service android:name=".sync.AccountService">
+        <service
+            android:name=".sync.AccountService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
