@@ -1,5 +1,9 @@
 package org.opennms.android.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
@@ -20,6 +24,7 @@ import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
+import org.opennms.android.ui.nodes.NodesActivity;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
@@ -32,11 +37,13 @@ public class SettingsActivity extends PreferenceActivity
     private SharedPreferences sharedPref;
     private String oldHost;
     private ServerCheckTask checkTask;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+        context = this;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         setTitle(R.string.settings);
@@ -94,11 +101,16 @@ public class SettingsActivity extends PreferenceActivity
                 checkServer();
                 return true;
             case R.id.menu_apply_settings:
-                finish();
+                showApplyDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        showDiscardDialog();
     }
 
     private void checkServer() {
@@ -165,6 +177,46 @@ public class SettingsActivity extends PreferenceActivity
         findPreference("wifi_only").setEnabled(enabled);
         findPreference("minimal_severity").setEnabled(enabled);
         findPreference("sync_rate").setEnabled(enabled);
+    }
+
+    void showApplyDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.settings_apply_message));
+        builder.setPositiveButton(getString(R.string.settings_dialog_apply), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // TODO: Save settings, remove old data
+                sendBroadcast(new Intent(TitleActivity.ACTION_FINISH));
+                Intent intent = new Intent(context, NodesActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton(getString(R.string.settings_dialog_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    void showDiscardDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.settings_discard_message));
+        builder.setPositiveButton(getString(R.string.settings_dialog_discard), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // TODO: Restore old settings
+                finish();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.settings_dialog_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
     }
 
     private class ServerCheckTask extends AsyncTask<Void, Void, Response> {

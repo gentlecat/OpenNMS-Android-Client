@@ -118,6 +118,12 @@
     <string name="server_check_not_ok">Can\'t connect to server. Make sure settings are correct.</string>
     <string name="server_check_failed">Error occurred while checking connection!</string>
     <string name="server_check_offline">Can\'t check connection. Device is offline.</string>
+    <!-- Dialogs in settings -->
+    <string name="settings_apply_message">Apply changes?</string>
+    <string name="settings_discard_message">Discard changes?</string>
+    <string name="settings_dialog_apply">Apply</string>
+    <string name="settings_dialog_discard">Discard</string>
+    <string name="settings_dialog_cancel">Cancel</string>
 
     <!-- TitleActivity -->
     <string name="title_activity_configure_button">Configure connection</string>

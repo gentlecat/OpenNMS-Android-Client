@@ -21,42 +21,38 @@
         android:logo="@drawable/opennms_logo"
         android:theme="@style/Theme.AppCompat.Light">
 
+        <!-- Title -->
         <activity
             android:name=".ui.TitleActivity"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:noHistory="true">
+            android:uiOptions="splitActionBarWhenNarrow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Settings -->
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:noHistory="true" />
+
+        <!-- Content -->
         <activity
             android:name=".ui.nodes.NodesActivity"
             android:launchMode="singleTop" />
         <activity android:name=".ui.nodes.NodeDetailsActivity" />
-
         <activity
             android:name=".ui.alarms.AlarmsActivity"
             android:launchMode="singleTop" />
         <activity android:name=".ui.alarms.AlarmDetailsActivity" />
-
         <activity
             android:name=".ui.events.EventsActivity"
             android:launchMode="singleTop" />
         <activity android:name=".ui.events.EventDetailsActivity" />
-
         <activity
             android:name=".ui.outages.OutagesActivity"
             android:launchMode="singleTop" />
         <activity android:name=".ui.outages.OutageDetailsActivity" />
-
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:parentActivityName=".ui.nodes.NodesActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.nodes.NodesActivity" />
-        </activity>
 
         <provider
             android:authorities="org.opennms.android.sync.AlarmsSyncAdapter"
