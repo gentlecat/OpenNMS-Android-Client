@@ -66,7 +66,8 @@ public class TitleActivity extends ActionBarActivity {
     private final class FinishReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(ACTION_FINISH))
+            String action = intent.getAction();
+            if (action != null && action.equals(ACTION_FINISH))
                 finish();
         }
     }
