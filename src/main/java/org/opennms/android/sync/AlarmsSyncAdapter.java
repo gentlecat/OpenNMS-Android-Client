@@ -23,6 +23,7 @@ import org.opennms.android.R;
 import org.opennms.android.net.Client;
 import org.opennms.android.parsing.AlarmsParser;
 import org.opennms.android.provider.Contract;
+import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.util.ArrayList;
@@ -73,9 +74,7 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
         ConnectivityManager connManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        if (sharedPref.getBoolean("wifi_only",
-                context.getResources().getBoolean(R.bool.wifi_only))) {
+        if (NotificationSettings.wifiOnly(context)) {
             NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (!wifi.isConnected()) {
                 issueWarningNotification(
@@ -99,10 +98,12 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
         contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
                 values.toArray(new ContentValues[values.size()]));
 
-        int latestShownAlarmId = sharedPref.getInt("latest_shown_alarm_id", 0);
-        String minimalSeverity =
-                sharedPref.getString("minimal_severity",
-                        context.getString(R.string.default_minimal_severity));
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        final String STATE_LATEST_SHOWN_ALARM = "latest_shown_alarm_id";
+        int latestShownAlarmId = sharedPref.getInt(STATE_LATEST_SHOWN_ALARM, 0);
+        String minimalSeverity = NotificationSettings.minSeverity(context);
         String[] severityValues =
                 context.getResources().getStringArray(R.array.severity_values);
         int newAlarmsCount = 0, maxId = 0;
@@ -126,12 +127,10 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         if (latestShownAlarmId != maxId) {
-            sharedPref.edit().putInt("latest_shown_alarm_id", maxId).commit();
+            sharedPref.edit().putInt(STATE_LATEST_SHOWN_ALARM, maxId).commit();
         }
-        boolean notificationsOn =
-                sharedPref.getBoolean("notifications_on", context.getResources()
-                        .getBoolean(R.bool.default_notifications));
-        if (newAlarmsCount > 0 && notificationsOn) {
+
+        if (newAlarmsCount > 0 && NotificationSettings.enabled(context)) {
             issueNewAlarmsNotification(context, newAlarmsCount);
         }
 
