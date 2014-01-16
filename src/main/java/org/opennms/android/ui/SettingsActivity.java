@@ -59,16 +59,14 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onResume() {
         super.onResume();
-        getPreferenceScreen().getSharedPreferences()
-                .registerOnSharedPreferenceChangeListener(this);
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         updateSummaries();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        getPreferenceScreen().getSharedPreferences()
-                .unregisterOnSharedPreferenceChangeListener(this);
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -175,7 +173,7 @@ public class SettingsActivity extends PreferenceActivity
         builder.setTitle(getString(R.string.settings_apply_message));
         builder.setPositiveButton(getString(R.string.settings_dialog_apply), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // TODO: Mark as configured (TitleActivity will not be shown anymore)
+                sharedPref.edit().putBoolean(TitleActivity.STATE_TITLE_PASSED, true).commit();
 
                 boolean sync = NotificationSettings.enabled(context);
                 int frequency = NotificationSettings.syncRateMinutes(context) * 60;
