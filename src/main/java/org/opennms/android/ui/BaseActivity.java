@@ -1,7 +1,6 @@
 package org.opennms.android.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,7 +19,6 @@ import android.widget.FrameLayout;
 import org.opennms.android.R;
 import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.dialogs.AboutDialog;
-import org.opennms.android.ui.dialogs.WelcomeDialog;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -77,12 +75,6 @@ public abstract class BaseActivity extends ActionBarActivity {
             }
         };
         navigationLayout.setDrawerListener(navigationToggle);
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPref.getBoolean("is_first_launch", true)) {
-            sharedPref.edit().putBoolean("is_first_launch", false).commit();
-            showWelcomeDialog();
-        }
 
         if (savedInstanceState != null) {
             title = savedInstanceState.getCharSequence(STATE_TITLE);
@@ -162,11 +154,6 @@ public abstract class BaseActivity extends ActionBarActivity {
     public void showAboutDialog() {
         AboutDialog dialog = new AboutDialog();
         dialog.show(getSupportFragmentManager(), AboutDialog.TAG);
-    }
-
-    public void showWelcomeDialog() {
-        WelcomeDialog dialog = new WelcomeDialog();
-        dialog.show(getSupportFragmentManager(), WelcomeDialog.TAG);
     }
 
 }

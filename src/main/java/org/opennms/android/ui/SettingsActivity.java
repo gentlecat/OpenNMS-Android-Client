@@ -1,5 +1,9 @@
 package org.opennms.android.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
@@ -17,9 +21,12 @@ import org.opennms.android.Utils;
 import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.settings.ConnectionSettings;
+import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.SyncUtils;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
+import org.opennms.android.ui.nodes.NodesActivity;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
@@ -30,14 +37,21 @@ public class SettingsActivity extends PreferenceActivity
 
     public static final String TAG = "SettingsActivity";
     private SharedPreferences sharedPref;
-    private String oldHost;
     private ServerCheckTask checkTask;
+    private Context context;
+    private Settings oldSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+        context = this;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        oldSettings = (Settings) getLastNonConfigurationInstance();
+        if (oldSettings == null) {
+            oldSettings = getCurrentSettings();
+        }
 
         setTitle(R.string.settings);
     }
@@ -45,9 +59,6 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        oldHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
-
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
         updateSummaries();
@@ -63,22 +74,12 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onStop() {
         super.onStop();
-        boolean sync = sharedPref.getBoolean("notifications_on", getResources().getBoolean(R.bool.default_notifications));
-        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
-        int frequency = Integer.parseInt(syncRate) * 60;
-        SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
-
-        String newHost = sharedPref.getString("host", String.valueOf(getString(R.string.default_host)));
-        if (!newHost.equals(oldHost)) {
-            new DatabaseHelper(getApplicationContext()).wipe();
-
-            /** Resetting information about active fragments with details */
-            sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
-            sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
-            sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
-        }
-
         if (checkTask != null) checkTask.cancel(true);
+    }
+
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return oldSettings;
     }
 
     @Override
@@ -94,23 +95,26 @@ public class SettingsActivity extends PreferenceActivity
                 checkServer();
                 return true;
             case R.id.menu_apply_settings:
-                finish();
+                showApplyDialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        showDiscardDialog();
+    }
+
     private void checkServer() {
         if (checkTask != null && checkTask.getStatus() == AsyncTask.Status.RUNNING) return;
-        if (Utils.isOnline(getApplicationContext())) {
-            Toast.makeText(getApplicationContext(), R.string.server_check_wait,
-                    Toast.LENGTH_LONG).show();
+        if (Utils.isOnline(context)) {
+            Toast.makeText(context, R.string.server_check_wait, Toast.LENGTH_LONG).show();
             checkTask = new ServerCheckTask();
             checkTask.execute();
         } else {
-            Toast.makeText(getApplicationContext(), R.string.server_check_offline,
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.server_check_offline, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -118,39 +122,37 @@ public class SettingsActivity extends PreferenceActivity
         updateSummaries();
     }
 
-
     private void updateSummaries() {
-        // Authentication
-        findPreference("user").setSummary(
-                sharedPref.getString("user", getResources().getString(R.string.default_user)));
-
         // Server
-        findPreference("host").setSummary(sharedPref.getString("host", getResources().getString(R.string.default_host)));
-        findPreference("port").setSummary(sharedPref.getString("port", Integer.toString(getResources().getInteger(R.integer.default_port))));
-        if (sharedPref.getBoolean("https", getResources().getBoolean(R.bool.default_https))) {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_https_on));
+        findPreference(ConnectionSettings.KEY_HOST).setSummary(ConnectionSettings.host(context));
+        findPreference(ConnectionSettings.KEY_PORT).setSummary(String.valueOf(ConnectionSettings.port(context)));
+        if (ConnectionSettings.isHttps(context)) {
+            findPreference(ConnectionSettings.KEY_HTTPS).setSummary(getString(R.string.settings_https_on));
         } else {
-            findPreference("https").setSummary(getResources().getString(R.string.settings_https_off));
+            findPreference(ConnectionSettings.KEY_HTTPS).setSummary(getString(R.string.settings_https_off));
         }
-        findPreference("rest_url").setSummary(sharedPref.getString("rest_url", getResources()
-                .getString(R.string.default_rest_url)));
+        findPreference(ConnectionSettings.KEY_REST_URL).setSummary(ConnectionSettings.restUrl(context));
+
+        // Authentication
+        findPreference(ConnectionSettings.KEY_USER).setSummary(ConnectionSettings.user(context));
 
         // Notifications
-        boolean notificationsOn = sharedPref.getBoolean(
-                "notifications_on", getResources().getBoolean(R.bool.default_notifications));
+        boolean notificationsOn = NotificationSettings.enabled(context);
         setNotificationPrefsEnabled(notificationsOn);
         if (notificationsOn) {
-            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_true));
+            findPreference(NotificationSettings.KEY_NOTIFICATIONS_ENABLED)
+                    .setSummary(getString(R.string.settings_notifications_enabled_true));
         } else {
-            findPreference("notifications_on").setSummary(getResources().getString(R.string.settings_notifications_enabled_false));
+            findPreference(NotificationSettings.KEY_NOTIFICATIONS_ENABLED)
+                    .setSummary(getString(R.string.settings_notifications_enabled_false));
         }
 
-        String minimalSeverity = sharedPref.getString("minimal_severity", getString(R.string.default_minimal_severity));
-        ListPreference minimalSeverityPreference = (ListPreference) findPreference("minimal_severity");
+        String minimalSeverity = NotificationSettings.minSeverity(context);
+        ListPreference minimalSeverityPreference = (ListPreference) findPreference(NotificationSettings.KEY_MINIMAL_SEVERITY);
         int index = minimalSeverityPreference.findIndexOfValue(minimalSeverity);
         minimalSeverityPreference.setSummary(minimalSeverityPreference.getEntries()[index]);
 
-        String syncRate = sharedPref.getString("sync_rate", String.valueOf(getResources().getInteger(R.integer.default_sync_rate_minutes)));
+        String syncRate = String.valueOf(NotificationSettings.syncRateMinutes(context));
         int refreshRateVal = Integer.parseInt(syncRate);
         String syncRateSummary = syncRate + " ";
         if (refreshRateVal == 1) {
@@ -158,19 +160,131 @@ public class SettingsActivity extends PreferenceActivity
         } else {
             syncRateSummary += getString(R.string.settings_sync_rate_minutes_plural);
         }
-        findPreference("sync_rate").setSummary(syncRateSummary);
+        findPreference(NotificationSettings.KEY_SYNC_RATE_MINUTES).setSummary(syncRateSummary);
     }
 
     void setNotificationPrefsEnabled(Boolean enabled) {
-        findPreference("wifi_only").setEnabled(enabled);
-        findPreference("minimal_severity").setEnabled(enabled);
-        findPreference("sync_rate").setEnabled(enabled);
+        findPreference(NotificationSettings.KEY_SYNC_WIFI_ONLY).setEnabled(enabled);
+        findPreference(NotificationSettings.KEY_MINIMAL_SEVERITY).setEnabled(enabled);
+        findPreference(NotificationSettings.KEY_SYNC_RATE_MINUTES).setEnabled(enabled);
+    }
+
+    void showApplyDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.settings_apply_message));
+        builder.setPositiveButton(getString(R.string.settings_dialog_apply), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // TODO: Mark as configured (TitleActivity will not be shown anymore)
+
+                boolean sync = NotificationSettings.enabled(context);
+                int frequency = NotificationSettings.syncRateMinutes(context) * 60;
+                SyncUtils.setSyncAlarmsPeriodically(sync, AccountService.getAccount(), frequency);
+
+                new DatabaseHelper(getApplicationContext()).wipe();
+                /** Resetting information about active fragments with details */
+                sharedPref.edit().putLong(NodesListFragment.STATE_ACTIVE_NODE_ID, -1).commit();
+                sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
+                sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
+
+                sendBroadcast(new Intent(TitleActivity.ACTION_FINISH));
+                Intent intent = new Intent(context, NodesActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.settings_dialog_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    void showDiscardDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(getString(R.string.settings_discard_message));
+        builder.setPositiveButton(getString(R.string.settings_dialog_discard), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                restoreSettings(oldSettings, sharedPref);
+                finish();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.settings_dialog_cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    /**
+     * Settings class is used to store settings to allow restoration in case
+     * user decided to reverse changes.
+     */
+    public class Settings {
+        // Connection
+        public String host;
+        public int port;
+        public boolean isHttps;
+        public String restUrl;
+        public String user;
+        public String password;
+
+        // Notifications and sync
+        public boolean notificationsOn;
+        public String minSeverity;
+        public int syncRate;
+        public boolean isWifiOnly;
+    }
+
+    Settings getCurrentSettings() {
+        Settings config = new Settings();
+
+        // Connection
+        config.host = ConnectionSettings.host(context);
+        config.port = ConnectionSettings.port(context);
+        config.isHttps = ConnectionSettings.isHttps(context);
+        config.restUrl = ConnectionSettings.restUrl(context);
+        config.user = ConnectionSettings.user(context);
+        config.password = ConnectionSettings.password(context);
+
+        // Notifications and sync
+        config.notificationsOn = NotificationSettings.enabled(context);
+        config.minSeverity = NotificationSettings.minSeverity(context);
+        config.syncRate = NotificationSettings.syncRateMinutes(context);
+        config.isWifiOnly = NotificationSettings.wifiOnly(context);
+
+        return config;
+    }
+
+    void restoreSettings(Settings settings, SharedPreferences sharedPref) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        // Connection
+        editor.putString(ConnectionSettings.KEY_HOST, settings.host);
+        editor.putString(ConnectionSettings.KEY_PORT, String.valueOf(settings.port));
+        editor.putBoolean(ConnectionSettings.KEY_HTTPS, settings.isHttps);
+        editor.putString(ConnectionSettings.KEY_REST_URL, settings.restUrl);
+        editor.putString(ConnectionSettings.KEY_USER, settings.user);
+        editor.putString(ConnectionSettings.KEY_PASSWORD, settings.password);
+
+        // Notifications and sync
+        editor.putBoolean(NotificationSettings.KEY_NOTIFICATIONS_ENABLED, settings.notificationsOn);
+        editor.putString(NotificationSettings.KEY_MINIMAL_SEVERITY, settings.minSeverity);
+        editor.putString(NotificationSettings.KEY_SYNC_RATE_MINUTES, String.valueOf(settings.syncRate));
+        editor.putBoolean(NotificationSettings.KEY_SYNC_WIFI_ONLY, settings.isWifiOnly);
+
+        editor.commit();
     }
 
     private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
 
         protected Response doInBackground(Void... voids) {
-            String user = sharedPref.getString("user", null);
+            String user = ConnectionSettings.user(context);
             try {
                 return new DataLoader(getApplicationContext()).user(user);
             } catch (Exception e) {

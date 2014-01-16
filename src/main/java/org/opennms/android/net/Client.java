@@ -1,11 +1,11 @@
 package org.opennms.android.net;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.squareup.okhttp.OkAuthenticator;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.opennms.android.settings.ConnectionSettings;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,20 +24,18 @@ public class Client {
     private static final String ENCODING = "UTF-8";
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int CONNECT_TIMEOUT_MS = 15000;
-    private SharedPreferences settings;
+    private Context context;
     private OkHttpClient client;
 
     /**
-     * @param appContext Application context used to get connection information from
-     *                   {@link android.content.SharedPreferences}.
+     * @param context Application context used to get connection information from settings.
      */
-    public Client(Context appContext) {
-        settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-
+    public Client(Context context) {
+        this.context = context;
         client = new OkHttpClient();
 
-        final String user = settings.getString("user", null);
-        final String password = settings.getString("password", null);
+        final String user = ConnectionSettings.user(this.context);
+        final String password = ConnectionSettings.password(this.context);
 
         client.setAuthenticator(new OkAuthenticator() {
             @Override
@@ -115,7 +113,7 @@ public class Client {
      * @return port that is used to connect to OpenNMS server.
      */
     private int getPort() {
-        return Integer.parseInt(settings.getString("port", null));
+        return ConnectionSettings.port(context);
     }
 
     /**
@@ -127,9 +125,9 @@ public class Client {
      * @throws MalformedURLException
      */
     private URL getURL(String path) throws MalformedURLException {
-        Boolean isHttps = settings.getBoolean("https", false);
-        String host = settings.getString("host", null);
-        String restUrl = settings.getString("rest_url", null);
+        boolean isHttps = ConnectionSettings.isHttps(context);
+        String host = ConnectionSettings.host(context);
+        String restUrl = ConnectionSettings.restUrl(context);
         String base = String.format("http%s://%s:%d/" + restUrl,
                 (isHttps ? "s" : ""), host, getPort());
         return new URL(base + path);

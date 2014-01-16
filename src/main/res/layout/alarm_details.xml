@@ -8,18 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/details_layout_padding"
-        android:paddingTop="@dimen/details_layout_padding">
+        android:paddingTop="@dimen/details_vertical_margin"
+        android:paddingBottom="@dimen/details_vertical_margin">
 
         <TextView
             android:id="@+id/alarm_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:paddingRight="@dimen/details_horizontal_margin"
+            android:paddingLeft="@dimen/details_horizontal_margin" />
 
         <LinearLayout
             android:id="@+id/alarm_severity_row"
@@ -31,112 +31,97 @@
                 android:id="@+id/alarm_severity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/details_layout_padding"
-                android:paddingRight="@dimen/details_layout_padding"
                 android:textAllCaps="true"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:paddingRight="@dimen/details_horizontal_margin"
+                android:paddingLeft="@dimen/details_horizontal_margin" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/alarm_ack_status"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top" />
+            android:orientation="vertical"
+            android:paddingRight="@dimen/details_horizontal_margin"
+            android:paddingLeft="@dimen/details_horizontal_margin">
 
-        <TextView
-            android:id="@+id/alarm_ack_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_ack_status"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top" />
 
-        <TextView
-            android:id="@+id/alarm_log_message_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_message" />
+            <TextView
+                android:id="@+id/alarm_ack_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/alarm_log_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_log_message_title"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top"
+                android:text="@string/alarm_details_message" />
 
-        <TextView
-            android:id="@+id/alarm_node_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_node" />
+            <TextView
+                android:id="@+id/alarm_log_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/alarm_node"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_node_title"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top"
+                android:text="@string/alarm_details_node" />
 
-        <TextView
-            android:id="@+id/alarm_service_type_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_service_type" />
+            <TextView
+                android:id="@+id/alarm_node"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/alarm_service_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_service_type_title"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top"
+                android:text="@string/alarm_details_service_type" />
 
-        <TextView
-            android:id="@+id/alarm_last_event_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_last_event" />
+            <TextView
+                android:id="@+id/alarm_service_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/alarm_last_event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_last_event_title"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top"
+                android:text="@string/alarm_details_last_event" />
 
-        <TextView
-            android:id="@+id/alarm_description_title"
-            style="@style/DetailsHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding"
-            android:paddingTop="@dimen/details_section_padding_top"
-            android:text="@string/alarm_details_desc" />
+            <TextView
+                android:id="@+id/alarm_last_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/alarm_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/details_layout_padding"
-            android:paddingRight="@dimen/details_layout_padding" />
+            <TextView
+                android:id="@+id/alarm_description_title"
+                style="@style/DetailsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_section_margin_top"
+                android:text="@string/alarm_details_desc" />
+
+            <TextView
+                android:id="@+id/alarm_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

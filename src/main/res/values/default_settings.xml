@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Server -->
+    <!-- Connection -->
     <string name="default_host">demo.opennms.org</string>
     <integer name="default_port">8980</integer>
     <bool name="default_https">false</bool>
     <string name="default_rest_url">opennms/rest/</string>
-
-    <!-- Authentication -->
     <string name="default_user">demo</string>
     <string name="default_password">demo</string>
 
-    <!-- Notifications -->
+    <!-- Notifications and sync-->
     <bool name="default_notifications">false</bool>
     <bool name="wifi_only">false</bool>
     <string name="default_minimal_severity">NORMAL</string>
