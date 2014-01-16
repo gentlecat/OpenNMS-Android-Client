@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
@@ -17,12 +19,19 @@ import org.opennms.android.ui.nodes.NodesActivity;
 public class TitleActivity extends ActionBarActivity {
     private FinishReceiver finishReceiver;
     public static final String ACTION_FINISH = "org.opennms.android.ui.ACTION_FINISH";
+    public static final String STATE_TITLE_PASSED = "title_passed";
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: Add is_completed flag. If true, skip title screen and launch base activity.
+        
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPref.getBoolean(STATE_TITLE_PASSED, false)) {
+            Intent intent=new Intent(this, NodesActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         getSupportActionBar().hide();
         final Activity thisActivity = this;
@@ -45,6 +54,7 @@ public class TitleActivity extends ActionBarActivity {
         demo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sharedPref.edit().putBoolean(STATE_TITLE_PASSED, true).commit();
                 Toast.makeText(thisActivity,
                         getString(R.string.title_activity_tip_toast),
                         Toast.LENGTH_LONG).show();
