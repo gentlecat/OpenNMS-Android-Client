@@ -32,9 +32,7 @@
         </activity>
 
         <!-- Settings -->
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:noHistory="true" />
+        <activity android:name=".ui.SettingsActivity" />
 
         <!-- Content -->
         <activity

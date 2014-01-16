@@ -21,7 +21,6 @@ import org.opennms.android.Utils;
 import org.opennms.android.net.DataLoader;
 import org.opennms.android.net.Response;
 import org.opennms.android.provider.DatabaseHelper;
-import org.opennms.android.settings.Configuration;
 import org.opennms.android.settings.ConnectionSettings;
 import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.sync.AccountService;
@@ -37,11 +36,10 @@ public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
 
     public static final String TAG = "SettingsActivity";
-    public static final String STATE_OLD_SETTINGS = "old_settings";
     private SharedPreferences sharedPref;
     private ServerCheckTask checkTask;
     private Context context;
-    private Configuration oldSettings;
+    private Settings oldSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +48,9 @@ public class SettingsActivity extends PreferenceActivity
         context = this;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (savedInstanceState != null) {
-            oldSettings = savedInstanceState.getParcelable(STATE_OLD_SETTINGS);
-        } else {
-            oldSettings = getCurrentConfiguration();
+        oldSettings = (Settings) getLastNonConfigurationInstance();
+        if (oldSettings == null) {
+            oldSettings = getCurrentSettings();
         }
 
         setTitle(R.string.settings);
@@ -68,12 +65,6 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(STATE_OLD_SETTINGS, oldSettings);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         getPreferenceScreen().getSharedPreferences()
@@ -84,6 +75,11 @@ public class SettingsActivity extends PreferenceActivity
     protected void onStop() {
         super.onStop();
         if (checkTask != null) checkTask.cancel(true);
+    }
+
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return oldSettings;
     }
 
     @Override
@@ -125,7 +121,6 @@ public class SettingsActivity extends PreferenceActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         updateSummaries();
     }
-
 
     private void updateSummaries() {
         // Server
@@ -195,6 +190,7 @@ public class SettingsActivity extends PreferenceActivity
                 sendBroadcast(new Intent(TitleActivity.ACTION_FINISH));
                 Intent intent = new Intent(context, NodesActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         builder.setNegativeButton(getString(R.string.settings_dialog_cancel), new DialogInterface.OnClickListener() {
@@ -212,7 +208,7 @@ public class SettingsActivity extends PreferenceActivity
         builder.setTitle(getString(R.string.settings_discard_message));
         builder.setPositiveButton(getString(R.string.settings_dialog_discard), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                restoreConfiguration(oldSettings, sharedPref);
+                restoreSettings(oldSettings, sharedPref);
                 finish();
             }
         });
@@ -225,8 +221,28 @@ public class SettingsActivity extends PreferenceActivity
         builder.create().show();
     }
 
-    Configuration getCurrentConfiguration() {
-        Configuration config = new Configuration();
+    /**
+     * Settings class is used to store settings to allow restoration in case
+     * user decided to reverse changes.
+     */
+    public class Settings {
+        // Connection
+        public String host;
+        public int port;
+        public boolean isHttps;
+        public String restUrl;
+        public String user;
+        public String password;
+
+        // Notifications and sync
+        public boolean notificationsOn;
+        public String minSeverity;
+        public int syncRate;
+        public boolean isWifiOnly;
+    }
+
+    Settings getCurrentSettings() {
+        Settings config = new Settings();
 
         // Connection
         config.host = ConnectionSettings.host(context);
@@ -245,22 +261,22 @@ public class SettingsActivity extends PreferenceActivity
         return config;
     }
 
-    void restoreConfiguration(Configuration config, SharedPreferences sharedPref) {
+    void restoreSettings(Settings settings, SharedPreferences sharedPref) {
         SharedPreferences.Editor editor = sharedPref.edit();
 
         // Connection
-        editor.putString(ConnectionSettings.KEY_HOST, config.host);
-        editor.putString(ConnectionSettings.KEY_PORT, String.valueOf(config.port));
-        editor.putBoolean(ConnectionSettings.KEY_HTTPS, config.isHttps);
-        editor.putString(ConnectionSettings.KEY_REST_URL, config.restUrl);
-        editor.putString(ConnectionSettings.KEY_USER, config.user);
-        editor.putString(ConnectionSettings.KEY_PASSWORD, config.password);
+        editor.putString(ConnectionSettings.KEY_HOST, settings.host);
+        editor.putString(ConnectionSettings.KEY_PORT, String.valueOf(settings.port));
+        editor.putBoolean(ConnectionSettings.KEY_HTTPS, settings.isHttps);
+        editor.putString(ConnectionSettings.KEY_REST_URL, settings.restUrl);
+        editor.putString(ConnectionSettings.KEY_USER, settings.user);
+        editor.putString(ConnectionSettings.KEY_PASSWORD, settings.password);
 
         // Notifications and sync
-        editor.putBoolean(NotificationSettings.KEY_NOTIFICATIONS_ENABLED, config.notificationsOn);
-        editor.putString(NotificationSettings.KEY_MINIMAL_SEVERITY, config.minSeverity);
-        editor.putString(NotificationSettings.KEY_SYNC_RATE_MINUTES, String.valueOf(config.syncRate));
-        editor.putBoolean(NotificationSettings.KEY_SYNC_WIFI_ONLY, config.isWifiOnly);
+        editor.putBoolean(NotificationSettings.KEY_NOTIFICATIONS_ENABLED, settings.notificationsOn);
+        editor.putString(NotificationSettings.KEY_MINIMAL_SEVERITY, settings.minSeverity);
+        editor.putString(NotificationSettings.KEY_SYNC_RATE_MINUTES, String.valueOf(settings.syncRate));
+        editor.putBoolean(NotificationSettings.KEY_SYNC_WIFI_ONLY, settings.isWifiOnly);
 
         editor.commit();
     }
