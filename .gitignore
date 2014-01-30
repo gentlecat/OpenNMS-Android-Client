@@ -1,13 +1,6 @@
-# Built application files
-*.apk
-*.ap_
-
-# Java class files
-*.class
-
 # Generated files
 .gradle
-/build
+build/
 bin/
 gen/
 gen-external-apklibs/
@@ -21,7 +14,7 @@ lint.xml
 # Workspace settings
 *.metadata
 
-# IntelliJ IDEA
+# IntelliJ IDEA / Android Studio
 .idea
 *.iml
 *.ipr
@@ -32,6 +25,3 @@ out/
 tmp
 *~
 .DS_Store
-gradle/
-gradlew
-gradlew.bat
