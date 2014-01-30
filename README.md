@@ -1,5 +1,7 @@
 # OpenNMS Android Client
 
+![](http://i.imgur.com/oasWVOH.png)
+
 ## Building application
 
 ### Requirements
