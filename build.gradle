@@ -6,6 +6,12 @@ buildscript {
         classpath 'com.android.tools.build:gradle:0.8.+'
     }
 }
+
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
+def versionBuild = 0
+
 apply plugin: 'android'
 
 repositories {
@@ -21,13 +27,29 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19"
+    buildToolsVersion "19.0.1"
 
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
 
-        versionCode 1
-        versionName "1.0.0-SNAPSHOT"
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+    }
+
+    buildTypes {
+        debug {
+            packageNameSuffix '.dev'
+            versionNameSuffix '-dev'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
