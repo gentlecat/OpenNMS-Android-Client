@@ -34,10 +34,10 @@ public interface ServerInterface {
     @GET("/alarms")
     Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
 
-    @PUT("alarms/{id}")
+    @PUT("/alarms/{id}")
     Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
 
-    @GET("alarms?orderBy=id&order=desc&limit=0")
+    @GET("/alarms?orderBy=id&order=desc&limit=0")
     Alarms alarmsAll();
 
     @GET("/alarms/{id}")
