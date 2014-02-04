@@ -9,7 +9,10 @@ import android.os.IBinder;
 
 import org.opennms.android.sync.LoadManager;
 
-public class MainApplication extends Application {
+import dagger.ObjectGraph;
+
+public class App extends Application {
+    private ObjectGraph objectGraph;
 
     public LoadManager loadManager;
     public boolean serviceConnected = false;
@@ -29,9 +32,21 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        objectGraph = ObjectGraph.create(Modules.list(this));
+        objectGraph.inject(this);
+
         Intent serviceIntent = new Intent(this, LoadManager.class);
         startService(serviceIntent);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void inject(Object o) {
+        objectGraph.inject(o);
+    }
+
+    public static App get(Context context) {
+        return (App) context.getApplicationContext();
     }
 
 }

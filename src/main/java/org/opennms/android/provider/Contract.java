@@ -22,12 +22,12 @@ public final class Contract {
     }
 
     interface NodeColumns {
-        String NAME = "name";
+        String LABEL = "label";
         String CREATED_TIME = "created_time";
         String LABEL_SOURCE = "label_source";
         String DESCRIPTION = "description";
         String LOCATION = "location";
-        String CONTACT = "contact";
+        String SYS_CONTACT = "contact";
         String SYS_OBJECT_ID = "sys_object_id";
     }
 

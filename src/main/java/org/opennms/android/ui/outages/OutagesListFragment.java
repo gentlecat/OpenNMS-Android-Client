@@ -35,7 +35,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.MainApplication;
+import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -71,14 +71,14 @@ public class OutagesListFragment extends ListFragment
             }
         }
     };
-    private MainApplication app;
+    private App app;
     private boolean firstLoad = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (MainApplication) getActivity().getApplication();
+        app = (App) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 

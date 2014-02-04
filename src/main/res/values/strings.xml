@@ -116,7 +116,6 @@
     <string name="server_check_wait">Checking connection to server. Please wait.</string>
     <string name="server_check_ok">Connection successful. Server settings are correct.</string>
     <string name="server_check_not_ok">Can\'t connect to server. Make sure settings are correct.</string>
-    <string name="server_check_failed">Error occurred while checking connection!</string>
     <string name="server_check_offline">Can\'t check connection. Device is offline.</string>
     <!-- Dialogs in settings -->
     <string name="settings_apply_message">Apply changes?</string>

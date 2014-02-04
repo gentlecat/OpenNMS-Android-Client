@@ -25,10 +25,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + Tables.NODES
             + " ("
             + Nodes._ID + " INTEGER PRIMARY KEY, "
-            + Nodes.NAME + " TEXT, "
+            + Nodes.LABEL + " TEXT, "
             + Nodes.CREATED_TIME + " TEXT, "
             + Nodes.LABEL_SOURCE + " TEXT, "
-            + Nodes.CONTACT + " TEXT, "
+            + Nodes.SYS_CONTACT + " TEXT, "
             + Nodes.DESCRIPTION + " TEXT, "
             + Nodes.SYS_OBJECT_ID + " TEXT, "
             + Nodes.LOCATION + " TEXT"

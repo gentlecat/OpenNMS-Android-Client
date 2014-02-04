@@ -32,7 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.MainApplication;
+import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -48,7 +48,7 @@ public class EventsListFragment extends ListFragment
     private static final int LOADER_ID = 2;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
-    private MainApplication app;
+    private App app;
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -86,7 +86,7 @@ public class EventsListFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (MainApplication) getActivity().getApplication();
+        app = (App) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 

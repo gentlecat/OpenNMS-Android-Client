@@ -25,10 +25,10 @@ public class TitleActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         if (sharedPref.getBoolean(STATE_TITLE_PASSED, false)) {
-            Intent intent=new Intent(this, NodesActivity.class);
+            Intent intent = new Intent(this, NodesActivity.class);
             startActivity(intent);
             finish();
         }

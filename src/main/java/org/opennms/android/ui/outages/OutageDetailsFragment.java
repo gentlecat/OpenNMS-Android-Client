@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,15 +20,13 @@ import android.widget.TextView;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.OutagesParser;
+import org.opennms.android.data.api.model.Outage;
+import org.opennms.android.provider.ContentValuesGenerator;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.ui.ActivityUtils;
+import org.opennms.android.ui.DetailsFragment;
 
-import java.net.HttpURLConnection;
-
-public class OutageDetailsFragment extends Fragment
+public class OutageDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "OutageDetailsFragment";
@@ -82,26 +79,6 @@ public class OutageDetailsFragment extends Fragment
 
         loaderManager = getLoaderManager();
         loaderManager.restartLoader(LOADER_ID, null, this);
-    }
-
-    private void showErrorMessage() {
-        if (!isAdded()) {
-            return;
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                RelativeLayout detailsContainer =
-                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
-                if (detailsContainer == null) {
-                    return;
-                }
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(R.layout.details_error, detailsContainer);
-            }
-        });
     }
 
     @Override
@@ -207,34 +184,30 @@ public class OutageDetailsFragment extends Fragment
         serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
     }
 
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
+    private class GetDetailsFromServer extends AsyncTask<Void, Void, Outage> {
 
-        protected Response doInBackground(Void... voids) {
+        protected Outage doInBackground(Void... voids) {
             try {
-                return new DataLoader(getActivity()).outage(outageId);
+                return server.outage(outageId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about outage from server", e);
                 return null;
             }
         }
 
-        protected void onPostExecute(Response response) {
+        protected void onPostExecute(Outage outage) {
             /** If information is available, updating DB */
-            if (response != null) {
-                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
-                    ContentValues[] values = new ContentValues[1];
-                    values[0] = OutagesParser.parseSingle(response.getMessage());
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values);
+            if (outage != null) {
+                ContentValues[] values = new ContentValues[1];
+                values[0] = ContentValuesGenerator.generate(outage);
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values);
 
-                    Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
-                            null, null, null, null);
-                    updateContent(newCursor);
-                    newCursor.close();
-                } else {
-                    showErrorMessage();
-                }
+                Cursor newCursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
+                        null, null, null, null);
+                updateContent(newCursor);
+                newCursor.close();
             } else {
                 showErrorMessage();
             }

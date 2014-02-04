@@ -35,7 +35,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.MainApplication;
+import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.provider.Contract;
@@ -52,7 +52,7 @@ public class AlarmsListFragment extends ListFragment
     private static final String SELECTION_ACKED = Contract.Alarms.ACK_USER + " IS NOT NULL";
     private static final int LOADER_ID = 0;
     private static final int LOAD_LIMIT = 30;
-    private MainApplication app;
+    private App app;
     private AlarmAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -89,7 +89,7 @@ public class AlarmsListFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (MainApplication) getActivity().getApplication();
+        app = (App) getActivity().getApplication();
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 

@@ -38,7 +38,7 @@ public class AppContentProvider extends ContentProvider {
         // Nodes
         matcher.addURI(authority, Contract.PATH_NODES, NODES);
         matcher.addURI(authority, Contract.PATH_NODES + "/#", NODES_ID);
-        matcher.addURI(authority, Contract.PATH_NODES + "/" + Nodes.NAME + "/*", NODES_NAME);
+        matcher.addURI(authority, Contract.PATH_NODES + "/" + Nodes.LABEL + "/*", NODES_NAME);
 
         // Alarms
         matcher.addURI(authority, Contract.PATH_ALARMS, ALARMS);
@@ -104,7 +104,7 @@ public class AppContentProvider extends ContentProvider {
                 break;
             case NODES_NAME:
                 queryBuilder.setTables(Tables.NODES);
-                queryBuilder.appendWhere(Nodes.NAME + " LIKE '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Nodes.LABEL + " LIKE '%" + uri.getLastPathSegment() + "%'");
                 break;
             case ALARMS:
                 queryBuilder.setTables(Tables.ALARMS);

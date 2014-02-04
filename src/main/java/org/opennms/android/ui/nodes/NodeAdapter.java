@@ -56,7 +56,7 @@ public class NodeAdapter extends CursorAdapter {
         int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Nodes._ID));
         viewHolder.id.setText(String.valueOf(id));
 
-        String name = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Nodes.NAME));
+        String name = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Nodes.LABEL));
         viewHolder.name.setText(name);
 
         if (anyAlarms(id)) {
@@ -70,7 +70,7 @@ public class NodeAdapter extends CursorAdapter {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
         queryBuilder.setTables(Contract.Tables.ALARMS);
         queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
-                                 + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
+                + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
         return queryBuilder.query(db, null, null, null, null, null, null).moveToFirst();
     }
 

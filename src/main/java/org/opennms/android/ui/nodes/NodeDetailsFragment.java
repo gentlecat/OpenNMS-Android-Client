@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -25,19 +24,19 @@ import android.widget.TextView;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.AlarmsParser;
-import org.opennms.android.parsing.NodesParser;
-import org.opennms.android.parsing.OutagesParser;
+import org.opennms.android.data.api.model.Alarm;
+import org.opennms.android.data.api.model.Node;
+import org.opennms.android.data.api.model.Outage;
+import org.opennms.android.provider.ContentValuesGenerator;
 import org.opennms.android.provider.Contract;
 import org.opennms.android.provider.DatabaseHelper;
 import org.opennms.android.ui.ActivityUtils;
+import org.opennms.android.ui.DetailsFragment;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.List;
 
-public class NodeDetailsFragment extends Fragment
+public class NodeDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "NodeDetailsFragment";
@@ -91,26 +90,6 @@ public class NodeDetailsFragment extends Fragment
         }
 
         cursor.close();
-    }
-
-    private void showErrorMessage() {
-        if (!isAdded()) {
-            return;
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                RelativeLayout detailsContainer =
-                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
-                if (detailsContainer == null) {
-                    return;
-                }
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(R.layout.details_error, detailsContainer);
-            }
-        });
     }
 
     @Override
@@ -168,7 +147,7 @@ public class NodeDetailsFragment extends Fragment
                 (LinearLayout) getActivity().findViewById(R.id.node_details);
 
         String name = nodeName = cursor.getString(
-                cursor.getColumnIndexOrThrow(Contract.Nodes.NAME));
+                cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL));
         TextView nameView = (TextView) getActivity().findViewById(R.id.node_name);
         nameView.setText(name);
 
@@ -177,7 +156,7 @@ public class NodeDetailsFragment extends Fragment
         idView.setText(String.valueOf(id));
 
         String sysContact = cursor.getString(
-                cursor.getColumnIndexOrThrow(Contract.Nodes.CONTACT));
+                cursor.getColumnIndexOrThrow(Contract.Nodes.SYS_CONTACT));
         TextView sysContactView = (TextView) getActivity().findViewById(R.id.node_contact);
         if (sysContact != null) {
             sysContactView.setText(sysContact);
@@ -197,10 +176,14 @@ public class NodeDetailsFragment extends Fragment
         TextView labelSourceView =
                 (TextView) getActivity().findViewById(R.id.node_label_source);
         if (labelSource != null) {
-            if (labelSource.equals("U")) labelSourceView.setText(R.string.node_label_source_userdefined);
-            else if (labelSource.equals("H")) labelSourceView.setText(R.string.node_label_source_hostname);
-            else if (labelSource.equals("S")) labelSourceView.setText(R.string.node_label_source_sysname);
-            else if (labelSource.equals("A")) labelSourceView.setText(R.string.node_label_source_address);
+            if (labelSource.equals("U"))
+                labelSourceView.setText(R.string.node_label_source_userdefined);
+            else if (labelSource.equals("H"))
+                labelSourceView.setText(R.string.node_label_source_hostname);
+            else if (labelSource.equals("S"))
+                labelSourceView.setText(R.string.node_label_source_sysname);
+            else if (labelSource.equals("A"))
+                labelSourceView.setText(R.string.node_label_source_address);
             else labelSourceView.setText(labelSource);
         } else {
             detailsLayout.removeView(labelSourceView);
@@ -250,34 +233,30 @@ public class NodeDetailsFragment extends Fragment
      * Useful if details fragment was opened from another section and information is not saved in
      * the database.
      */
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
+    private class GetDetailsFromServer extends AsyncTask<Void, Void, Node> {
 
-        protected Response doInBackground(Void... voids) {
+        protected Node doInBackground(Void... voids) {
             try {
-                return new DataLoader(getActivity()).node(nodeId);
+                return server.node(nodeId);
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info about node from server", e);
                 return null;
             }
         }
 
-        protected void onPostExecute(Response response) {
+        protected void onPostExecute(Node node) {
             /** If information is available, updating DB */
-            if (response != null) {
-                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
-                    ContentValues[] values = new ContentValues[1];
-                    values[0] = NodesParser.parseSingle(response.getMessage());
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values);
+            if (node != null) {
+                ContentValues[] values = new ContentValues[1];
+                values[0] = ContentValuesGenerator.generate(node);
+                ContentResolver contentResolver = getActivity().getContentResolver();
+                contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values);
 
-                    Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(nodeId)),
-                            null, null, null, null);
-                    updateContent(newCursor);
-                    newCursor.close();
-                } else {
-                    showErrorMessage();
-                }
+                Cursor newCursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(nodeId)),
+                        null, null, null, null);
+                updateContent(newCursor);
+                newCursor.close();
             } else {
                 showErrorMessage();
             }
@@ -295,17 +274,16 @@ public class NodeDetailsFragment extends Fragment
          * @return {@link android.database.Cursor} with alarms.
          */
         protected Cursor doInBackground(Void... voids) {
-            Response response = null;
+            List<Alarm> alarms = null;
             try {
-                response = new DataLoader(getActivity()).alarmsRelatedToNode(nodeName);
+                alarms = server.alarmsRelatedToNode(nodeName).alarms;
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
             }
 
-            if (response != null && response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+            if (alarms != null) {
                 ContentResolver contentResolver = getActivity().getContentResolver();
-                ArrayList<ContentValues> values = AlarmsParser.parseMultiple(response.getMessage());
+                ArrayList<ContentValues> values = ContentValuesGenerator.fromAlarms(alarms);
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
                         values.toArray(new ContentValues[values.size()]));
             }
@@ -400,18 +378,16 @@ public class NodeDetailsFragment extends Fragment
          * @return {@link android.database.Cursor} with outages.
          */
         protected Cursor doInBackground(Void... voids) {
-            Response response = null;
+            List<Outage> outages = null;
             try {
-                response = new DataLoader(getActivity()).outagesRelatedToNode(nodeId);
+                outages = server.outagesRelatedToNode(nodeId).outages;
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
             }
 
-            if (response != null && response.getMessage() != null
-                    && response.getCode() == HttpURLConnection.HTTP_OK) {
+            if (outages != null) {
                 ContentResolver contentResolver = getActivity().getContentResolver();
-                ArrayList<ContentValues> values =
-                        OutagesParser.parseMultiple(response.getMessage());
+                ArrayList<ContentValues> values = ContentValuesGenerator.fromOutages(outages);
                 contentResolver.bulkInsert(Contract.Outages.CONTENT_URI,
                         values.toArray(new ContentValues[values.size()]));
             }
