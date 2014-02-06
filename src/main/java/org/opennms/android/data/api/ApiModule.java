@@ -54,12 +54,6 @@ public final class ApiModule {
                 .setServer(server)
                 .setRequestInterceptor(headers)
                 .setConverter(new GsonConverter(gson))
-                .setLog(new RestAdapter.Log() {
-                    @Override
-                    public void log(String message) {
-                        Log.d("TEST", message);
-                    }
-                })
                 .build();
     }
 
