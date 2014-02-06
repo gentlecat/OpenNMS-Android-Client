@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     compile "com.android.support:support-v4:19.+"
-    compile "com.android.support:appcompat-v7:18.+"
+    compile "com.android.support:appcompat-v7:19.+"
 
     compile "com.squareup.okhttp:okhttp:1.3.+"
 }
