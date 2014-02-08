@@ -27,9 +27,9 @@ import org.opennms.android.Utils;
 import org.opennms.android.data.api.model.Alarm;
 import org.opennms.android.data.api.model.Node;
 import org.opennms.android.data.api.model.Outage;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
-import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
+import org.opennms.android.data.storage.DatabaseHelper;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.DetailsFragment;
 
@@ -169,7 +169,7 @@ public class NodeDetailsFragment extends DetailsFragment
         String createdTime = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Nodes.CREATED_TIME));
         TextView timeView = (TextView) getActivity().findViewById(R.id.node_creation_time);
-        timeView.setText(Utils.reformatDate(createdTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
+        timeView.setText(createdTime);
 
         String labelSource = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Nodes.LABEL_SOURCE));

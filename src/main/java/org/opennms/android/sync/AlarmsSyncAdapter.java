@@ -23,8 +23,8 @@ import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.Alarm;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 

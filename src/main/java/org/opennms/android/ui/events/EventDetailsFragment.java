@@ -22,8 +22,8 @@ import android.widget.TextView;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.data.api.model.Event;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.DetailsFragment;
 
@@ -127,7 +127,7 @@ public class EventDetailsFragment extends DetailsFragment
         String createTimeString = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
         TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
-        timeTextView.setText(Utils.reformatDate(createTimeString, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
+        timeTextView.setText(createTimeString);
 
         // Log message
         String logMessage = cursor.getString(

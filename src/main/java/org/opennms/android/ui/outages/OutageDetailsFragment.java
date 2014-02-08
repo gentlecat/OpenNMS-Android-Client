@@ -19,10 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
+import org.opennms.android.data.ContentValuesGenerator;
 import org.opennms.android.data.api.model.Outage;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.DetailsFragment;
 
@@ -138,8 +137,7 @@ public class OutageDetailsFragment extends DetailsFragment
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID));
         TextView lostServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
-        lostServiceEvent.setText(Utils.reformatDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
-                + "\n#" + serviceLostEventId);
+        lostServiceEvent.setText(serviceLostTime + "\n#" + serviceLostEventId);
         lostServiceEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,9 +152,7 @@ public class OutageDetailsFragment extends DetailsFragment
         TextView regainedServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
         if (serviceRegainedTime != null) {
-            regainedServiceEvent.setText(Utils.reformatDate(serviceRegainedTime,
-                    "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
-                    + serviceRegainedEventId);
+            regainedServiceEvent.setText(serviceRegainedTime + "\n#" + serviceRegainedEventId);
             regainedServiceEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -14,8 +14,8 @@ import org.opennms.android.data.api.model.Alarm;
 import org.opennms.android.data.api.model.Event;
 import org.opennms.android.data.api.model.Node;
 import org.opennms.android.data.api.model.Outage;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
 
 import java.util.ArrayList;
 import java.util.List;

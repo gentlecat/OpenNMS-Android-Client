@@ -54,9 +54,9 @@
         <activity android:name=".ui.outages.OutageDetailsActivity" />
 
         <provider
-            android:authorities="org.opennms.android.sync.AlarmsSyncAdapter"
+            android:authorities="org.opennms.android.data.AppContentProvider"
             android:exported="false"
-            android:name=".provider.AppContentProvider" />
+            android:name=".data.AppContentProvider" />
 
         <service
             android:name=".sync.SyncService"

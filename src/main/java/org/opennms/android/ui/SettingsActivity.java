@@ -21,7 +21,7 @@ import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.User;
-import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.data.storage.DatabaseHelper;
 import org.opennms.android.settings.ConnectionSettings;
 import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.sync.AccountService;

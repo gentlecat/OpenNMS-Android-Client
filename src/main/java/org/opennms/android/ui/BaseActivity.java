@@ -32,7 +32,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     private CharSequence title;
     protected ActionBarDrawerToggle navigationToggle;
     protected ActionBar actionBar;
-    @Inject   protected ServerInterface server;
+    @Inject
+    protected ServerInterface server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

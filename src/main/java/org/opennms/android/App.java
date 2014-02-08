@@ -30,11 +30,16 @@ public class App extends Application {
     };
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
 
         objectGraph = ObjectGraph.create(Modules.list(this));
         objectGraph.inject(this);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
         Intent serviceIntent = new Intent(this, LoadManager.class);
         startService(serviceIntent);

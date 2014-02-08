@@ -43,10 +43,11 @@ public interface ServerInterface {
     @GET("/alarms/{id}")
     Alarm alarm(@Path("id") long id);
 
-    @GET("/alarms/?query=nodeLabel='{nodeLabel}'")
-    Alarms alarmsRelatedToNode(@Path("nodeLabel") String nodeLabel);
+    // TODO: Fix
+    @GET("/alarms/?query=nodeLabel='{label}'")
+    Alarms alarmsRelatedToNode(@Path("label") String nodeLabel);
 
-    @GET("/outages")
+    @GET("/outages?orderBy=id&order=desc")
     Outages outages(@Query("limit") int limit, @Query("offset") int offset);
 
     @GET("/outages/{id}")

@@ -10,6 +10,7 @@ import com.squareup.okhttp.OkAuthenticator;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.opennms.android.data.api.ApiModule;
+import org.opennms.android.data.storage.StorageModule;
 import org.opennms.android.settings.ConnectionSettings;
 
 import java.io.File;
@@ -24,7 +25,13 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
-        includes = ApiModule.class,
+        includes = {
+                ApiModule.class,
+                StorageModule.class,
+        },
+        injects = {
+                AppContentProvider.class,
+        },
         complete = false,
         library = true
 )

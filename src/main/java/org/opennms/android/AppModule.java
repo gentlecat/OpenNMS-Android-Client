@@ -13,11 +13,9 @@ import dagger.Provides;
 @Module(
         includes = {
                 UiModule.class,
-                DataModule.class
+                DataModule.class,
         },
-        injects = {
-                App.class
-        }
+        injects = App.class
 )
 public final class AppModule {
     private final App app;

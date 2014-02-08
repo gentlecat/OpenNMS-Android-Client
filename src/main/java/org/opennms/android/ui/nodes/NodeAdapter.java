@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.provider.Contract;
-import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.data.storage.Contract;
+import org.opennms.android.data.storage.DatabaseHelper;
 
 public class NodeAdapter extends CursorAdapter {
 

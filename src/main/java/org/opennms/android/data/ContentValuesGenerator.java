@@ -1,4 +1,4 @@
-package org.opennms.android.provider;
+package org.opennms.android.data;
 
 import android.content.ContentValues;
 
@@ -6,6 +6,7 @@ import org.opennms.android.data.api.model.Alarm;
 import org.opennms.android.data.api.model.Event;
 import org.opennms.android.data.api.model.Node;
 import org.opennms.android.data.api.model.Outage;
+import org.opennms.android.data.storage.Contract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,10 @@ public final class ContentValuesGenerator {
 
     public static ArrayList<ContentValues> fromNodes(List<Node> nodes) {
         ArrayList<ContentValues> valuesArray = new ArrayList<>();
-        for (Node node : nodes) {
-            valuesArray.add(generate(node));
+        if (nodes != null) {
+            for (Node node : nodes) {
+                valuesArray.add(generate(node));
+            }
         }
         return valuesArray;
     }
@@ -36,8 +39,10 @@ public final class ContentValuesGenerator {
 
     public static ArrayList<ContentValues> fromEvents(List<Event> events) {
         ArrayList<ContentValues> valuesArray = new ArrayList<>();
-        for (Event event : events) {
-            valuesArray.add(generate(event));
+        if (events != null) {
+            for (Event event : events) {
+                valuesArray.add(generate(event));
+            }
         }
         return valuesArray;
     }
@@ -62,8 +67,10 @@ public final class ContentValuesGenerator {
 
     public static ArrayList<ContentValues> fromAlarms(List<Alarm> alarms) {
         ArrayList<ContentValues> valuesArray = new ArrayList<>();
-        for (Alarm alarm : alarms) {
-            valuesArray.add(generate(alarm));
+        if (alarms != null) {
+            for (Alarm alarm : alarms) {
+                valuesArray.add(generate(alarm));
+            }
         }
         return valuesArray;
     }
@@ -94,8 +101,10 @@ public final class ContentValuesGenerator {
 
     public static ArrayList<ContentValues> fromOutages(List<Outage> outages) {
         ArrayList<ContentValues> valuesArray = new ArrayList<>();
-        for (Outage outage : outages) {
-            valuesArray.add(generate(outage));
+        if (outages != null) {
+            for (Outage outage : outages) {
+                valuesArray.add(generate(outage));
+            }
         }
         return valuesArray;
     }

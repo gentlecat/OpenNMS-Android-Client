@@ -38,7 +38,7 @@ import android.widget.Toast;
 import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.sync.AccountService;
 import org.opennms.android.sync.LoadManager;
 import org.opennms.android.ui.BaseActivity;

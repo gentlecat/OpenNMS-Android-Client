@@ -1,4 +1,4 @@
-package org.opennms.android.provider;
+package org.opennms.android.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,11 +11,15 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import org.opennms.android.provider.Contract.Alarms;
-import org.opennms.android.provider.Contract.Events;
-import org.opennms.android.provider.Contract.Nodes;
-import org.opennms.android.provider.Contract.Outages;
-import org.opennms.android.provider.Contract.Tables;
+import org.opennms.android.App;
+import org.opennms.android.data.storage.Contract;
+import org.opennms.android.data.storage.Contract.Alarms;
+import org.opennms.android.data.storage.Contract.Events;
+import org.opennms.android.data.storage.Contract.Nodes;
+import org.opennms.android.data.storage.Contract.Outages;
+import org.opennms.android.data.storage.Contract.Tables;
+
+import javax.inject.Inject;
 
 public class AppContentProvider extends ContentProvider {
 
@@ -29,7 +33,8 @@ public class AppContentProvider extends ContentProvider {
     private static final int OUTAGES = 400;
     private static final int OUTAGES_ID = 401;
     private static UriMatcher uriMatcher;
-    private DatabaseHelper dbHelper;
+    @Inject
+    SQLiteDatabase db;
 
     private static UriMatcher createUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -57,8 +62,9 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        App app = App.get(getContext());
+        app.inject(this);
         uriMatcher = createUriMatcher();
-        dbHelper = new DatabaseHelper(getContext());
         return true;
     }
 
@@ -90,7 +96,6 @@ public class AppContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         final int match = uriMatcher.match(uri);
@@ -138,7 +143,6 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES: {
@@ -200,7 +204,6 @@ public class AppContentProvider extends ContentProvider {
     }
 
     private int bulkInsertHelper(String table, ContentValues[] values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             int rowsAffected = values.length;
@@ -218,10 +221,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         int rowsAffected = 0;
-
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES_ID:
@@ -279,10 +279,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         int rowsAffected = 0;
-
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES:

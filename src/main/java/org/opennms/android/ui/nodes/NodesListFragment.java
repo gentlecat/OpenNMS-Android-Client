@@ -39,8 +39,8 @@ import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.Node;
-import org.opennms.android.provider.ContentValuesGenerator;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.sync.LoadManager;
 import org.opennms.android.ui.BaseActivity;
 
