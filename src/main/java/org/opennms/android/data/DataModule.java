@@ -1,6 +1,7 @@
 package org.opennms.android.data;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -11,6 +12,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 import org.opennms.android.data.api.ApiModule;
 import org.opennms.android.data.storage.StorageModule;
+import org.opennms.android.data.sync.SyncModule;
 import org.opennms.android.settings.ConnectionSettings;
 
 import java.io.File;
@@ -28,6 +30,7 @@ import dagger.Provides;
         includes = {
                 ApiModule.class,
                 StorageModule.class,
+                SyncModule.class,
         },
         injects = {
                 AppContentProvider.class,
@@ -43,6 +46,12 @@ public final class DataModule {
     @Singleton
     SharedPreferences provideSharedPreferences(Application app) {
         return PreferenceManager.getDefaultSharedPreferences(app);
+    }
+
+    @Provides
+    @Singleton
+    ContentResolver provideContentResolver(Application app) {
+        return app.getContentResolver();
     }
 
     @Provides

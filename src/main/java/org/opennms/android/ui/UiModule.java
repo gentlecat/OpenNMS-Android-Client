@@ -1,7 +1,7 @@
 package org.opennms.android.ui;
 
-import org.opennms.android.sync.AlarmsSyncAdapter;
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.sync.AlarmsSyncAdapter;
+import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.alarms.AlarmDetailsActivity;
 import org.opennms.android.ui.alarms.AlarmDetailsFragment;
 import org.opennms.android.ui.alarms.AlarmsActivity;
@@ -23,7 +23,7 @@ import dagger.Module;
 
 @Module(
         injects = {
-                LoadManager.class,
+                UpdateManager.class,
                 AlarmsSyncAdapter.class,
 
                 BaseActivity.class,

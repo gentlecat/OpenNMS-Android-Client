@@ -68,19 +68,13 @@ public class AlarmDetailsFragment extends DetailsFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -288,35 +282,6 @@ public class AlarmDetailsFragment extends DetailsFragment
 
         isAcked = ackTime != null;
         updateMenu(isAcked);
-    }
-
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Alarm> {
-        protected Alarm doInBackground(Void... voids) {
-            try {
-                return server.alarm(alarmId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about alarm from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Alarm alarm) {
-            /** If information is available, updating DB */
-            if (alarm != null) {
-                ContentValues[] values = new ContentValues[1];
-                values[0] = ContentValuesGenerator.generate(alarm);
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
-
-                Cursor newCursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                        null, null, null, null);
-                updateContent(newCursor);
-                newCursor.close();
-            } else {
-                showErrorMessage();
-            }
-        }
     }
 
     private class AcknowledgementTask extends AsyncTask<Void, Void, Alarm> {

@@ -1,4 +1,4 @@
-package org.opennms.android.sync;
+package org.opennms.android.data.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -12,7 +12,6 @@ import org.opennms.android.data.storage.Contract;
  * Static helper methods for working with the sync framework.
  */
 public class SyncUtils {
-
     public static final String TAG = "SyncUtils";
     public static final String CONTENT_AUTHORITY = Contract.CONTENT_AUTHORITY;
 

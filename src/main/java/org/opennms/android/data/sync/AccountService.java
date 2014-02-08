@@ -1,4 +1,4 @@
-package org.opennms.android.sync;
+package org.opennms.android.data.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -12,10 +12,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class AccountService extends Service {
-
-    public static final String ACCOUNT_NAME = "Alarms synchronization";
     private static final String TAG = "AccountService";
-    private static final String ACCOUNT_TYPE = "org.opennms.android.sync.AlarmsSyncAdapter";
+
+    public static final String ACCOUNT_NAME = "Alarms sync";
+    private static final String ACCOUNT_TYPE = "org.opennms.android.data.sync.AlarmsSyncAdapter";
     private Authenticator authenticator;
 
     /**
@@ -52,7 +52,6 @@ public class AccountService extends Service {
     }
 
     public class Authenticator extends AbstractAccountAuthenticator {
-
         public Authenticator(Context context) {
             super(context);
         }

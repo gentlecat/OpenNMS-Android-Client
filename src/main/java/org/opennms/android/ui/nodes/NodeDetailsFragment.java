@@ -23,11 +23,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
-import org.opennms.android.data.api.model.Alarm;
-import org.opennms.android.data.api.model.Node;
-import org.opennms.android.data.api.model.Outage;
 import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.api.model.Alarm;
+import org.opennms.android.data.api.model.Outage;
 import org.opennms.android.data.storage.Contract;
 import org.opennms.android.data.storage.DatabaseHelper;
 import org.opennms.android.ui.ActivityUtils;
@@ -71,11 +69,7 @@ public class NodeDetailsFragment extends DetailsFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
             alarmsLoader = new AlarmsLoader();
@@ -85,11 +79,9 @@ public class NodeDetailsFragment extends DetailsFragment
             outagesLoader = new OutagesLoader();
             outagesLoader.execute();
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -225,41 +217,6 @@ public class NodeDetailsFragment extends DetailsFragment
             TextView title = (TextView) getActivity()
                     .findViewById(R.id.node_sys_object_id_title);
             detailsLayout.removeView(title);
-        }
-    }
-
-    /**
-     * {@link android.os.AsyncTask} that is used to load details form server.
-     * Useful if details fragment was opened from another section and information is not saved in
-     * the database.
-     */
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Node> {
-
-        protected Node doInBackground(Void... voids) {
-            try {
-                return server.node(nodeId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about node from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Node node) {
-            /** If information is available, updating DB */
-            if (node != null) {
-                ContentValues[] values = new ContentValues[1];
-                values[0] = ContentValuesGenerator.generate(node);
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Nodes.CONTENT_URI, values);
-
-                Cursor newCursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, String.valueOf(nodeId)),
-                        null, null, null, null);
-                updateContent(newCursor);
-                newCursor.close();
-            } else {
-                showErrorMessage();
-            }
         }
     }
 

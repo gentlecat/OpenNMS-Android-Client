@@ -1,7 +1,6 @@
-package org.opennms.android.sync;
+package org.opennms.android.data.sync;
 
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -9,29 +8,24 @@ import android.os.IBinder;
 import android.util.Log;
 
 import org.opennms.android.App;
-import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.Alarm;
 import org.opennms.android.data.api.model.Event;
 import org.opennms.android.data.api.model.Node;
 import org.opennms.android.data.api.model.Outage;
-import org.opennms.android.data.ContentValuesGenerator;
-import org.opennms.android.data.storage.Contract;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class LoadManager extends Service {
+public class UpdateManager extends Service {
+    private static final String TAG = "UpdateManager";
 
-    private static final String TAG = "LoadManager";
     @Inject
-    ServerInterface server;
+    Updater updater;
 
     @Override
     public void onCreate() {
-        App app = App.get(this);
-        app.inject(this);
+        App.get(this).inject(this);
     }
 
     @Override
@@ -47,7 +41,6 @@ public class LoadManager extends Service {
         return START_STICKY;
     }
 
-
     // Object that receives interactions from clients
     private final IBinder binder = new LocalBinder();
 
@@ -57,8 +50,8 @@ public class LoadManager extends Service {
      * IPC.
      */
     public class LocalBinder extends Binder {
-        public LoadManager getService() {
-            return LoadManager.this;
+        public UpdateManager getService() {
+            return UpdateManager.this;
         }
     }
 
@@ -104,7 +97,7 @@ public class LoadManager extends Service {
         }
     }
 
-    class NodesLoader extends AsyncTask<Void, Void, List<Node>> {
+    class NodesLoader extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
         public NodesLoader(int limit, int offset) {
@@ -118,21 +111,8 @@ public class LoadManager extends Service {
             nodesLoadActive = true;
         }
 
-        protected List<Node> doInBackground(Void... voids) {
-            List<Node> nodes;
-            try {
-                nodes = server.nodes(limit, offset).nodes;
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred during nodes loading!", e);
-                return null;
-            }
-
-            /** Updating database records */
-            ArrayList<ContentValues> values = ContentValuesGenerator.fromNodes(nodes);
-            getContentResolver().bulkInsert(Contract.Nodes.CONTENT_URI,
-                    values.toArray(new ContentValues[values.size()]));
-
-            return nodes;
+        protected Boolean doInBackground(Void... voids) {
+            return updater.updateNodes(limit, offset);
         }
 
         protected void onPostExecute(List<Node> nodes) {
@@ -140,7 +120,7 @@ public class LoadManager extends Service {
         }
     }
 
-    class AlarmsLoader extends AsyncTask<Void, Void, List<Alarm>> {
+    class AlarmsLoader extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
         public AlarmsLoader(int limit, int offset) {
@@ -154,21 +134,8 @@ public class LoadManager extends Service {
             alarmsLoadActive = true;
         }
 
-        protected List<Alarm> doInBackground(Void... voids) {
-            List<Alarm> alarms;
-            try {
-                alarms = server.alarms(limit, offset).alarms;
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred during alarms loading!", e);
-                return null;
-            }
-
-            /** Updating database records */
-            ArrayList<ContentValues> values = ContentValuesGenerator.fromAlarms(alarms);
-            getContentResolver().bulkInsert(Contract.Alarms.CONTENT_URI,
-                    values.toArray(new ContentValues[values.size()]));
-
-            return alarms;
+        protected Boolean doInBackground(Void... voids) {
+            return updater.updateAlarms(limit, offset);
         }
 
         protected void onPostExecute(List<Alarm> alarms) {
@@ -176,7 +143,7 @@ public class LoadManager extends Service {
         }
     }
 
-    class EventsLoader extends AsyncTask<Void, Void, List<Event>> {
+    class EventsLoader extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
         public EventsLoader(int limit, int offset) {
@@ -190,21 +157,8 @@ public class LoadManager extends Service {
             eventsLoadActive = true;
         }
 
-        protected List<Event> doInBackground(Void... voids) {
-            List<Event> events;
-            try {
-                events = server.events(limit, offset).events;
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred during events loading!", e);
-                return null;
-            }
-
-            /** Updating database records */
-            ArrayList<ContentValues> values = ContentValuesGenerator.fromEvents(events);
-            getContentResolver().bulkInsert(Contract.Events.CONTENT_URI,
-                    values.toArray(new ContentValues[values.size()]));
-
-            return events;
+        protected Boolean doInBackground(Void... voids) {
+            return updater.updateEvents(limit, offset);
         }
 
         protected void onPostExecute(List<Event> events) {
@@ -212,7 +166,7 @@ public class LoadManager extends Service {
         }
     }
 
-    class OutagesLoader extends AsyncTask<Void, Void, List<Outage>> {
+    class OutagesLoader extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
         public OutagesLoader(int limit, int offset) {
@@ -226,21 +180,8 @@ public class LoadManager extends Service {
             outagesLoadActive = true;
         }
 
-        protected List<Outage> doInBackground(Void... voids) {
-            List<Outage> outages;
-            try {
-                outages = server.outages(limit, offset).outages;
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred during outages loading!", e);
-                return null;
-            }
-
-            /** Updating database records */
-            ArrayList<ContentValues> values = ContentValuesGenerator.fromOutages(outages);
-            getContentResolver().bulkInsert(Contract.Outages.CONTENT_URI,
-                    values.toArray(new ContentValues[values.size()]));
-
-            return outages;
+        protected Boolean doInBackground(Void... voids) {
+            return updater.updateOutages(limit, offset);
         }
 
         protected void onPostExecute(List<Outage> outages) {

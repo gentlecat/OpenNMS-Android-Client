@@ -7,19 +7,19 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.sync.UpdateManager;
 
 import dagger.ObjectGraph;
 
 public class App extends Application {
     private ObjectGraph objectGraph;
 
-    public LoadManager loadManager;
+    public UpdateManager loadManager;
     public boolean serviceConnected = false;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            loadManager = ((LoadManager.LocalBinder) service).getService();
+            loadManager = ((UpdateManager.LocalBinder) service).getService();
             serviceConnected = true;
         }
 
@@ -42,7 +42,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Intent serviceIntent = new Intent(this, LoadManager.class);
+        Intent serviceIntent = new Intent(this, UpdateManager.class);
         startService(serviceIntent);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }

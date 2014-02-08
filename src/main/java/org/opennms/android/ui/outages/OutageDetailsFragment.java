@@ -1,16 +1,12 @@
 package org.opennms.android.ui.outages;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.data.ContentValuesGenerator;
-import org.opennms.android.data.api.model.Outage;
 import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.DetailsFragment;
@@ -55,19 +49,13 @@ public class OutageDetailsFragment extends DetailsFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -178,36 +166,6 @@ public class OutageDetailsFragment extends DetailsFragment
         TextView serviceTypeView =
                 (TextView) getActivity().findViewById(R.id.outage_service_type);
         serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
-    }
-
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Outage> {
-
-        protected Outage doInBackground(Void... voids) {
-            try {
-                return server.outage(outageId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about outage from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Outage outage) {
-            /** If information is available, updating DB */
-            if (outage != null) {
-                ContentValues[] values = new ContentValues[1];
-                values[0] = ContentValuesGenerator.generate(outage);
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values);
-
-                Cursor newCursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
-                        null, null, null, null);
-                updateContent(newCursor);
-                newCursor.close();
-            } else {
-                showErrorMessage();
-            }
-        }
     }
 
 }

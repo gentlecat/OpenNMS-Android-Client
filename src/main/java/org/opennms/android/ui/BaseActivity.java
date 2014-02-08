@@ -18,7 +18,7 @@ import android.widget.FrameLayout;
 import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.data.api.ServerInterface;
-import org.opennms.android.sync.SyncUtils;
+import org.opennms.android.data.sync.SyncUtils;
 import org.opennms.android.ui.dialogs.AboutDialog;
 
 import javax.inject.Inject;

@@ -39,8 +39,8 @@ import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
 import org.opennms.android.data.storage.Contract;
-import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.sync.AccountService;
+import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
 
 public class AlarmsListFragment extends ListFragment
@@ -127,7 +127,7 @@ public class AlarmsListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.ALARMS));
         }
     }
 
@@ -159,7 +159,7 @@ public class AlarmsListFragment extends ListFragment
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.ALARMS));
         }
     }
 
@@ -215,7 +215,7 @@ public class AlarmsListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.ALARMS));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.ALARMS));
         }
     }
 
@@ -264,7 +264,7 @@ public class AlarmsListFragment extends ListFragment
         if (Utils.isOnline(getActivity())) {
             getActivity().getContentResolver().delete(Contract.Alarms.CONTENT_URI, null, null);
             if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.ALARMS, LOAD_LIMIT, 0);
+                app.loadManager.startLoading(UpdateManager.LoadType.ALARMS, LOAD_LIMIT, 0);
                 setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");

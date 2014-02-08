@@ -1,17 +1,13 @@
 package org.opennms.android.ui.events;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +16,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
-import org.opennms.android.data.api.model.Event;
-import org.opennms.android.data.ContentValuesGenerator;
 import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.DetailsFragment;
 
 public class EventDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final String TAG = "EventDetailsFragment";
     private static final int LOADER_ID = 0x2;
     private long eventId;
 
@@ -43,10 +34,15 @@ public class EventDetailsFragment extends DetailsFragment
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                Uri.withAppendedPath(Contract.Events.CONTENT_URI,
-                        String.valueOf(eventId)),
+                Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
                 null, null, null, null);
     }
 
@@ -56,19 +52,13 @@ public class EventDetailsFragment extends DetailsFragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -191,35 +181,6 @@ public class EventDetailsFragment extends DetailsFragment
             TextView title =
                     (TextView) getActivity().findViewById(R.id.event_service_type_title);
             detailsLayout.removeView(title);
-        }
-    }
-
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Event> {
-        protected Event doInBackground(Void... voids) {
-            try {
-                return server.event(eventId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about event from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Event event) {
-            /** If information is available, updating DB */
-            if (event != null) {
-                ContentValues[] values = new ContentValues[1];
-                values[0] = ContentValuesGenerator.generate(event);
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values);
-
-                Cursor newCursor = getActivity().getContentResolver().query(
-                        Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
-                        null, null, null, null);
-                updateContent(newCursor);
-                newCursor.close();
-            } else {
-                showErrorMessage();
-            }
         }
     }
 

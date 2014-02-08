@@ -41,7 +41,7 @@ import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.Node;
 import org.opennms.android.data.ContentValuesGenerator;
 import org.opennms.android.data.storage.Contract;
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
 
 import java.util.ArrayList;
@@ -138,7 +138,7 @@ public class NodesListFragment extends ListFragment
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
     }
 
@@ -161,7 +161,7 @@ public class NodesListFragment extends ListFragment
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setVisible(!isDrawerOpen);
@@ -213,7 +213,7 @@ public class NodesListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
@@ -234,11 +234,11 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
+        if (app.serviceConnected && app.loadManager.isLoading(UpdateManager.LoadType.NODES)) return;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
                 // TODO: Add search support
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
                 setRefreshIndicationState(true);
             }
@@ -296,7 +296,7 @@ public class NodesListFragment extends ListFragment
             getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
             currentBatch = 1;
             if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
+                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, 0);
                 setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
