@@ -33,6 +33,7 @@ public class App extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
+        // Initializing objectGraph here because we'll need it early in ContentProvider.
         objectGraph = ObjectGraph.create(Modules.list(this));
         objectGraph.inject(this);
     }
