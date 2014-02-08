@@ -3,7 +3,6 @@ package org.opennms.android.ui;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,9 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import org.opennms.android.App;
 import org.opennms.android.R;
-import org.opennms.android.sync.SyncUtils;
+import org.opennms.android.data.api.ServerInterface;
+import org.opennms.android.data.sync.SyncUtils;
 import org.opennms.android.ui.dialogs.AboutDialog;
+
+import javax.inject.Inject;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -29,13 +32,16 @@ public abstract class BaseActivity extends ActionBarActivity {
     private CharSequence title;
     protected ActionBarDrawerToggle navigationToggle;
     protected ActionBar actionBar;
+    @Inject
+    protected ServerInterface server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        App app = App.get(this);
+        app.inject(this);
 
         SyncUtils.createSyncAccount(this);
 

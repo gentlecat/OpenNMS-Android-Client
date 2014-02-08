@@ -7,16 +7,19 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.sync.UpdateManager;
 
-public class MainApplication extends Application {
+import dagger.ObjectGraph;
 
-    public LoadManager loadManager;
+public class App extends Application {
+    private ObjectGraph objectGraph;
+
+    public UpdateManager loadManager;
     public boolean serviceConnected = false;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            loadManager = ((LoadManager.LocalBinder) service).getService();
+            loadManager = ((UpdateManager.LocalBinder) service).getService();
             serviceConnected = true;
         }
 
@@ -27,11 +30,29 @@ public class MainApplication extends Application {
     };
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        // Initializing objectGraph here because we'll need it early in ContentProvider.
+        objectGraph = ObjectGraph.create(Modules.list(this));
+        objectGraph.inject(this);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
-        Intent serviceIntent = new Intent(this, LoadManager.class);
+
+        Intent serviceIntent = new Intent(this, UpdateManager.class);
         startService(serviceIntent);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void inject(Object o) {
+        objectGraph.inject(o);
+    }
+
+    public static App get(Context context) {
+        return (App) context.getApplicationContext();
     }
 
 }

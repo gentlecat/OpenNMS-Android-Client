@@ -1,4 +1,4 @@
-package org.opennms.android.sync;
+package org.opennms.android.data.sync;
 
 import android.accounts.Account;
 import android.app.Notification;
@@ -19,14 +19,19 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import org.opennms.android.App;
 import org.opennms.android.R;
-import org.opennms.android.net.Client;
-import org.opennms.android.parsing.AlarmsParser;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.api.ServerInterface;
+import org.opennms.android.data.api.model.Alarm;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.settings.NotificationSettings;
 import org.opennms.android.ui.alarms.AlarmsActivity;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Handle the transfer of alarm data between a server and an app, using the Android sync adapter
@@ -38,8 +43,9 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int ALARM_NOTIFICATION_ID = 0x1;
     private static final int WARNING_NOTIFICATION_ID = 0x2;
     private ContentResolver contentResolver;
-    private Client serverCommunication;
     private Context context;
+    @Inject
+    ServerInterface server;
 
     /**
      * Set up the sync adapter
@@ -48,7 +54,9 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         this.context = context;
         contentResolver = context.getContentResolver();
-        serverCommunication = new Client(context);
+
+        App app = App.get(context);
+        app.inject(this);
     }
 
     /**
@@ -59,7 +67,6 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize, allowParallelSyncs);
         this.context = context;
         contentResolver = context.getContentResolver();
-        serverCommunication = new Client(context);
     }
 
     @Override
@@ -85,16 +92,15 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
 
-        // TODO: Load data using DataLoader
-        String result;
+        List<Alarm> alarms;
         try {
-            result = serverCommunication.get("alarms?orderBy=id&order=desc&limit=0").getMessage();
+            alarms = server.alarmsAll().alarms;
         } catch (Exception e) {
             Log.e(TAG, "Error occurred during alarm synchronization process", e);
             return;
         }
         contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
-        ArrayList<ContentValues> values = AlarmsParser.parseMultiple(result);
+        ArrayList<ContentValues> values = ContentValuesGenerator.fromAlarms(alarms);
         contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
                 values.toArray(new ContentValues[values.size()]));
 

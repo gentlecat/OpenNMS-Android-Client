@@ -1,18 +1,13 @@
 package org.opennms.android.ui.events;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +16,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.EventsParser;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
+import org.opennms.android.ui.DetailsFragment;
 
-import java.net.HttpURLConnection;
-
-public class EventDetailsFragment extends Fragment
+public class EventDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final String TAG = "EventDetailsFragment";
     private static final int LOADER_ID = 0x2;
     private long eventId;
-    private LoaderManager loaderManager;
 
     // Do not remove
     public EventDetailsFragment() {
@@ -47,10 +34,15 @@ public class EventDetailsFragment extends Fragment
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle data) {
         return new CursorLoader(getActivity(),
-                Uri.withAppendedPath(Contract.Events.CONTENT_URI,
-                        String.valueOf(eventId)),
+                Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
                 null, null, null, null);
     }
 
@@ -60,47 +52,13 @@ public class EventDetailsFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
-    }
-
-    private void showErrorMessage() {
-        if (!isAdded()) {
-            return;
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                RelativeLayout detailsContainer =
-                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
-                if (detailsContainer == null) {
-                    return;
-                }
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(R.layout.details_error, detailsContainer);
-            }
-        });
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loaderManager = getLoaderManager();
-        loaderManager.restartLoader(LOADER_ID, null, this);
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -159,7 +117,7 @@ public class EventDetailsFragment extends Fragment
         String createTimeString = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Events.CREATE_TIME));
         TextView timeTextView = (TextView) getActivity().findViewById(R.id.event_create_time);
-        timeTextView.setText(Utils.reformatDate(createTimeString, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ"));
+        timeTextView.setText(createTimeString);
 
         // Log message
         String logMessage = cursor.getString(
@@ -223,40 +181,6 @@ public class EventDetailsFragment extends Fragment
             TextView title =
                     (TextView) getActivity().findViewById(R.id.event_service_type_title);
             detailsLayout.removeView(title);
-        }
-    }
-
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
-
-        protected Response doInBackground(Void... voids) {
-            try {
-                return new DataLoader(getActivity()).event(eventId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about event from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Response response) {
-            /** If information is available, updating DB */
-            if (response != null) {
-                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
-                    ContentValues[] values = new ContentValues[1];
-                    values[0] = EventsParser.parseSingle(response.getMessage());
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    contentResolver.bulkInsert(Contract.Events.CONTENT_URI, values);
-
-                    Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Events.CONTENT_URI, String.valueOf(eventId)),
-                            null, null, null, null);
-                    updateContent(newCursor);
-                    newCursor.close();
-                } else {
-                    showErrorMessage();
-                }
-            } else {
-                showErrorMessage();
-            }
         }
     }
 

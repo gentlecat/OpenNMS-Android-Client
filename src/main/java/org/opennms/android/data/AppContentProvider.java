@@ -1,4 +1,4 @@
-package org.opennms.android.provider;
+package org.opennms.android.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -10,14 +10,21 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+import android.util.Log;
 
-import org.opennms.android.provider.Contract.Alarms;
-import org.opennms.android.provider.Contract.Events;
-import org.opennms.android.provider.Contract.Nodes;
-import org.opennms.android.provider.Contract.Outages;
-import org.opennms.android.provider.Contract.Tables;
+import org.opennms.android.App;
+import org.opennms.android.data.storage.Contract;
+import org.opennms.android.data.storage.Contract.Alarms;
+import org.opennms.android.data.storage.Contract.Events;
+import org.opennms.android.data.storage.Contract.Nodes;
+import org.opennms.android.data.storage.Contract.Outages;
+import org.opennms.android.data.storage.Contract.Tables;
+import org.opennms.android.data.sync.Updater;
+
+import javax.inject.Inject;
 
 public class AppContentProvider extends ContentProvider {
+    private static final String TAG = "AppContentProvider";
 
     private static final int NODES = 100;
     private static final int NODES_ID = 101;
@@ -29,7 +36,10 @@ public class AppContentProvider extends ContentProvider {
     private static final int OUTAGES = 400;
     private static final int OUTAGES_ID = 401;
     private static UriMatcher uriMatcher;
-    private DatabaseHelper dbHelper;
+    @Inject
+    SQLiteDatabase db;
+    @Inject
+    Updater updater;
 
     private static UriMatcher createUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -38,7 +48,7 @@ public class AppContentProvider extends ContentProvider {
         // Nodes
         matcher.addURI(authority, Contract.PATH_NODES, NODES);
         matcher.addURI(authority, Contract.PATH_NODES + "/#", NODES_ID);
-        matcher.addURI(authority, Contract.PATH_NODES + "/" + Nodes.NAME + "/*", NODES_NAME);
+        matcher.addURI(authority, Contract.PATH_NODES + "/" + Nodes.LABEL + "/*", NODES_NAME);
 
         // Alarms
         matcher.addURI(authority, Contract.PATH_ALARMS, ALARMS);
@@ -57,8 +67,9 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        App app = App.get(getContext());
+        app.inject(this);
         uriMatcher = createUriMatcher();
-        dbHelper = new DatabaseHelper(getContext());
         return true;
     }
 
@@ -90,55 +101,91 @@ public class AppContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
                         String sortOrder) {
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        Cursor cursor;
 
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES:
                 queryBuilder.setTables(Tables.NODES);
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+
             case NODES_ID:
                 queryBuilder.setTables(Tables.NODES);
                 queryBuilder.appendWhere(Nodes._ID + "=" + uri.getLastPathSegment());
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                if (!cursor.moveToFirst()) {
+                    Log.i(TAG, "Node #" + uri.getLastPathSegment() + " is missing. Updating...");
+                    updater.updateNode(Long.parseLong(uri.getLastPathSegment()));
+                    cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                }
                 break;
+
             case NODES_NAME:
                 queryBuilder.setTables(Tables.NODES);
-                queryBuilder.appendWhere(Nodes.NAME + " LIKE '%" + uri.getLastPathSegment() + "%'");
+                queryBuilder.appendWhere(Nodes.LABEL + " LIKE '%" + uri.getLastPathSegment() + "%'");
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+
             case ALARMS:
                 queryBuilder.setTables(Tables.ALARMS);
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+
             case ALARMS_ID:
                 queryBuilder.setTables(Tables.ALARMS);
                 queryBuilder.appendWhere(Alarms._ID + "=" + uri.getLastPathSegment());
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                if (!cursor.moveToFirst()) {
+                    Log.i(TAG, "Alarm #" + uri.getLastPathSegment() + " is missing. Updating...");
+                    updater.updateAlarm(Long.parseLong(uri.getLastPathSegment()));
+                    cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                }
                 break;
+
             case EVENTS:
                 queryBuilder.setTables(Tables.EVENTS);
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+
             case EVENTS_ID:
                 queryBuilder.setTables(Tables.EVENTS);
                 queryBuilder.appendWhere(Events._ID + "=" + uri.getLastPathSegment());
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                if (!cursor.moveToFirst()) {
+                    Log.i(TAG, "Event #" + uri.getLastPathSegment() + " is missing. Updating...");
+                    updater.updateEvent(Long.parseLong(uri.getLastPathSegment()));
+                    cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                }
                 break;
+
             case OUTAGES:
                 queryBuilder.setTables(Tables.OUTAGES);
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
+
             case OUTAGES_ID:
                 queryBuilder.setTables(Tables.OUTAGES);
                 queryBuilder.appendWhere(Outages._ID + "=" + uri.getLastPathSegment());
+                cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                if (!cursor.moveToFirst()) {
+                    Log.i(TAG, "Outage #" + uri.getLastPathSegment() + " is missing. Updating...");
+                    updater.updateOutage(Long.parseLong(uri.getLastPathSegment()));
+                    cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+                }
                 break;
+
             default:
                 throw new UnsupportedOperationException("Unknown URI: " + uri);
         }
 
-        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES: {
@@ -200,7 +247,6 @@ public class AppContentProvider extends ContentProvider {
     }
 
     private int bulkInsertHelper(String table, ContentValues[] values) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
             int rowsAffected = values.length;
@@ -218,10 +264,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         int rowsAffected = 0;
-
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES_ID:
@@ -279,10 +322,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         int rowsAffected = 0;
-
         final int match = uriMatcher.match(uri);
         switch (match) {
             case NODES:

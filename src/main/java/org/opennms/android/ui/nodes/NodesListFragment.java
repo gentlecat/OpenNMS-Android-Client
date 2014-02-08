@@ -34,18 +34,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.opennms.android.MainApplication;
+import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.NodesParser;
-import org.opennms.android.provider.Contract;
-import org.opennms.android.sync.LoadManager;
+import org.opennms.android.data.api.ServerInterface;
+import org.opennms.android.data.api.model.Node;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.storage.Contract;
+import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
 
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class NodesListFragment extends ListFragment
         implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<Cursor>,
@@ -56,7 +58,7 @@ public class NodesListFragment extends ListFragment
     private static final int LOADER_ID = 3;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
-    private MainApplication app;
+    private App app;
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
@@ -77,12 +79,16 @@ public class NodesListFragment extends ListFragment
     private View listFooter;
     private AsyncTask searchUpdateTask;
     private int currentBatch = 1;
+    @Inject
+    protected ServerInterface server;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        app = (MainApplication) getActivity().getApplication();
+        app = App.get(getActivity());
+        app.inject(this);
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
@@ -132,7 +138,7 @@ public class NodesListFragment extends ListFragment
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
     }
 
@@ -155,7 +161,7 @@ public class NodesListFragment extends ListFragment
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setVisible(!isDrawerOpen);
@@ -177,14 +183,14 @@ public class NodesListFragment extends ListFragment
         Uri baseUri;
         if (this.currentFilter != null) {
             baseUri = Uri.withAppendedPath(
-                    Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, Contract.Nodes.NAME),
+                    Uri.withAppendedPath(Contract.Nodes.CONTENT_URI, Contract.Nodes.LABEL),
                     Uri.encode(this.currentFilter));
         } else {
             baseUri = Contract.Nodes.CONTENT_URI;
         }
         String[] projection = {
                 Contract.Nodes._ID,
-                Contract.Nodes.NAME
+                Contract.Nodes.LABEL
         };
         return new CursorLoader(getActivity(), baseUri, projection, null, null,
                 /** Sort order must be the same as in requests to server. */
@@ -207,7 +213,7 @@ public class NodesListFragment extends ListFragment
         }
         firstLoad = false;
         if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(LoadManager.LoadType.NODES));
+            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
         }
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
@@ -228,11 +234,11 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(LoadManager.LoadType.NODES)) return;
+        if (app.serviceConnected && app.loadManager.isLoading(UpdateManager.LoadType.NODES)) return;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
                 // TODO: Add search support
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
                 setRefreshIndicationState(true);
             }
@@ -290,7 +296,7 @@ public class NodesListFragment extends ListFragment
             getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
             currentBatch = 1;
             if (app.serviceConnected) {
-                app.loadManager.startLoading(LoadManager.LoadType.NODES, LOAD_LIMIT, 0);
+                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, 0);
                 setRefreshIndicationState(true);
             } else {
                 Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
@@ -322,20 +328,20 @@ public class NodesListFragment extends ListFragment
         }
     }
 
-    private class SearchUpdate extends AsyncTask<Void, Void, Response> {
-        protected Response doInBackground(Void... voids) {
+    private class SearchUpdate extends AsyncTask<Void, Void, List<Node>> {
+        protected List<Node> doInBackground(Void... voids) {
             try {
-                return new DataLoader(getActivity()).nodes(LOAD_LIMIT, 0, currentFilter);
+                return server.nodesSearch(LOAD_LIMIT, 0, currentFilter).nodes;
             } catch (Exception e) {
                 Log.e(TAG, "Error occurred while loading info from server", e);
                 return null;
             }
         }
 
-        protected void onPostExecute(Response response) {
-            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+        protected void onPostExecute(List<Node> nodes) {
+            if (nodes != null) {
                 /** Updating database records */
-                ArrayList<ContentValues> values = NodesParser.parseMultiple(response.getMessage());
+                ArrayList<ContentValues> values = ContentValuesGenerator.fromNodes(nodes);
                 getActivity().getContentResolver().bulkInsert(Contract.Nodes.CONTENT_URI,
                         values.toArray(new ContentValues[values.size()]));
             }

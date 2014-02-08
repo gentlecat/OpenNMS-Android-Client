@@ -16,21 +16,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.provider.DatabaseHelper;
+import org.opennms.android.data.api.ServerInterface;
+import org.opennms.android.data.api.model.User;
+import org.opennms.android.data.storage.DatabaseHelper;
 import org.opennms.android.settings.ConnectionSettings;
 import org.opennms.android.settings.NotificationSettings;
-import org.opennms.android.sync.AccountService;
-import org.opennms.android.sync.SyncUtils;
+import org.opennms.android.data.sync.AccountService;
+import org.opennms.android.data.sync.SyncUtils;
 import org.opennms.android.ui.alarms.AlarmsListFragment;
 import org.opennms.android.ui.nodes.NodesActivity;
 import org.opennms.android.ui.nodes.NodesListFragment;
 import org.opennms.android.ui.outages.OutagesListFragment;
 
-import java.net.HttpURLConnection;
+import javax.inject.Inject;
 
 public class SettingsActivity extends PreferenceActivity
         implements OnSharedPreferenceChangeListener {
@@ -40,6 +41,8 @@ public class SettingsActivity extends PreferenceActivity
     private ServerCheckTask checkTask;
     private Context context;
     private Settings oldSettings;
+    @Inject
+    ServerInterface server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,9 @@ public class SettingsActivity extends PreferenceActivity
         addPreferencesFromResource(R.xml.settings);
         context = this;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        App app = App.get(context);
+        app.inject(this);
 
         oldSettings = (Settings) getLastNonConfigurationInstance();
         if (oldSettings == null) {
@@ -279,12 +285,12 @@ public class SettingsActivity extends PreferenceActivity
         editor.commit();
     }
 
-    private class ServerCheckTask extends AsyncTask<Void, Void, Response> {
+    private class ServerCheckTask extends AsyncTask<Void, Void, User> {
 
-        protected Response doInBackground(Void... voids) {
+        protected User doInBackground(Void... voids) {
             String user = ConnectionSettings.user(context);
             try {
-                return new DataLoader(getApplicationContext()).user(user);
+                return server.user(user);
             } catch (Exception e) {
                 // TODO: Provide more information to user
                 Log.e(TAG, "Error occurred while testing connection to server!", e);
@@ -292,16 +298,12 @@ public class SettingsActivity extends PreferenceActivity
             }
         }
 
-        protected void onPostExecute(Response response) {
+        protected void onPostExecute(User user) {
             // TODO: Replace previous toast if it is still displayed
-            if (response != null) {
-                if (response.getCode() == HttpURLConnection.HTTP_OK) {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_ok, Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.server_check_not_ok, Toast.LENGTH_LONG).show();
-                }
+            if (user != null) {
+                Toast.makeText(getApplicationContext(), R.string.server_check_ok, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), R.string.server_check_failed, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.server_check_not_ok, Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -1,4 +1,4 @@
-package org.opennms.android.sync;
+package org.opennms.android.data.sync;
 
 import android.app.Service;
 import android.content.Intent;

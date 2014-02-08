@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.storage.Contract;
 
 public class EventAdapter extends CursorAdapter {
 

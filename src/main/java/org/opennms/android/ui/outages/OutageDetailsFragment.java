@@ -1,17 +1,12 @@
 package org.opennms.android.ui.outages;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +15,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.opennms.android.R;
-import org.opennms.android.Utils;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.OutagesParser;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
+import org.opennms.android.ui.DetailsFragment;
 
-import java.net.HttpURLConnection;
-
-public class OutageDetailsFragment extends Fragment
+public class OutageDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "OutageDetailsFragment";
@@ -59,19 +49,13 @@ public class OutageDetailsFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -82,26 +66,6 @@ public class OutageDetailsFragment extends Fragment
 
         loaderManager = getLoaderManager();
         loaderManager.restartLoader(LOADER_ID, null, this);
-    }
-
-    private void showErrorMessage() {
-        if (!isAdded()) {
-            return;
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                RelativeLayout detailsContainer =
-                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
-                if (detailsContainer == null) {
-                    return;
-                }
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(R.layout.details_error, detailsContainer);
-            }
-        });
     }
 
     @Override
@@ -161,8 +125,7 @@ public class OutageDetailsFragment extends Fragment
                 cursor.getColumnIndexOrThrow(Contract.Outages.SERVICE_LOST_EVENT_ID));
         TextView lostServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_lost_service_event);
-        lostServiceEvent.setText(Utils.reformatDate(serviceLostTime, "yyyy-MM-dd'T'HH:mm:ssZ")
-                + "\n#" + serviceLostEventId);
+        lostServiceEvent.setText(serviceLostTime + "\n#" + serviceLostEventId);
         lostServiceEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,9 +140,7 @@ public class OutageDetailsFragment extends Fragment
         TextView regainedServiceEvent =
                 (TextView) getActivity().findViewById(R.id.outage_regained_service_event);
         if (serviceRegainedTime != null) {
-            regainedServiceEvent.setText(Utils.reformatDate(serviceRegainedTime,
-                    "yyyy-MM-dd'T'HH:mm:ssZ") + "\n#"
-                    + serviceRegainedEventId);
+            regainedServiceEvent.setText(serviceRegainedTime + "\n#" + serviceRegainedEventId);
             regainedServiceEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,40 +166,6 @@ public class OutageDetailsFragment extends Fragment
         TextView serviceTypeView =
                 (TextView) getActivity().findViewById(R.id.outage_service_type);
         serviceTypeView.setText(serviceTypeName + " (#" + serviceTypeId + ")");
-    }
-
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
-
-        protected Response doInBackground(Void... voids) {
-            try {
-                return new DataLoader(getActivity()).outage(outageId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about outage from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Response response) {
-            /** If information is available, updating DB */
-            if (response != null) {
-                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
-                    ContentValues[] values = new ContentValues[1];
-                    values[0] = OutagesParser.parseSingle(response.getMessage());
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    contentResolver.bulkInsert(Contract.Outages.CONTENT_URI, values);
-
-                    Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Outages.CONTENT_URI, String.valueOf(outageId)),
-                            null, null, null, null);
-                    updateContent(newCursor);
-                    newCursor.close();
-                } else {
-                    showErrorMessage();
-                }
-            } else {
-                showErrorMessage();
-            }
-        }
     }
 
 }

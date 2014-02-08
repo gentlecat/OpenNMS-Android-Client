@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -26,17 +25,16 @@ import android.widget.Toast;
 
 import org.opennms.android.R;
 import org.opennms.android.Utils;
-import org.opennms.android.net.Client;
-import org.opennms.android.net.DataLoader;
-import org.opennms.android.net.Response;
-import org.opennms.android.parsing.AlarmsParser;
-import org.opennms.android.provider.Contract;
+import org.opennms.android.data.ContentValuesGenerator;
+import org.opennms.android.data.api.model.Alarm;
+import org.opennms.android.data.storage.Contract;
 import org.opennms.android.ui.ActivityUtils;
 import org.opennms.android.ui.BaseActivity;
+import org.opennms.android.ui.DetailsFragment;
 
-import java.net.HttpURLConnection;
+import retrofit.RetrofitError;
 
-public class AlarmDetailsFragment extends Fragment
+public class AlarmDetailsFragment extends DetailsFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = "AlarmDetailsFragment";
@@ -70,19 +68,13 @@ public class AlarmDetailsFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (!isAdded()) {
-            return;
-        }
-
-        /** Checking if data has been loaded from the DB */
+        if (!isAdded()) return;
         if (cursor != null && cursor.moveToFirst()) {
             updateContent(cursor);
         } else {
-            /** If not, trying to get information from the server */
-            new GetDetailsFromServer().execute();
+            showErrorMessage();
         }
-
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
     @Override
@@ -102,26 +94,6 @@ public class AlarmDetailsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.details_loading, container, false);
-    }
-
-    private void showErrorMessage() {
-        if (!isAdded()) {
-            return;
-        }
-
-        getActivity().runOnUiThread(new Runnable() {
-            public void run() {
-                RelativeLayout detailsContainer =
-                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
-                if (detailsContainer == null) {
-                    return;
-                }
-                detailsContainer.removeAllViews();
-                LayoutInflater inflater = (LayoutInflater) getActivity()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                inflater.inflate(R.layout.details_error, detailsContainer);
-            }
-        });
     }
 
     @Override
@@ -244,7 +216,7 @@ public class AlarmDetailsFragment extends Fragment
         TextView ackMessage = (TextView) getActivity().findViewById(R.id.alarm_ack_message);
         if (ackTime != null) {
             ackStatus.setText(getString(R.string.alarm_details_acked));
-            ackMessage.setText(Utils.reformatDate(ackTime, "yyyy-MM-dd'T'HH:mm:ss'.'SSSZ")
+            ackMessage.setText(ackTime
                     + " " + getString(R.string.alarm_details_acked_by) + " "
                     + ackUser);
         } else {
@@ -300,8 +272,7 @@ public class AlarmDetailsFragment extends Fragment
         String lastEventSeverity = cursor.getString(
                 cursor.getColumnIndexOrThrow(Contract.Alarms.LAST_EVENT_SEVERITY));
         TextView lastEvent = (TextView) getActivity().findViewById(R.id.alarm_last_event);
-        lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n"
-                + Utils.reformatDate(lastEventTimeString, "yyyy-MM-dd'T'HH:mm:ssZ"));
+        lastEvent.setText("#" + lastEventId + " " + lastEventSeverity + "\n" + lastEventTimeString);
         lastEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -313,44 +284,11 @@ public class AlarmDetailsFragment extends Fragment
         updateMenu(isAcked);
     }
 
-    private class GetDetailsFromServer extends AsyncTask<Void, Void, Response> {
-
-        protected Response doInBackground(Void... voids) {
-            try {
-                return new DataLoader(getActivity()).alarm(alarmId);
-            } catch (Exception e) {
-                Log.e(TAG, "Error occurred while loading info about alarm from server", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(Response response) {
-            /** If information is available, updating DB */
-            if (response != null) {
-                if (response.getMessage() != null && response.getCode() == HttpURLConnection.HTTP_OK) {
-                    ContentValues[] values = new ContentValues[1];
-                    values[0] = AlarmsParser.parseSingle(response.getMessage());
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
-
-                    Cursor newCursor = getActivity().getContentResolver().query(
-                            Uri.withAppendedPath(Contract.Alarms.CONTENT_URI, String.valueOf(alarmId)),
-                            null, null, null, null);
-                    updateContent(newCursor);
-                    newCursor.close();
-                } else {
-                    showErrorMessage();
-                }
-            } else {
-                showErrorMessage();
-            }
-        }
-    }
-
-    private class AcknowledgementTask extends AsyncTask<Void, Void, Response> {
+    private class AcknowledgementTask extends AsyncTask<Void, Void, Alarm> {
 
         private final MenuItem ackMenuItem = menu.findItem(R.id.menu_ack_alarm);
         private AlarmDetailsFragment fragment;
+        private Exception lastException;
 
         public AcknowledgementTask(AlarmDetailsFragment fragment) {
             this.fragment = fragment;
@@ -364,25 +302,26 @@ public class AlarmDetailsFragment extends Fragment
         }
 
         @Override
-        protected Response doInBackground(Void... voids) {
+        protected Alarm doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).put(String.format("alarms/%d?ack=true", alarmId));
-            } catch (Exception e) {
+                return server.alarmSetAck(alarmId, true);
+            } catch (RetrofitError e) {
+                lastException = e;
                 Log.e(TAG, "Error occurred during acknowledgement process!", e);
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(Response response) {
-            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+        protected void onPostExecute(Alarm alarm) {
+            if (alarm != null) {
                 Toast.makeText(getActivity(),
                         String.format(getString(R.string.alarm_ack_success), alarmId),
                         Toast.LENGTH_LONG).show();
 
                 // Updating database
                 ContentValues[] values = new ContentValues[1];
-                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                values[0] = ContentValuesGenerator.generate(alarm);
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
 
@@ -390,7 +329,7 @@ public class AlarmDetailsFragment extends Fragment
                 loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
-                        "Error occurred during acknowledgement process!",
+                        "Error occurred during acknowledgement process!" + lastException.toString(),
                         Toast.LENGTH_LONG).show();
                 updateMenu(false);
             }
@@ -398,10 +337,10 @@ public class AlarmDetailsFragment extends Fragment
 
     }
 
-    private class UnacknowledgementTask extends AsyncTask<Void, Void, Response> {
-
+    private class UnacknowledgementTask extends AsyncTask<Void, Void, Alarm> {
         private final MenuItem unackMenuItem = menu.findItem(R.id.menu_unack_alarm);
         private AlarmDetailsFragment fragment;
+        private Exception lastException;
 
         public UnacknowledgementTask(AlarmDetailsFragment fragment) {
             this.fragment = fragment;
@@ -415,25 +354,26 @@ public class AlarmDetailsFragment extends Fragment
         }
 
         @Override
-        protected Response doInBackground(Void... voids) {
+        protected Alarm doInBackground(Void... voids) {
             try {
-                return new Client(getActivity()).put(String.format("alarms/%d?ack=false", alarmId));
-            } catch (Exception e) {
+                return server.alarmSetAck(alarmId, false);
+            } catch (RetrofitError e) {
+                lastException = e;
                 Log.e(TAG, "Error occurred during unacknowledgement process!", e);
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(Response response) {
-            if (response != null && response.getCode() == HttpURLConnection.HTTP_OK) {
+        protected void onPostExecute(Alarm alarm) {
+            if (alarm != null) {
                 Toast.makeText(getActivity(),
                         String.format(getString(R.string.alarm_unack_success), alarmId),
                         Toast.LENGTH_LONG).show();
 
                 // Updating database
                 ContentValues[] values = new ContentValues[1];
-                values[0] = AlarmsParser.parseSingle(response.getMessage());
+                values[0] = ContentValuesGenerator.generate(alarm);
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI, values);
 
@@ -441,7 +381,7 @@ public class AlarmDetailsFragment extends Fragment
                 loaderManager.restartLoader(LOADER_ID, null, fragment);
             } else {
                 Toast.makeText(getActivity(),
-                        "Error occurred during unacknowledgement process!",
+                        "Error occurred during unacknowledgement process!" + lastException.toString(),
                         Toast.LENGTH_LONG).show();
                 updateMenu(true);
             }
