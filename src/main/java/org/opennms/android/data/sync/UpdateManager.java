@@ -1,106 +1,68 @@
 package org.opennms.android.data.sync;
 
-import android.app.Service;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.util.Log;
 
 import org.opennms.android.App;
-import org.opennms.android.data.api.model.Alarm;
-import org.opennms.android.data.api.model.Event;
-import org.opennms.android.data.api.model.Node;
-import org.opennms.android.data.api.model.Outage;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
-public class UpdateManager extends Service {
+public class UpdateManager {
     private static final String TAG = "UpdateManager";
 
     @Inject
     Updater updater;
 
-    @Override
-    public void onCreate() {
-        App.get(this).inject(this);
+    public UpdateManager(App app) {
+        app.inject(this);
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
+    public enum UpdateType {NODES, ALARMS, EVENTS, OUTAGES}
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Received start id " + startId + ": " + intent);
-        /** We want this service to continue running until
-         * it is explicitly stopped, so return sticky. */
-        return START_STICKY;
-    }
+    boolean nodesUpdating = false;
+    boolean alarmsUpdating = false;
+    boolean eventsUpdating = false;
+    boolean outagesUpdating = false;
 
-    // Object that receives interactions from clients
-    private final IBinder binder = new LocalBinder();
-
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class LocalBinder extends Binder {
-        public UpdateManager getService() {
-            return UpdateManager.this;
-        }
-    }
-
-    public enum LoadType {NODES, ALARMS, EVENTS, OUTAGES}
-
-    boolean nodesLoadActive = false;
-    boolean alarmsLoadActive = false;
-    boolean eventsLoadActive = false;
-    boolean outagesLoadActive = false;
-
-    public boolean isLoading(LoadType loadType) {
-        switch (loadType) {
+    public boolean isUpdating(UpdateType updateType) {
+        switch (updateType) {
             case NODES:
-                return nodesLoadActive;
+                return nodesUpdating;
             case ALARMS:
-                return alarmsLoadActive;
+                return alarmsUpdating;
             case EVENTS:
-                return eventsLoadActive;
+                return eventsUpdating;
             case OUTAGES:
-                return outagesLoadActive;
+                return outagesUpdating;
         }
         return false;
     }
 
-    public void startLoading(LoadType loadType, int limit, int offset) {
-        if (isLoading(loadType)) {
-            Log.i(TAG, "Already loading.");
+    public void startUpdating(UpdateType updateType, int limit, int offset) {
+        if (isUpdating(updateType)) {
+            Log.i(TAG, "Already updating.");
             return;
         }
-        switch (loadType) {
+        switch (updateType) {
             case NODES:
-                new NodesLoader(limit, offset).execute();
+                new NodesUpdater(limit, offset).execute();
                 break;
             case ALARMS:
-                new AlarmsLoader(limit, offset).execute();
+                new AlarmsUpdater(limit, offset).execute();
                 break;
             case EVENTS:
-                new EventsLoader(limit, offset).execute();
+                new EventsUpdater(limit, offset).execute();
                 break;
             case OUTAGES:
-                new OutagesLoader(limit, offset).execute();
+                new OutagesUpdater(limit, offset).execute();
                 break;
         }
     }
 
-    class NodesLoader extends AsyncTask<Void, Void, Boolean> {
+    class NodesUpdater extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
-        public NodesLoader(int limit, int offset) {
+        public NodesUpdater(int limit, int offset) {
             this.limit = limit;
             this.offset = offset;
         }
@@ -108,22 +70,22 @@ public class UpdateManager extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            nodesLoadActive = true;
+            nodesUpdating = true;
         }
 
         protected Boolean doInBackground(Void... voids) {
             return updater.updateNodes(limit, offset);
         }
 
-        protected void onPostExecute(List<Node> nodes) {
-            nodesLoadActive = false;
+        protected void onPostExecute(Boolean success) {
+            nodesUpdating = false;
         }
     }
 
-    class AlarmsLoader extends AsyncTask<Void, Void, Boolean> {
+    class AlarmsUpdater extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
-        public AlarmsLoader(int limit, int offset) {
+        public AlarmsUpdater(int limit, int offset) {
             this.limit = limit;
             this.offset = offset;
         }
@@ -131,22 +93,22 @@ public class UpdateManager extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            alarmsLoadActive = true;
+            alarmsUpdating = true;
         }
 
         protected Boolean doInBackground(Void... voids) {
             return updater.updateAlarms(limit, offset);
         }
 
-        protected void onPostExecute(List<Alarm> alarms) {
-            alarmsLoadActive = false;
+        protected void onPostExecute(Boolean success) {
+            alarmsUpdating = false;
         }
     }
 
-    class EventsLoader extends AsyncTask<Void, Void, Boolean> {
+    class EventsUpdater extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
-        public EventsLoader(int limit, int offset) {
+        public EventsUpdater(int limit, int offset) {
             this.limit = limit;
             this.offset = offset;
         }
@@ -154,22 +116,22 @@ public class UpdateManager extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            eventsLoadActive = true;
+            eventsUpdating = true;
         }
 
         protected Boolean doInBackground(Void... voids) {
             return updater.updateEvents(limit, offset);
         }
 
-        protected void onPostExecute(List<Event> events) {
-            eventsLoadActive = false;
+        protected void onPostExecute(Boolean success) {
+            eventsUpdating = false;
         }
     }
 
-    class OutagesLoader extends AsyncTask<Void, Void, Boolean> {
+    class OutagesUpdater extends AsyncTask<Void, Void, Boolean> {
         private int limit, offset;
 
-        public OutagesLoader(int limit, int offset) {
+        public OutagesUpdater(int limit, int offset) {
             this.limit = limit;
             this.offset = offset;
         }
@@ -177,15 +139,15 @@ public class UpdateManager extends Service {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            outagesLoadActive = true;
+            outagesUpdating = true;
         }
 
         protected Boolean doInBackground(Void... voids) {
             return updater.updateOutages(limit, offset);
         }
 
-        protected void onPostExecute(List<Outage> outages) {
-            outagesLoadActive = false;
+        protected void onPostExecute(Boolean success) {
+            outagesUpdating = false;
         }
     }
 

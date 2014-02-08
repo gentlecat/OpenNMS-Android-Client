@@ -59,7 +59,7 @@
             android:name=".data.AppContentProvider" />
 
         <service
-            android:name=".data.sync.SyncService"
+            android:name=".data.sync.AlarmsSyncService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -78,7 +78,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service android:name=".data.sync.UpdateManager" />
 
     </application>
 

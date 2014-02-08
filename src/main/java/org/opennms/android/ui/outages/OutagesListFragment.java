@@ -20,7 +20,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +41,8 @@ import org.opennms.android.data.storage.Contract;
 import org.opennms.android.data.sync.AccountService;
 import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
+
+import javax.inject.Inject;
 
 public class OutagesListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, ActionBar.OnNavigationListener {
@@ -71,15 +72,18 @@ public class OutagesListFragment extends ListFragment
             }
         }
     };
-    private App app;
     private boolean firstLoad = true;
+    @Inject
+    UpdateManager updateManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        app = (App) getActivity().getApplication();
+        App.get(getActivity()).inject(this);
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -120,9 +124,7 @@ public class OutagesListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.OUTAGES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.OUTAGES));
     }
 
     @Override
@@ -156,9 +158,7 @@ public class OutagesListFragment extends ListFragment
         boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.OUTAGES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.OUTAGES));
     }
 
     @Override
@@ -208,9 +208,7 @@ public class OutagesListFragment extends ListFragment
             }
         }
         firstLoad = false;
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.OUTAGES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.OUTAGES));
     }
 
     @Override
@@ -257,12 +255,8 @@ public class OutagesListFragment extends ListFragment
     private void refreshList() {
         if (Utils.isOnline(getActivity())) {
             getActivity().getContentResolver().delete(Contract.Outages.CONTENT_URI, null, null);
-            if (app.serviceConnected) {
-                app.loadManager.startLoading(UpdateManager.LoadType.OUTAGES, LOAD_LIMIT, 0);
-                setRefreshIndicationState(true);
-            } else {
-                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
-            }
+            updateManager.startUpdating(UpdateManager.UpdateType.OUTAGES, LOAD_LIMIT, 0);
+            setRefreshIndicationState(true);
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),

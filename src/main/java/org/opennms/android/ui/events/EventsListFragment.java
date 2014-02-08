@@ -18,7 +18,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +39,8 @@ import org.opennms.android.data.sync.AccountService;
 import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
 
+import javax.inject.Inject;
+
 public class EventsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener {
 
@@ -48,7 +49,6 @@ public class EventsListFragment extends ListFragment
     private static final int LOADER_ID = 2;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
-    private App app;
     private EventAdapter adapter;
     private boolean isDualPane = false;
     private FrameLayout detailsContainer;
@@ -81,13 +81,17 @@ public class EventsListFragment extends ListFragment
         }
     };
     private SharedPreferences sharedPref;
+    @Inject
+    UpdateManager updateManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        app = (App) getActivity().getApplication();
+        App.get(getActivity()).inject(this);
+
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -136,9 +140,7 @@ public class EventsListFragment extends ListFragment
     @Override
     public void onResume() {
         super.onResume();
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.EVENTS));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.EVENTS));
     }
 
     @Override
@@ -153,9 +155,7 @@ public class EventsListFragment extends ListFragment
         boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.EVENTS));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.EVENTS));
     }
 
     @Override
@@ -209,9 +209,7 @@ public class EventsListFragment extends ListFragment
             }
         }
         firstLoad = false;
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.EVENTS));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.EVENTS));
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
@@ -231,10 +229,10 @@ public class EventsListFragment extends ListFragment
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(UpdateManager.LoadType.EVENTS)) return;
+        if (updateManager.isUpdating(UpdateManager.UpdateType.EVENTS)) return;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
-                app.loadManager.startLoading(UpdateManager.LoadType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                updateManager.startUpdating(UpdateManager.UpdateType.EVENTS, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
                 setRefreshIndicationState(true);
             }
@@ -276,12 +274,8 @@ public class EventsListFragment extends ListFragment
         if (Utils.isOnline(getActivity())) {
             getActivity().getContentResolver().delete(Contract.Events.CONTENT_URI, null, null);
             currentBatch = 1;
-            if (app.serviceConnected) {
-                app.loadManager.startLoading(UpdateManager.LoadType.EVENTS, LOAD_LIMIT, 0);
-                setRefreshIndicationState(true);
-            } else {
-                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
-            }
+            updateManager.startUpdating(UpdateManager.UpdateType.EVENTS, LOAD_LIMIT, 0);
+            setRefreshIndicationState(true);
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),

@@ -37,9 +37,9 @@ import android.widget.Toast;
 import org.opennms.android.App;
 import org.opennms.android.R;
 import org.opennms.android.Utils;
+import org.opennms.android.data.ContentValuesGenerator;
 import org.opennms.android.data.api.ServerInterface;
 import org.opennms.android.data.api.model.Node;
-import org.opennms.android.data.ContentValuesGenerator;
 import org.opennms.android.data.storage.Contract;
 import org.opennms.android.data.sync.UpdateManager;
 import org.opennms.android.ui.BaseActivity;
@@ -58,7 +58,6 @@ public class NodesListFragment extends ListFragment
     private static final int LOADER_ID = 3;
     private static final int SCROLL_THRESHOLD = 5; // Must be more than 1
     private static final int LOAD_LIMIT = 25;
-    private App app;
     private NodeAdapter adapter;
     private boolean isDualPane = false;
     private String currentFilter;
@@ -81,15 +80,17 @@ public class NodesListFragment extends ListFragment
     private int currentBatch = 1;
     @Inject
     protected ServerInterface server;
+    @Inject
+    UpdateManager updateManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-        app = App.get(getActivity());
-        app.inject(this);
+        App.get(getActivity()).inject(this);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -137,9 +138,7 @@ public class NodesListFragment extends ListFragment
     public void onResume() {
         super.onResume();
         getActivity().getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.NODES));
     }
 
     @Override
@@ -160,9 +159,7 @@ public class NodesListFragment extends ListFragment
         boolean isDrawerOpen = ((BaseActivity) getActivity()).isDrawerOpen();
         MenuItem refreshItem = menu.findItem(R.id.menu_refresh);
         refreshItem.setVisible(!isDrawerOpen);
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.NODES));
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setVisible(!isDrawerOpen);
     }
@@ -212,9 +209,7 @@ public class NodesListFragment extends ListFragment
             }
         }
         firstLoad = false;
-        if (app.serviceConnected) {
-            setRefreshIndicationState(app.loadManager.isLoading(UpdateManager.LoadType.NODES));
-        }
+        setRefreshIndicationState(updateManager.isUpdating(UpdateManager.UpdateType.NODES));
         currentBatch = getListView().getCount() / LOAD_LIMIT;
     }
 
@@ -234,11 +229,11 @@ public class NodesListFragment extends ListFragment
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if (app.serviceConnected && app.loadManager.isLoading(UpdateManager.LoadType.NODES)) return;
+        if (updateManager.isUpdating(UpdateManager.UpdateType.NODES)) return;
         if (scrollState == SCROLL_STATE_IDLE) {
             if (getListView().getLastVisiblePosition() >= getListView().getCount() - SCROLL_THRESHOLD) {
                 // TODO: Add search support
-                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
+                updateManager.startUpdating(UpdateManager.UpdateType.NODES, LOAD_LIMIT, LOAD_LIMIT * currentBatch);
                 currentBatch++;
                 setRefreshIndicationState(true);
             }
@@ -295,12 +290,8 @@ public class NodesListFragment extends ListFragment
         if (Utils.isOnline(getActivity())) {
             getActivity().getContentResolver().delete(Contract.Nodes.CONTENT_URI, null, null);
             currentBatch = 1;
-            if (app.serviceConnected) {
-                app.loadManager.startLoading(UpdateManager.LoadType.NODES, LOAD_LIMIT, 0);
-                setRefreshIndicationState(true);
-            } else {
-                Log.e(TAG, "LoadManager is not bound in Application. Cannot refresh list.");
-            }
+            updateManager.startUpdating(UpdateManager.UpdateType.NODES, LOAD_LIMIT, 0);
+            setRefreshIndicationState(true);
         } else {
             Toast.makeText(getActivity(),
                     getString(R.string.refresh_failed_offline),
