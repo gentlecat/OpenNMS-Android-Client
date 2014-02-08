@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="org.opennms.android.data.AppContentProvider"
+    android:accountType="org.opennms.android.data.sync.AlarmsSyncAdapter"
     android:allowParallelSyncs="true"
-    android:contentAuthority="org.opennms.android.data.AppContentProvider"
+    android:contentAuthority="org.opennms.android.data.sync.AlarmsSyncAdapter"
     android:isAlwaysSyncable="true"
     android:supportsUploading="false"
     android:userVisible="false" />
