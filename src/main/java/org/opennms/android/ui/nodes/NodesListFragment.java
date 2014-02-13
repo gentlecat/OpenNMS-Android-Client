@@ -295,6 +295,9 @@ public class NodesListFragment extends ListFragment
       currentBatch = 1;
       updateManager.startUpdating(UpdateManager.UpdateType.NODES, LOAD_LIMIT, 0);
       setRefreshIndicationState(true);
+
+      // TODO: Load only unacknowledged alarms here.
+      updateManager.startUpdating(UpdateManager.UpdateType.ALARMS, 0, 0);
     } else {
       Toast.makeText(getActivity(),
                      getString(R.string.refresh_failed_offline),
