@@ -52,10 +52,9 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
   public AlarmsSyncAdapter(Context context, boolean autoInitialize) {
     super(context, autoInitialize);
     this.context = context;
-    contentResolver = context.getContentResolver();
+    App.get(context).inject(this);
 
-    App app = App.get(context);
-    app.inject(this);
+    contentResolver = context.getContentResolver();
   }
 
   /**
@@ -94,7 +93,9 @@ public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
 
     List<Alarm> alarms;
     try {
-      alarms = server.alarmsAll().alarms;
+      // TODO: Get only alarms with severity greater than or equal than specified in settings value.
+      // See http://opennms.org/wiki/ReST#Alarms
+      alarms = server.alarmsUnacked(0, 0).alarms;
     } catch (Exception e) {
       Log.e(TAG, "Error occurred during alarm synchronization process", e);
       return;

@@ -36,11 +36,28 @@ public interface ServerInterface {
   @GET("/alarms")
   Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
 
+  /**
+   * Get only unacknowledged alarms.
+   *
+   * @param limit  Max number of alarms to return. 0 to get all.
+   * @param offset Result offset. Default is 0.
+   * @return Unacknowledged alarms.
+   */
+  @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NULL")
+  Alarms alarmsUnacked(@Query("limit") int limit, @Query("offset") int offset);
+
+  /**
+   * Get only acknowledged alarms.
+   *
+   * @param limit  Max number of alarms to return. 0 to get all.
+   * @param offset Result offset. Default is 0.
+   * @return Acknowledged alarms.
+   */
+  @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NOT%20NULL")
+  Alarms alarmsAcked(@Query("limit") int limit, @Query("offset") int offset);
+
   @PUT("/alarms/{id}")
   Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
-
-  @GET("/alarms?orderBy=id&order=desc&limit=0")
-  Alarms alarmsAll();
 
   @GET("/alarms/{id}")
   Alarm alarm(@Path("id") long id);
