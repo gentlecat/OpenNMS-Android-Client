@@ -332,8 +332,7 @@ public class AlarmDetailsFragment extends DetailsFragment
         // Updating details view
         loaderManager.restartLoader(LOADER_ID, null, fragment);
       } else {
-        Toast.makeText(getActivity(),
-                       "Error occurred during acknowledgement process!" + lastException.toString(),
+        Toast.makeText(getActivity(), "Error occurred during acknowledgement process!",
                        Toast.LENGTH_LONG).show();
         updateMenu(false);
       }
@@ -385,9 +384,7 @@ public class AlarmDetailsFragment extends DetailsFragment
         // Updating details view
         loaderManager.restartLoader(LOADER_ID, null, fragment);
       } else {
-        Toast.makeText(getActivity(),
-                       "Error occurred during unacknowledgement process!" + lastException
-                           .toString(),
+        Toast.makeText(getActivity(), "Error occurred during unacknowledgement process!",
                        Toast.LENGTH_LONG).show();
         updateMenu(true);
       }
