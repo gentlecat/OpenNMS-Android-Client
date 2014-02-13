@@ -16,46 +16,48 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface ServerInterface {
-    @GET("/nodes?orderBy=id")
-    Nodes nodes(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/nodes?comparator=ilike")
-    Nodes nodesSearch(@Query("limit") int limit, @Query("offset") int offset, @Query("label") String searchQuery);
+  @GET("/nodes?orderBy=id")
+  Nodes nodes(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/nodes/{id}")
-    Node node(@Path("id") long id);
+  @GET("/nodes?comparator=ilike")
+  Nodes nodesSearch(@Query("limit") int limit, @Query("offset") int offset,
+                    @Query("label") String searchQuery);
 
-    @GET("/events?orderBy=id&order=desc")
-    Events events(@Query("limit") int limit, @Query("offset") int offset);
+  @GET("/nodes/{id}")
+  Node node(@Path("id") long id);
 
-    @GET("/events/{id}")
-    Event event(@Path("id") long id);
+  @GET("/events?orderBy=id&order=desc")
+  Events events(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/alarms")
-    Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
+  @GET("/events/{id}")
+  Event event(@Path("id") long id);
 
-    @PUT("/alarms/{id}")
-    Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
+  @GET("/alarms")
+  Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/alarms?orderBy=id&order=desc&limit=0")
-    Alarms alarmsAll();
+  @PUT("/alarms/{id}")
+  Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
 
-    @GET("/alarms/{id}")
-    Alarm alarm(@Path("id") long id);
+  @GET("/alarms?orderBy=id&order=desc&limit=0")
+  Alarms alarmsAll();
 
-    // TODO: Fix
-    @GET("/alarms/?query=nodeLabel='{label}'")
-    Alarms alarmsRelatedToNode(@Path("label") String nodeLabel);
+  @GET("/alarms/{id}")
+  Alarm alarm(@Path("id") long id);
 
-    @GET("/outages?orderBy=id&order=desc")
-    Outages outages(@Query("limit") int limit, @Query("offset") int offset);
+  // TODO: Fix
+  @GET("/alarms/?query=nodeLabel='{label}'")
+  Alarms alarmsRelatedToNode(@Path("label") String nodeLabel);
 
-    @GET("/outages/{id}")
-    Outage outage(@Path("id") long id);
+  @GET("/outages?orderBy=id&order=desc")
+  Outages outages(@Query("limit") int limit, @Query("offset") int offset);
 
-    @GET("/outages/forNode/{nodeId}")
-    Outages outagesRelatedToNode(@Path("nodeId") long nodeId);
+  @GET("/outages/{id}")
+  Outage outage(@Path("id") long id);
 
-    @GET("/users")
-    User user(@Query("name") String name);
+  @GET("/outages/forNode/{nodeId}")
+  Outages outagesRelatedToNode(@Path("nodeId") long nodeId);
+
+  @GET("/users")
+  User user(@Query("name") String name);
 }

@@ -4,6 +4,8 @@
 
 ## Building application
 
+Latest version of Android Studio is recommended.
+
 ### Requirements
 * Gradle
 * Android SDK with build tools and support repository

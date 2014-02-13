@@ -9,13 +9,14 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
-        complete = false,
-        library = true
+    complete = false,
+    library = true
 )
 public final class StorageModule {
-    @Provides
-    @Singleton
-    SQLiteDatabase provideDatabase(Application app) {
-        return new DatabaseHelper(app).getWritableDatabase();
-    }
+
+  @Provides
+  @Singleton
+  SQLiteDatabase provideDatabase(Application app) {
+    return new DatabaseHelper(app).getWritableDatabase();
+  }
 }

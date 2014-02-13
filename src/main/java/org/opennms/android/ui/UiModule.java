@@ -20,34 +20,35 @@ import org.opennms.android.ui.outages.OutagesListFragment;
 import dagger.Module;
 
 @Module(
-        injects = {
-                BaseActivity.class,
-                DetailsActivity.class,
-                DetailsFragment.class,
-                SettingsActivity.class,
+    injects = {
+        BaseActivity.class,
+        DetailsActivity.class,
+        DetailsFragment.class,
+        SettingsActivity.class,
 
-                NodesActivity.class,
-                NodesListFragment.class,
-                NodeDetailsActivity.class,
-                NodeDetailsFragment.class,
+        NodesActivity.class,
+        NodesListFragment.class,
+        NodeDetailsActivity.class,
+        NodeDetailsFragment.class,
 
-                OutagesActivity.class,
-                OutagesListFragment.class,
-                OutageDetailsActivity.class,
-                OutageDetailsFragment.class,
+        OutagesActivity.class,
+        OutagesListFragment.class,
+        OutageDetailsActivity.class,
+        OutageDetailsFragment.class,
 
-                AlarmsActivity.class,
-                AlarmsListFragment.class,
-                AlarmDetailsActivity.class,
-                AlarmDetailsFragment.class,
+        AlarmsActivity.class,
+        AlarmsListFragment.class,
+        AlarmDetailsActivity.class,
+        AlarmDetailsFragment.class,
 
-                EventsActivity.class,
-                EventsListFragment.class,
-                EventDetailsActivity.class,
-                EventDetailsFragment.class,
-        },
-        complete = false,
-        library = true
+        EventsActivity.class,
+        EventsListFragment.class,
+        EventDetailsActivity.class,
+        EventDetailsFragment.class,
+    },
+    complete = false,
+    library = true
 )
 public class UiModule {
+
 }

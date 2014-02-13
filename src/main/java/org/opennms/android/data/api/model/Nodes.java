@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public final class Nodes {
-    @SerializedName("node")
-    public List<Node> nodes;
+
+  @SerializedName("node") public List<Node> nodes;
 }

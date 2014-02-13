@@ -6,23 +6,24 @@ import android.content.Context;
 import dagger.ObjectGraph;
 
 public class App extends Application {
-    private ObjectGraph objectGraph;
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
+  private ObjectGraph objectGraph;
 
-        // Initializing objectGraph here because we'll need it early in ContentProvider.
-        objectGraph = ObjectGraph.create(Modules.list(this));
-        objectGraph.inject(this);
-    }
+  @Override
+  protected void attachBaseContext(Context base) {
+    super.attachBaseContext(base);
 
-    public void inject(Object o) {
-        objectGraph.inject(o);
-    }
+    // Initializing objectGraph here because we'll need it early in ContentProvider.
+    objectGraph = ObjectGraph.create(Modules.list(this));
+    objectGraph.inject(this);
+  }
 
-    public static App get(Context context) {
-        return (App) context.getApplicationContext();
-    }
+  public void inject(Object o) {
+    objectGraph.inject(o);
+  }
+
+  public static App get(Context context) {
+    return (App) context.getApplicationContext();
+  }
 
 }

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="org.opennms.android.data.sync.AlarmsSyncAdapter"
     android:icon="@drawable/ic_launcher"
