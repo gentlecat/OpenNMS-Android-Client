@@ -75,8 +75,7 @@ public class OutagesListFragment extends ListFragment
     }
   };
   private boolean firstLoad = true;
-  @Inject
-  UpdateManager updateManager;
+  @Inject UpdateManager updateManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -226,8 +225,7 @@ public class OutagesListFragment extends ListFragment
     detailsContainer.removeAllViews();
     LayoutInflater inflater = (LayoutInflater) getActivity()
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    RelativeLayout emptyView = (RelativeLayout) inflater
-        .inflate(R.layout.empty_details, null);
+    RelativeLayout emptyView = (RelativeLayout) inflater.inflate(R.layout.empty_details, null);
     detailsContainer.addView(emptyView);
   }
 
