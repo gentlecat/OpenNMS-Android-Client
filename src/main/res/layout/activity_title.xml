@@ -3,8 +3,8 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/background"
         android:src="@drawable/dc_photo"
         android:scaleType="centerCrop" />
@@ -22,7 +22,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
@@ -43,13 +43,13 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
         <Button
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_activity_demo_button"
             android:id="@+id/demo_button" />
 
         <Button
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_activity_configure_button"
             android:id="@+id/configure_button"
