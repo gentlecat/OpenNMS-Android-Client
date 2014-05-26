@@ -1,4 +1,4 @@
-# OpenNMS Android Client
+# OpenNMS Android Client [![Build Status](https://travis-ci.org/tsukanov/OpenNMS-Android-Client.svg)](https://travis-ci.org/tsukanov/OpenNMS-Android-Client)
 
 ![](http://i.imgur.com/oasWVOH.png)
 
