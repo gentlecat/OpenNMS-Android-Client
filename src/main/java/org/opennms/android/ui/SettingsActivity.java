@@ -46,9 +46,9 @@ public class SettingsActivity extends PreferenceActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    context = this;
     App.get(context).inject(this);
     addPreferencesFromResource(R.xml.settings);
-    context = this;
     sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
     setTitle(R.string.settings);
