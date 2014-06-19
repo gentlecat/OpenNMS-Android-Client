@@ -14,8 +14,7 @@ public class App extends Application {
     super.attachBaseContext(base);
 
     // Initializing objectGraph here because we'll need it early in ContentProvider.
-    objectGraph = ObjectGraph.create(Modules.list(this));
-    objectGraph.inject(this);
+    createObjectGraph();
   }
 
   public void inject(Object o) {
@@ -24,6 +23,12 @@ public class App extends Application {
 
   public static App get(Context context) {
     return (App) context.getApplicationContext();
+  }
+
+  public void createObjectGraph() {
+    // Initializing objectGraph here because we'll need it early in ContentProvider.
+    objectGraph = ObjectGraph.create(Modules.list(this));
+    objectGraph.inject(this);
   }
 
 }

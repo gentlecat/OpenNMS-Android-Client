@@ -198,7 +198,10 @@ public class SettingsActivity extends PreferenceActivity
             sharedPref.edit().putLong(AlarmsListFragment.STATE_ACTIVE_ALARM_ID, -1).commit();
             sharedPref.edit().putLong(OutagesListFragment.STATE_ACTIVE_OUTAGE_ID, -1).commit();
 
+            App.get(context).createObjectGraph();
+
             sendBroadcast(new Intent(TitleActivity.ACTION_FINISH));
+
             Intent intent = new Intent(context, NodesActivity.class);
             startActivity(intent);
             finish();
