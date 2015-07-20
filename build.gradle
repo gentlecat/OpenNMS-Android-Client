@@ -3,14 +3,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath "com.android.tools.build:gradle:1.2.3"
     }
 }
-
-def versionMajor = 1
-def versionMinor = 0
-def versionPatch = 0
-def versionBuild = 0
 
 apply plugin: "com.android.application"
 
@@ -19,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile "com.android.support:support-v4:21.0.2"
-    compile "com.android.support:appcompat-v7:21.0.2"
+    compile "com.android.support:support-v4:22.2.0"
+    compile "com.android.support:appcompat-v7:22.2.0"
 
     compile "com.squareup.dagger:dagger:1.2.2"
     provided "com.squareup.dagger:dagger-compiler:1.2.2"
@@ -28,34 +23,18 @@ dependencies {
     compile "com.squareup.okhttp:okhttp:1.6.0"
     compile "com.squareup.retrofit:retrofit:1.5.1"
 
-    compile "joda-time:joda-time:2.6"
+    compile "joda-time:joda-time:2.8.1"
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.1"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 22
 
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
-    }
-
-    buildTypes {
-        debug {
-            applicationIdSuffix ".dev"
-            versionNameSuffix "-dev"
-        }
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        versionCode 1
+        versionName "0.1"
     }
 }

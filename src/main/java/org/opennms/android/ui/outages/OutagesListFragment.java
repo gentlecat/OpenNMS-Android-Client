@@ -19,7 +19,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -112,7 +112,7 @@ public class OutagesListFragment extends ListFragment
     TextView emptyText = (TextView) getActivity().findViewById(R.id.empty_list_text);
     emptyText.setText(getString(R.string.outages_list_empty));
 
-    ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+    ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
     actionBar.setDisplayShowTitleEnabled(false);
     actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
     SpinnerAdapter mSpinnerAdapter =
@@ -242,7 +242,6 @@ public class OutagesListFragment extends ListFragment
       OutageDetailsFragment detailsFragment = new OutageDetailsFragment(id);
       FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
       fragmentTransaction.replace(R.id.details_fragment_container, detailsFragment);
-      fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
       fragmentTransaction.commit();
     } else {
       Intent detailsIntent = new Intent(getActivity(), OutageDetailsActivity.class);

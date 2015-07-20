@@ -8,7 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -16,7 +16,7 @@ import android.widget.Toast;
 import org.opennms.android.R;
 import org.opennms.android.ui.nodes.NodesActivity;
 
-public class TitleActivity extends ActionBarActivity {
+public class TitleActivity extends AppCompatActivity {
 
   private FinishReceiver finishReceiver;
   public static final String ACTION_FINISH = "org.opennms.android.ui.ACTION_FINISH";
