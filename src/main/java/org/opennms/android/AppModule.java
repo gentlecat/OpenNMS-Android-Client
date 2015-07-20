@@ -11,23 +11,23 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
-    includes = {
-        UiModule.class,
-        DataModule.class,
-    },
-    injects = App.class
+        includes = {
+                UiModule.class,
+                DataModule.class,
+        },
+        injects = App.class
 )
 public final class AppModule {
 
-  private final App app;
+    private final App app;
 
-  public AppModule(App app) {
-    this.app = app;
-  }
+    public AppModule(App app) {
+        this.app = app;
+    }
 
-  @Provides
-  @Singleton
-  Application provideApplication() {
-    return app;
-  }
+    @Provides
+    @Singleton
+    Application provideApplication() {
+        return app;
+    }
 }

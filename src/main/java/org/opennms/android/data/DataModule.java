@@ -27,69 +27,69 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module(
-    includes = {
-        ApiModule.class,
-        StorageModule.class,
-        SyncModule.class,
-    },
-    injects = {
-        AppContentProvider.class,
-    },
-    complete = false,
-    library = true
+        includes = {
+                ApiModule.class,
+                StorageModule.class,
+                SyncModule.class,
+        },
+        injects = {
+                AppContentProvider.class,
+        },
+        complete = false,
+        library = true
 )
 public final class DataModule {
 
-  static final String TAG = "DataModule";
-  static final int DISK_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
+    static final String TAG = "DataModule";
+    static final int DISK_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
 
-  @Provides
-  @Singleton
-  SharedPreferences provideSharedPreferences(Application app) {
-    return PreferenceManager.getDefaultSharedPreferences(app);
-  }
-
-  @Provides
-  @Singleton
-  ContentResolver provideContentResolver(Application app) {
-    return app.getContentResolver();
-  }
-
-  @Provides
-  @Singleton
-  OkHttpClient provideOkHttpClient(Application app) {
-    return createOkHttpClient(app);
-  }
-
-  static OkHttpClient createOkHttpClient(Application app) {
-    OkHttpClient client = new OkHttpClient();
-
-    final String user = ConnectionSettings.user(app);
-    final String password = ConnectionSettings.password(app);
-
-    client.setAuthenticator(new OkAuthenticator() {
-      @Override
-      public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges)
-          throws IOException {
-        return Credential.basic(user, password);
-      }
-
-      @Override
-      public Credential authenticateProxy(Proxy proxy, URL url, List<Challenge> challenges)
-          throws IOException {
-        return Credential.basic(user, password);
-      }
-    });
-
-    // Install an HTTP cache in the application cache directory.
-    try {
-      File cacheDir = new File(app.getCacheDir(), "http");
-      HttpResponseCache cache = new HttpResponseCache(cacheDir, DISK_CACHE_SIZE);
-      client.setResponseCache(cache);
-    } catch (IOException e) {
-      Log.e(TAG, "Unable to install disk cache.", e);
+    @Provides
+    @Singleton
+    SharedPreferences provideSharedPreferences(Application app) {
+        return PreferenceManager.getDefaultSharedPreferences(app);
     }
 
-    return client;
-  }
+    @Provides
+    @Singleton
+    ContentResolver provideContentResolver(Application app) {
+        return app.getContentResolver();
+    }
+
+    @Provides
+    @Singleton
+    OkHttpClient provideOkHttpClient(Application app) {
+        return createOkHttpClient(app);
+    }
+
+    static OkHttpClient createOkHttpClient(Application app) {
+        OkHttpClient client = new OkHttpClient();
+
+        final String user = ConnectionSettings.user(app);
+        final String password = ConnectionSettings.password(app);
+
+        client.setAuthenticator(new OkAuthenticator() {
+            @Override
+            public Credential authenticate(Proxy proxy, URL url, List<Challenge> challenges)
+                    throws IOException {
+                return Credential.basic(user, password);
+            }
+
+            @Override
+            public Credential authenticateProxy(Proxy proxy, URL url, List<Challenge> challenges)
+                    throws IOException {
+                return Credential.basic(user, password);
+            }
+        });
+
+        // Install an HTTP cache in the application cache directory.
+        try {
+            File cacheDir = new File(app.getCacheDir(), "http");
+            HttpResponseCache cache = new HttpResponseCache(cacheDir, DISK_CACHE_SIZE);
+            client.setResponseCache(cache);
+        } catch (IOException e) {
+            Log.e(TAG, "Unable to install disk cache.", e);
+        }
+
+        return client;
+    }
 }

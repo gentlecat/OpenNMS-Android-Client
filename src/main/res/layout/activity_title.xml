@@ -3,56 +3,56 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/background"
-        android:src="@drawable/dc_photo"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/dc_photo" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textColor="#afff"
-        android:text="Photo by Beraldo Leal / CC BY 2.0"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="2sp"
         android:layout_marginTop="2sp"
-        android:layout_marginRight="2sp" />
+        android:text="Photo by Beraldo Leal / CC BY 2.0"
+        android:textColor="#afff"
+        android:textSize="10sp" />
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:id="@+id/linearLayout">
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:text="@string/app_name"
-            android:textSize="48sp"
             android:textColor="#fff"
-            android:textStyle="bold"
-            android:layout_marginBottom="@dimen/activity_vertical_margin" />
+            android:textSize="48sp"
+            android:textStyle="bold" />
 
         <Button
+            android:id="@+id/demo_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/title_activity_demo_button"
-            android:id="@+id/demo_button" />
+            android:text="@string/title_activity_demo_button" />
 
         <Button
+            android:id="@+id/configure_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/title_activity_configure_button"
-            android:id="@+id/configure_button"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -8,12 +8,11 @@ import retrofit.RequestInterceptor;
 @Singleton
 public final class ApiHeaders implements RequestInterceptor {
 
-  @Inject
-  public ApiHeaders() {
-  }
+    @Inject
+    public ApiHeaders() {}
 
-  @Override
-  public void intercept(RequestFacade request) {
-    request.addHeader("Accept", "application/json");
-  }
+    @Override
+    public void intercept(RequestFacade request) {
+        request.addHeader("Accept", "application/json");
+    }
 }

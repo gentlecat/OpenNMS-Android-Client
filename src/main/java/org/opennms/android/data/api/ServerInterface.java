@@ -17,64 +17,64 @@ import retrofit.http.Query;
 
 public interface ServerInterface {
 
-  @GET("/nodes?orderBy=id")
-  Nodes nodes(@Query("limit") int limit, @Query("offset") int offset);
+    @GET("/nodes?orderBy=id")
+    Nodes nodes(@Query("limit") int limit, @Query("offset") int offset);
 
-  @GET("/nodes?comparator=ilike")
-  Nodes nodesSearch(@Query("limit") int limit, @Query("offset") int offset,
-                    @Query("label") String searchQuery);
+    @GET("/nodes?comparator=ilike")
+    Nodes nodesSearch(@Query("limit") int limit, @Query("offset") int offset,
+                      @Query("label") String searchQuery);
 
-  @GET("/nodes/{id}")
-  Node node(@Path("id") long id);
+    @GET("/nodes/{id}")
+    Node node(@Path("id") long id);
 
-  @GET("/events?orderBy=id&order=desc")
-  Events events(@Query("limit") int limit, @Query("offset") int offset);
+    @GET("/events?orderBy=id&order=desc")
+    Events events(@Query("limit") int limit, @Query("offset") int offset);
 
-  @GET("/events/{id}")
-  Event event(@Path("id") long id);
+    @GET("/events/{id}")
+    Event event(@Path("id") long id);
 
-  @GET("/alarms")
-  Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
+    @GET("/alarms")
+    Alarms alarms(@Query("limit") int limit, @Query("offset") int offset);
 
-  /**
-   * Get only unacknowledged alarms.
-   *
-   * @param limit  Max number of alarms to return. 0 to get all.
-   * @param offset Result offset. Default is 0.
-   * @return Unacknowledged alarms.
-   */
-  @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NULL")
-  Alarms alarmsUnacked(@Query("limit") int limit, @Query("offset") int offset);
+    /**
+     * Get only unacknowledged alarms.
+     *
+     * @param limit  Max number of alarms to return. 0 to get all.
+     * @param offset Result offset. Default is 0.
+     * @return Unacknowledged alarms.
+     */
+    @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NULL")
+    Alarms alarmsUnacked(@Query("limit") int limit, @Query("offset") int offset);
 
-  /**
-   * Get only acknowledged alarms.
-   *
-   * @param limit  Max number of alarms to return. 0 to get all.
-   * @param offset Result offset. Default is 0.
-   * @return Acknowledged alarms.
-   */
-  @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NOT%20NULL")
-  Alarms alarmsAcked(@Query("limit") int limit, @Query("offset") int offset);
+    /**
+     * Get only acknowledged alarms.
+     *
+     * @param limit  Max number of alarms to return. 0 to get all.
+     * @param offset Result offset. Default is 0.
+     * @return Acknowledged alarms.
+     */
+    @GET("alarms?orderBy=id&order=desc&query=alarmAckUser%20IS%20NOT%20NULL")
+    Alarms alarmsAcked(@Query("limit") int limit, @Query("offset") int offset);
 
-  @PUT("/alarms/{id}")
-  Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
+    @PUT("/alarms/{id}")
+    Alarm alarmSetAck(@Path("id") long id, @Query("ack") boolean isAcked);
 
-  @GET("/alarms/{id}")
-  Alarm alarm(@Path("id") long id);
+    @GET("/alarms/{id}")
+    Alarm alarm(@Path("id") long id);
 
-  // TODO: Fix
-  @GET("/alarms/?query=nodeLabel='{label}'")
-  Alarms alarmsRelatedToNode(@Path("label") String nodeLabel);
+    // TODO: Fix
+    @GET("/alarms/?query=nodeLabel='{label}'")
+    Alarms alarmsRelatedToNode(@Path("label") String nodeLabel);
 
-  @GET("/outages?orderBy=id&order=desc")
-  Outages outages(@Query("limit") int limit, @Query("offset") int offset);
+    @GET("/outages?orderBy=id&order=desc")
+    Outages outages(@Query("limit") int limit, @Query("offset") int offset);
 
-  @GET("/outages/{id}")
-  Outage outage(@Path("id") long id);
+    @GET("/outages/{id}")
+    Outage outage(@Path("id") long id);
 
-  @GET("/outages/forNode/{nodeId}")
-  Outages outagesRelatedToNode(@Path("nodeId") long nodeId);
+    @GET("/outages/forNode/{nodeId}")
+    Outages outagesRelatedToNode(@Path("nodeId") long nodeId);
 
-  @GET("/users")
-  User user(@Query("name") String name);
+    @GET("/users")
+    User user(@Query("name") String name);
 }

@@ -7,10 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingRight="@dimen/details_horizontal_margin"
+        android:paddingBottom="@dimen/details_vertical_margin"
         android:paddingLeft="@dimen/details_horizontal_margin"
-        android:paddingTop="@dimen/details_vertical_margin"
-        android:paddingBottom="@dimen/details_vertical_margin">
+        android:paddingRight="@dimen/details_horizontal_margin"
+        android:paddingTop="@dimen/details_vertical_margin">
 
         <TextView
             android:id="@+id/outage_id"

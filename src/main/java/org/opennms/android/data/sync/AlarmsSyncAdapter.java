@@ -39,156 +39,156 @@ import javax.inject.Inject;
  */
 public class AlarmsSyncAdapter extends AbstractThreadedSyncAdapter {
 
-  public static final String TAG = "AlarmsSyncAdapter";
-  private static final int ALARM_NOTIFICATION_ID = 0x1;
-  private static final int WARNING_NOTIFICATION_ID = 0x2;
-  private ContentResolver contentResolver;
-  private Context context;
-  @Inject ServerInterface server;
+    public static final String TAG = "AlarmsSyncAdapter";
+    private static final int ALARM_NOTIFICATION_ID = 0x1;
+    private static final int WARNING_NOTIFICATION_ID = 0x2;
+    private ContentResolver contentResolver;
+    private Context context;
+    @Inject ServerInterface server;
 
-  /**
-   * Set up the sync adapter
-   */
-  public AlarmsSyncAdapter(Context context, boolean autoInitialize) {
-    super(context, autoInitialize);
-    this.context = context;
-    App.get(context).inject(this);
+    /**
+     * Set up the sync adapter
+     */
+    public AlarmsSyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
+        this.context = context;
+        App.get(context).inject(this);
 
-    contentResolver = context.getContentResolver();
-  }
-
-  /**
-   * Set up the sync adapter
-   * This form of the constructor maintains compatibility with Android 3.0 and later platform
-   * versions.
-   */
-  public AlarmsSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
-    super(context, autoInitialize, allowParallelSyncs);
-    this.context = context;
-    contentResolver = context.getContentResolver();
-  }
-
-  @Override
-  public void onPerformSync(
-      Account account,
-      Bundle extras,
-      String authority,
-      ContentProviderClient provider,
-      SyncResult syncResult) {
-    Log.d(TAG, "Synchronizing alarms...");
-
-    ConnectivityManager connManager =
-        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-    if (NotificationSettings.wifiOnly(context)) {
-      NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-      if (!wifi.isConnected()) {
-        issueWarningNotification(
-            context,
-            context.getString(R.string.sync_failed_notif_title),
-            context.getString(R.string.sync_failed_notif_text_wifi));
-        return;
-      }
+        contentResolver = context.getContentResolver();
     }
 
-    List<Alarm> alarms;
-    try {
-      // TODO: Get only alarms with severity greater than or equal than specified in settings value.
-      // See http://opennms.org/wiki/ReST#Alarms
-      alarms = server.alarmsUnacked(0, 0).alarms;
-    } catch (Exception e) {
-      Log.e(TAG, "Error occurred during alarm synchronization process", e);
-      return;
+    /**
+     * Set up the sync adapter
+     * This form of the constructor maintains compatibility with Android 3.0 and later platform
+     * versions.
+     */
+    public AlarmsSyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
+        super(context, autoInitialize, allowParallelSyncs);
+        this.context = context;
+        contentResolver = context.getContentResolver();
     }
-    contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
-    ArrayList<ContentValues> values = ContentValuesGenerator.fromAlarms(alarms);
-    contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
-                               values.toArray(new ContentValues[values.size()]));
 
-    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+    @Override
+    public void onPerformSync(
+            Account account,
+            Bundle extras,
+            String authority,
+            ContentProviderClient provider,
+            SyncResult syncResult) {
+        Log.d(TAG, "Synchronizing alarms...");
 
-    final String STATE_LATEST_SHOWN_ALARM = "latest_shown_alarm_id";
-    int latestShownAlarmId = sharedPref.getInt(STATE_LATEST_SHOWN_ALARM, 0);
-    String minimalSeverity = NotificationSettings.minSeverity(context);
-    String[] severityValues =
-        context.getResources().getStringArray(R.array.severity_values);
-    int newAlarmsCount = 0, maxId = 0;
-    for (ContentValues currentValues : values) {
-      int id = currentValues.getAsInteger(Contract.Alarms._ID);
-      if (id > latestShownAlarmId) {
-        String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
-        for (String curSeverityVal : severityValues) {
-          if (curSeverityVal.equals(severity)) {
-            newAlarmsCount++;
-            break;
-          }
-          if (curSeverityVal.equals(minimalSeverity)) {
-            break;
-          }
+        ConnectivityManager connManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (NotificationSettings.wifiOnly(context)) {
+            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if (!wifi.isConnected()) {
+                issueWarningNotification(
+                        context,
+                        context.getString(R.string.sync_failed_notif_title),
+                        context.getString(R.string.sync_failed_notif_text_wifi));
+                return;
+            }
         }
-      }
-      if (id > maxId) {
-        maxId = id;
-      }
+
+        List<Alarm> alarms;
+        try {
+            // TODO: Get only alarms with severity greater than or equal than specified in settings value.
+            // See http://opennms.org/wiki/ReST#Alarms
+            alarms = server.alarmsUnacked(0, 0).alarms;
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred during alarm synchronization process", e);
+            return;
+        }
+        contentResolver.delete(Contract.Alarms.CONTENT_URI, null, null);
+        ArrayList<ContentValues> values = ContentValuesGenerator.fromAlarms(alarms);
+        contentResolver.bulkInsert(Contract.Alarms.CONTENT_URI,
+                values.toArray(new ContentValues[values.size()]));
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+
+        final String STATE_LATEST_SHOWN_ALARM = "latest_shown_alarm_id";
+        int latestShownAlarmId = sharedPref.getInt(STATE_LATEST_SHOWN_ALARM, 0);
+        String minimalSeverity = NotificationSettings.minSeverity(context);
+        String[] severityValues =
+                context.getResources().getStringArray(R.array.severity_values);
+        int newAlarmsCount = 0, maxId = 0;
+        for (ContentValues currentValues : values) {
+            int id = currentValues.getAsInteger(Contract.Alarms._ID);
+            if (id > latestShownAlarmId) {
+                String severity = currentValues.getAsString(Contract.Alarms.SEVERITY);
+                for (String curSeverityVal : severityValues) {
+                    if (curSeverityVal.equals(severity)) {
+                        newAlarmsCount++;
+                        break;
+                    }
+                    if (curSeverityVal.equals(minimalSeverity)) {
+                        break;
+                    }
+                }
+            }
+            if (id > maxId) {
+                maxId = id;
+            }
+        }
+
+        if (latestShownAlarmId != maxId) {
+            sharedPref.edit().putInt(STATE_LATEST_SHOWN_ALARM, maxId).commit();
+        }
+
+        if (newAlarmsCount > 0 && NotificationSettings.enabled(context)) {
+            issueNewAlarmsNotification(context, newAlarmsCount);
+        }
+
+        Log.d(TAG, "Alarm sync complete.");
     }
 
-    if (latestShownAlarmId != maxId) {
-      sharedPref.edit().putInt(STATE_LATEST_SHOWN_ALARM, maxId).commit();
+    private void issueNewAlarmsNotification(Context context, int newAlarmsCount) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setContentTitle(context.getString(R.string.new_alarms_notif_title))
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
+
+        if (newAlarmsCount == 1) {
+            builder.setContentText(context.getString(R.string.new_alarms_notif_text_singular));
+        } else {
+            builder.setContentText(String.format(
+                    context.getString(R.string.new_alarms_notif_text_plural),
+                    newAlarmsCount));
+        }
+
+        // Clicking the notification itself displays AlarmsActivity
+        Intent resultIntent = new Intent(context, AlarmsActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent resultPendingIntent = PendingIntent
+                .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build());
     }
 
-    if (newAlarmsCount > 0 && NotificationSettings.enabled(context)) {
-      issueNewAlarmsNotification(context, newAlarmsCount);
+    private void issueWarningNotification(Context context, String title, String text) {
+        // TODO: Notify only once
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
+
+        // Clicking the notification itself displays AlarmsActivity
+        Intent resultIntent = new Intent(context, AlarmsActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent resultPendingIntent = PendingIntent
+                .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(WARNING_NOTIFICATION_ID, builder.build());
     }
-
-    Log.d(TAG, "Alarm sync complete.");
-  }
-
-  private void issueNewAlarmsNotification(Context context, int newAlarmsCount) {
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-        .setSmallIcon(R.drawable.ic_stat_notification)
-        .setContentTitle(context.getString(R.string.new_alarms_notif_title))
-        .setAutoCancel(true)
-        .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
-
-    if (newAlarmsCount == 1) {
-      builder.setContentText(context.getString(R.string.new_alarms_notif_text_singular));
-    } else {
-      builder.setContentText(String.format(
-          context.getString(R.string.new_alarms_notif_text_plural),
-          newAlarmsCount));
-    }
-
-    // Clicking the notification itself displays AlarmsActivity
-    Intent resultIntent = new Intent(context, AlarmsActivity.class);
-    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent resultPendingIntent = PendingIntent
-        .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    builder.setContentIntent(resultPendingIntent);
-
-    NotificationManager notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(ALARM_NOTIFICATION_ID, builder.build());
-  }
-
-  private void issueWarningNotification(Context context, String title, String text) {
-    // TODO: Notify only once
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-        .setSmallIcon(R.drawable.ic_stat_notification)
-        .setContentTitle(title)
-        .setContentText(text)
-        .setAutoCancel(true)
-        .setDefaults(Notification.DEFAULT_ALL); // requires VIBRATE permission
-
-    // Clicking the notification itself displays AlarmsActivity
-    Intent resultIntent = new Intent(context, AlarmsActivity.class);
-    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent resultPendingIntent = PendingIntent
-        .getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    builder.setContentIntent(resultPendingIntent);
-
-    NotificationManager notificationManager =
-        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(WARNING_NOTIFICATION_ID, builder.build());
-  }
 
 }

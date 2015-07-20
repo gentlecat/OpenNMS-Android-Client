@@ -7,12 +7,12 @@ import org.opennms.android.ui.BaseActivity;
 
 public class OutagesActivity extends BaseActivity {
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    getSupportFragmentManager().beginTransaction()
-        .replace(R.id.content_frame, new OutagesListFragment()).commit();
-    getSupportActionBar().setTitle(R.string.outages);
-  }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, new OutagesListFragment()).commit();
+        getSupportActionBar().setTitle(R.string.outages);
+    }
 
 }

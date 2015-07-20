@@ -14,31 +14,29 @@ import javax.inject.Inject;
 
 public abstract class DetailsFragment extends Fragment {
 
-  @Inject protected ServerInterface server;
+    @Inject protected ServerInterface server;
 
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    App.get(getActivity()).inject(this);
-  }
-
-  protected void showErrorMessage() {
-    if (!isAdded()) {
-      return;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        App.get(getActivity()).inject(this);
     }
-    getActivity().runOnUiThread(new Runnable() {
-      public void run() {
-        RelativeLayout detailsContainer =
-            (RelativeLayout) getActivity().findViewById(R.id.details_container);
-        if (detailsContainer == null) {
-          return;
-        }
-        detailsContainer.removeAllViews();
-        LayoutInflater inflater = (LayoutInflater) getActivity()
-            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.details_error, detailsContainer);
-      }
-    });
-  }
+
+    protected void showErrorMessage() {
+        if (!isAdded()) { return; }
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                RelativeLayout detailsContainer =
+                        (RelativeLayout) getActivity().findViewById(R.id.details_container);
+                if (detailsContainer == null) {
+                    return;
+                }
+                detailsContainer.removeAllViews();
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                inflater.inflate(R.layout.details_error, detailsContainer);
+            }
+        });
+    }
 
 }

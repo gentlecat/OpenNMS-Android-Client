@@ -6,5 +6,5 @@ import java.util.List;
 
 public final class Outages {
 
-  @SerializedName("outage") public List<Outage> outages;
+    @SerializedName("outage") public List<Outage> outages;
 }

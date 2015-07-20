@@ -6,5 +6,5 @@ import java.util.List;
 
 public final class Nodes {
 
-  @SerializedName("node") public List<Node> nodes;
+    @SerializedName("node") public List<Node> nodes;
 }

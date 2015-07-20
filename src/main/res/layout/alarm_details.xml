@@ -7,18 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/details_vertical_margin"
-        android:paddingBottom="@dimen/details_vertical_margin">
+        android:paddingBottom="@dimen/details_vertical_margin"
+        android:paddingTop="@dimen/details_vertical_margin">
 
         <TextView
             android:id="@+id/alarm_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/details_horizontal_margin"
+            android:paddingRight="@dimen/details_horizontal_margin"
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            android:paddingRight="@dimen/details_horizontal_margin"
-            android:paddingLeft="@dimen/details_horizontal_margin" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/alarm_severity_row"
@@ -30,18 +30,18 @@
                 android:id="@+id/alarm_severity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textStyle="bold"
+                android:paddingLeft="@dimen/details_horizontal_margin"
                 android:paddingRight="@dimen/details_horizontal_margin"
-                android:paddingLeft="@dimen/details_horizontal_margin" />
+                android:textAllCaps="true"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingRight="@dimen/details_horizontal_margin"
-            android:paddingLeft="@dimen/details_horizontal_margin">
+            android:paddingLeft="@dimen/details_horizontal_margin"
+            android:paddingRight="@dimen/details_horizontal_margin">
 
             <TextView
                 android:id="@+id/alarm_ack_status"

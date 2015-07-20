@@ -17,68 +17,68 @@ import org.opennms.android.data.storage.DatabaseHelper;
 
 public class NodeAdapter extends CursorAdapter {
 
-  private LayoutInflater layoutInflater;
-  private SQLiteDatabase db;
+    private LayoutInflater layoutInflater;
+    private SQLiteDatabase db;
 
-  public NodeAdapter(Context context, Cursor cursor, int flags) {
-    super(context, cursor, flags);
-    db = new DatabaseHelper(context).getReadableDatabase();
-    layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-  }
-
-  @Override
-  public View newView(Context context, Cursor cursor, ViewGroup parent) {
-    return layoutInflater.inflate(R.layout.node_list_item, parent, false);
-  }
-
-  @Override
-  public void bindView(View view, Context context, Cursor cursor) {
-  }
-
-  @Override
-  public View getView(int position, View convertView, ViewGroup parent) {
-    if (!mCursor.moveToPosition(position)) {
-      throw new IllegalStateException("Can't move cursor to position " + position);
+    public NodeAdapter(Context context, Cursor cursor, int flags) {
+        super(context, cursor, flags);
+        db = new DatabaseHelper(context).getReadableDatabase();
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    final ViewHolder viewHolder;
-
-    if (convertView == null || convertView.getTag() == null) {
-      convertView = newView(mContext, mCursor, parent);
-      viewHolder = new ViewHolder();
-      viewHolder.id = (TextView) convertView.findViewById(R.id.node_list_item_id);
-      viewHolder.name = (TextView) convertView.findViewById(R.id.node_list_item_name);
-      viewHolder.warning = (ImageView) convertView.findViewById(R.id.node_list_item_warning);
-    } else {
-      viewHolder = (ViewHolder) convertView.getTag();
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        return layoutInflater.inflate(R.layout.node_list_item, parent, false);
     }
 
-    int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Nodes._ID));
-    viewHolder.id.setText(String.valueOf(id));
-
-    String name = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Nodes.LABEL));
-    viewHolder.name.setText(name);
-
-    if (anyAlarms(id)) {
-      viewHolder.warning.setVisibility(View.VISIBLE);
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
     }
 
-    return convertView;
-  }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (!mCursor.moveToPosition(position)) {
+            throw new IllegalStateException("Can't move cursor to position " + position);
+        }
 
-  private boolean anyAlarms(int nodeId) {
-    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-    queryBuilder.setTables(Contract.Tables.ALARMS);
-    queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
-                             + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
-    return queryBuilder.query(db, null, null, null, null, null, null).moveToFirst();
-  }
+        final ViewHolder viewHolder;
 
-  static class ViewHolder {
+        if (convertView == null || convertView.getTag() == null) {
+            convertView = newView(mContext, mCursor, parent);
+            viewHolder = new ViewHolder();
+            viewHolder.id = (TextView) convertView.findViewById(R.id.node_list_item_id);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.node_list_item_name);
+            viewHolder.warning = (ImageView) convertView.findViewById(R.id.node_list_item_warning);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
 
-    TextView id;
-    TextView name;
-    ImageView warning;
-  }
+        int id = mCursor.getInt(mCursor.getColumnIndexOrThrow(Contract.Nodes._ID));
+        viewHolder.id.setText(String.valueOf(id));
+
+        String name = mCursor.getString(mCursor.getColumnIndexOrThrow(Contract.Nodes.LABEL));
+        viewHolder.name.setText(name);
+
+        if (anyAlarms(id)) {
+            viewHolder.warning.setVisibility(View.VISIBLE);
+        }
+
+        return convertView;
+    }
+
+    private boolean anyAlarms(int nodeId) {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        queryBuilder.setTables(Contract.Tables.ALARMS);
+        queryBuilder.appendWhere(Contract.Alarms.NODE_ID + "=" + nodeId
+                + " AND " + Contract.Alarms.ACK_USER + " IS NULL");
+        return queryBuilder.query(db, null, null, null, null, null, null).moveToFirst();
+    }
+
+    static class ViewHolder {
+
+        TextView id;
+        TextView name;
+        ImageView warning;
+    }
 
 }

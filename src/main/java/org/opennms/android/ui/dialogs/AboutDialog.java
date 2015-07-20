@@ -17,44 +17,43 @@ import org.opennms.android.R;
 
 public class AboutDialog extends DialogFragment {
 
-  public static final String TAG = "AboutDialog";
+    public static final String TAG = "AboutDialog";
 
-  public AboutDialog() {
-  }
+    public AboutDialog() {}
 
-  @Override
-  public Dialog onCreateDialog(Bundle savedInstanceState) {
-    View view = LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
 
-    TextView content = (TextView) view.findViewById(R.id.about_info);
-    content.setText(Html.fromHtml(getResources().getString(R.string.about_info)));
-    content.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView content = (TextView) view.findViewById(R.id.about_info);
+        content.setText(Html.fromHtml(getResources().getString(R.string.about_info)));
+        content.setMovementMethod(LinkMovementMethod.getInstance());
 
-    TextView versionTextView = (TextView) view.findViewById(R.id.about_version);
-    String version = getResources().getString(R.string.version) + " ";
-    try {
-      version += getActivity().getPackageManager()
-          .getPackageInfo(getActivity().getPackageName(), 0).versionName;
-    } catch (NameNotFoundException e) {
-      version += getResources().getString(R.string.unknown);
+        TextView versionTextView = (TextView) view.findViewById(R.id.about_version);
+        String version = getResources().getString(R.string.version) + " ";
+        try {
+            version += getActivity().getPackageManager()
+                    .getPackageInfo(getActivity().getPackageName(), 0).versionName;
+        } catch (NameNotFoundException e) {
+            version += getResources().getString(R.string.unknown);
+        }
+        versionTextView.setText(version);
+
+        Dialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.app_name_full)
+                .setView(view)
+                .setNeutralButton(
+                        getString(R.string.close_dialog),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        }).create();
+
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+
+        return dialog;
     }
-    versionTextView.setText(version);
-
-    Dialog dialog = new AlertDialog.Builder(getActivity())
-        .setTitle(R.string.app_name_full)
-        .setView(view)
-        .setNeutralButton(
-            getString(R.string.close_dialog),
-            new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-              }
-            }).create();
-
-    dialog.setCanceledOnTouchOutside(true);
-    dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-
-    return dialog;
-  }
 
 }
